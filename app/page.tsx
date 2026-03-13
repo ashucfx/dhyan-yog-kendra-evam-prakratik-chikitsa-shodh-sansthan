@@ -1,3 +1,5 @@
+import { BrandSeal } from "./components/brand-seal";
+
 const stats = [
   {
     value: "12+",
@@ -6,13 +8,13 @@ const stats = [
   },
   {
     value: "20 min",
-    label: "easy daily practice",
-    detail: "Short enough to fit real life, powerful enough to feel the shift."
+    label: "simple daily practice",
+    detail: "Short enough to fit real life and powerful enough to feel the shift."
   },
   {
     value: "1:1 feel",
     label: "personal guidance",
-    detail: "A warm, approachable path that feels supportive from day one."
+    detail: "A calm and supportive experience that feels warm from day one."
   }
 ];
 
@@ -21,6 +23,21 @@ const problems = [
   "Stress keeps showing up in your body.",
   "Your routine starts strong and fades out fast.",
   "You want guidance that feels personal, not generic."
+];
+
+const therapies = [
+  {
+    title: "Yoga therapy",
+    body: "Gentle, goal-based movement that helps you improve flexibility, strength, posture, and body awareness."
+  },
+  {
+    title: "Meditation and breathwork",
+    body: "Simple practices that help quiet overthinking, regulate stress, and bring more calm into your day."
+  },
+  {
+    title: "Naturopathy support",
+    body: "A natural wellness approach that helps you build healthier habits and feel more balanced from the inside out."
+  }
 ];
 
 const programs = [
@@ -115,7 +132,7 @@ const plans = [
   },
   {
     name: "Monthly Flow",
-    price: "₹999",
+    price: "Rs 999",
     intro: "Best for building a steady habit and feeling real progress.",
     features: ["Full program access", "Live and recorded sessions", "Personalized practice suggestions"],
     cta: "Start My Monthly Plan",
@@ -123,7 +140,7 @@ const plans = [
   },
   {
     name: "Deep Support",
-    price: "₹2499",
+    price: "Rs 2499",
     intro: "For a more personal journey with closer guidance and structure.",
     features: ["Everything in Monthly Flow", "Priority support", "Progress check-ins and routine guidance"],
     cta: "Get Full Support"
@@ -159,10 +176,15 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top">
-          Dhyan Yog Kendra Sansthan
+        <a className="brand brand-lockup" href="#top">
+          <BrandSeal className="nav-seal" />
+          <span>
+            <strong>Dhyan Yog Kendra Sansthan</strong>
+            <small>Yoga, meditation and natural wellness</small>
+          </span>
         </a>
         <nav className="main-nav" aria-label="Primary">
+          <a href="#about">About</a>
           <a href="#why">Why Us</a>
           <a href="#programs">Programs</a>
           <a href="#plans">Plans</a>
@@ -177,7 +199,16 @@ export default function Home() {
 
       <section className="hero section" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">Feel better in your body. Feel calmer in your mind.</p>
+          <p className="eyebrow">Yoga. Meditation. Natural wellness.</p>
+          <div className="hero-brand-row">
+            <BrandSeal className="hero-seal" />
+            <div className="hero-brand-copy">
+              <p className="hero-kicker">ध्यान योग केन्द्र एवं प्राकृतिक चिकित्सा शोध संस्थान</p>
+              <p className="hero-kicker-sub">
+                A calmer mind, a stronger body, and a more natural path to feeling well.
+              </p>
+            </div>
+          </div>
           <h1>Build a daily practice that helps you feel lighter, calmer, and more like yourself again.</h1>
           <p className="lead">
             If stress, low energy, hormone imbalance, sleep trouble, or daily tension has been wearing you down, you
@@ -210,6 +241,34 @@ export default function Home() {
             and more hopeful about your routine.
           </div>
         </aside>
+      </section>
+
+      <section className="section about-section" id="about">
+        <div className="section-heading narrow">
+          <p className="eyebrow">About the center</p>
+          <h2>A warm, natural approach to better health through yoga, meditation, and mindful living.</h2>
+        </div>
+        <div className="about-grid">
+          <div className="about-copy">
+            <p>
+              The logo direction sets the tone for the whole experience: stillness, growth, healing, and connection
+              with nature. The website now follows that same feeling with softer colors, calmer movement, and copy that
+              speaks directly to someone who wants help right now.
+            </p>
+            <p>
+              Whether someone is coming in for hormone support, better sleep, emotional balance, or a stronger body,
+              the journey should feel personal from the very first scroll.
+            </p>
+          </div>
+          <div className="therapy-grid">
+            {therapies.map((therapy) => (
+              <article className="therapy-card" key={therapy.title}>
+                <h3>{therapy.title}</h3>
+                <p>{therapy.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="section stats-strip" aria-label="Quick highlights">
@@ -409,7 +468,10 @@ export default function Home() {
       </section>
 
       <footer className="site-footer">
-        <p>Dhyan Yog Kendra Sansthan</p>
+        <div>
+          <p>Dhyan Yog Kendra Sansthan</p>
+          <small>Yoga, meditation and natural wellness</small>
+        </div>
         <div className="footer-links">
           <a href="#top">Back to top</a>
           <a href="#plans">Plans</a>

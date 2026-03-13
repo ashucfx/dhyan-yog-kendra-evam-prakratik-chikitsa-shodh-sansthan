@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Dhyan Yog Kendra Sansthan",
+  title: "Yoga Naturopathy and Meditation | Dhyan Yog Kendra Sansthan",
   description:
-    "Online yoga and meditation classes designed to help you feel calmer, lighter, stronger, and more balanced."
+    "Dhyan Yog Kendra Sansthan offers yoga, naturopathy, and meditation programs designed to help you feel calmer, lighter, stronger, and more balanced."
 };
 
 export default function RootLayout({
