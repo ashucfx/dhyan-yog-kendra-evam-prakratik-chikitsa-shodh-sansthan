@@ -434,74 +434,80 @@ export default function Home() {
       </div>
 
       <footer className="site-footer footer-shell">
-        <div className="footer-brand">
-          <div className="brand brand-lockup">
-            <BrandSeal className="nav-seal" />
-            <span>
-              <strong>{footerDetails.organizationName}</strong>
-              <small>{footerDetails.hindiName}</small>
-            </span>
-          </div>
-          <p className="footer-entity">{footerDetails.brandLine}</p>
-          <p className="footer-entity">Entity: {footerDetails.entityName}</p>
-          <p className="footer-contact">
-            <a href={`tel:${footerDetails.phone}`}>{footerDetails.phone}</a>
-          </p>
-          <p className="footer-contact">
-            <a href={`mailto:${footerDetails.email}`}>{footerDetails.email}</a>
-          </p>
-          <p className="footer-contact footer-address">{footerDetails.address}</p>
-        </div>
-
-        <div className="footer-column">
-          <p className="footer-title">Navigation</p>
-          {footerNavigation.map((item) => (
-            <a key={item.label} href={item.href}>
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        <div className="footer-column">
-          <p className="footer-title">Programs</p>
-          {footerPrograms.map((item) => (
-            <a key={item.label} href={item.href}>
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        <div className="footer-column">
-          <p className="footer-title">Legal</p>
-          {footerLegal.map((item) => (
-            <a key={item.label} href={item.href}>
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        <div className="footer-column">
-          <p className="footer-title">Social</p>
-          {footerSocials.map((item) => (
-            <a key={item.label} href={item.href} className="social-link">
-              <span className="social-badge">
-                <SocialIcon className="social-icon" label={item.label} />
+        <div className="footer-main">
+          <div className="footer-brand">
+            <div className="brand brand-lockup">
+              <BrandSeal className="nav-seal" />
+              <span>
+                <strong>{footerDetails.organizationName}</strong>
+                <small>{footerDetails.hindiName}</small>
               </span>
-              <span>{item.label}</span>
-            </a>
-          ))}
-        </div>
-
-        <div className="footer-map">
-          <p className="footer-title">Location</p>
-          <div className="map-card" aria-label="Organization map placeholder">
-            <div className="map-grid" />
-            <div className="map-pin">
-              <span className="map-pin-dot" />
             </div>
-            <div className="map-label">
-              <strong>{footerDetails.organizationName}</strong>
-              <span>{footerDetails.address}</span>
+            <p className="footer-entity">{footerDetails.brandLine}</p>
+            <div className="entity-chip">Registered Entity: {footerDetails.entityName}</div>
+            <div className="footer-contact-list">
+              <a className="footer-contact-item" href={`tel:${footerDetails.phone}`}>
+                <span className="footer-item-label">Phone</span>
+                <span className="footer-item-value">{footerDetails.phone}</span>
+              </a>
+              <a className="footer-contact-item" href={`mailto:${footerDetails.email}`}>
+                <span className="footer-item-label">Email</span>
+                <span className="footer-item-value">{footerDetails.email}</span>
+              </a>
+              <div className="footer-contact-item">
+                <span className="footer-item-label">Address</span>
+                <span className="footer-item-value footer-address">{footerDetails.address}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="footer-utility">
+            <div className="footer-map">
+              <p className="footer-title">Visit the center</p>
+              <div className="map-card" aria-label="Organization map placeholder">
+                <div className="map-grid" />
+                <div className="map-pin">
+                  <span className="map-pin-dot" />
+                </div>
+                <div className="map-label">
+                  <strong>{footerDetails.organizationName}</strong>
+                  <span>{footerDetails.address}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="footer-side">
+              <div className="footer-column">
+                <p className="footer-title">Programs</p>
+                {footerPrograms.map((item) => (
+                  <a key={item.label} href={item.href}>
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+
+              <div className="footer-column">
+                <p className="footer-title">Legal</p>
+                {footerLegal.map((item) => (
+                  <a key={item.label} href={item.href}>
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+
+              <div className="footer-column">
+                <p className="footer-title">Social</p>
+                <div className="social-grid">
+                  {footerSocials.map((item) => (
+                    <a key={item.label} href={item.href} className="social-link">
+                      <span className="social-badge">
+                        <SocialIcon className="social-icon" label={item.label} />
+                      </span>
+                      <span>{item.label}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
