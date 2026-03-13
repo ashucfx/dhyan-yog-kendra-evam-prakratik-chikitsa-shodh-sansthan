@@ -484,7 +484,6 @@ blockquote,
   text-transform: uppercase;
 }
 
-.program-card a,
 .footer-links a {
   color: var(--accent-dark);
   font-family: Arial, Helvetica, sans-serif;
@@ -536,20 +535,22 @@ blockquote,
   gap: 0.45rem;
   margin-top: 1rem;
   padding: 0.85rem 1.1rem;
+  min-height: 2.9rem;
   border-radius: 999px;
   background: var(--accent);
-  color: #fffaf7;
+  color: #fffaf7 !important;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.2;
+  white-space: nowrap;
   box-shadow: 0 18px 40px rgba(22, 58, 61, 0.12);
   transition: transform 180ms ease, background 180ms ease, color 180ms ease, box-shadow 180ms ease;
 }
 
 .card-cta:hover {
   background: var(--accent-dark);
-  color: #fffaf7;
+  color: #fffaf7 !important;
   transform: translateY(-2px);
   box-shadow: 0 22px 44px rgba(22, 58, 61, 0.18);
 }

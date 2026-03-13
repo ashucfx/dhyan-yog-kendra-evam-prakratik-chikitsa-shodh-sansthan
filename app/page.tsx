@@ -286,7 +286,7 @@ export default function Home() {
               <h3>{product.title}</h3>
               <p>{product.description}</p>
               <a className="card-cta" href="#join">
-                Explore wellness products
+                Shop wellness products
               </a>
             </article>
           ))}
