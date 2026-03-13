@@ -224,7 +224,8 @@ export const footerDetails = {
   brandLine: "Yoga, meditation and natural wellness for a calmer, healthier life.",
   entityName: "Registered Wellness Organization Name Placeholder",
   phone: "+91 98765 43210",
-  email: "hello@dhyanwellness.com"
+  email: "hello@dhyanwellness.com",
+  address: "Organization address placeholder, City, State, India"
 };
 
 export const footerNavigation = [

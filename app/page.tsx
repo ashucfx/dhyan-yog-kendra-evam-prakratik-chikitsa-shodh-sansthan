@@ -1,4 +1,5 @@
 import { BrandSeal } from "./components/brand-seal";
+import { SocialIcon } from "./components/social-icon";
 import {
   benefits,
   conditions,
@@ -32,7 +33,7 @@ export default function Home() {
           <BrandSeal className="nav-seal" />
           <span>
             <strong>Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan</strong>
-            <small>Guided yoga, meditation, and natural wellness support</small>
+            <small>ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान</small>
           </span>
         </a>
         <nav className="main-nav" aria-label="Primary">
@@ -60,7 +61,7 @@ export default function Home() {
             <BrandSeal className="hero-seal" />
             <div className="hero-brand-copy">
               <p className="hero-kicker">Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan</p>
-              <p className="hero-kicker-sub">Holistic yoga, meditation, and natural wellness guidance.</p>
+              <p className="hero-kicker-sub">ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान</p>
             </div>
           </div>
           <h1>Join personalized yoga and meditation sessions designed around your body, your condition, and your lifestyle.</h1>
@@ -449,6 +450,7 @@ export default function Home() {
           <p className="footer-contact">
             <a href={`mailto:${footerDetails.email}`}>{footerDetails.email}</a>
           </p>
+          <p className="footer-contact footer-address">{footerDetails.address}</p>
         </div>
 
         <div className="footer-column">
@@ -481,10 +483,27 @@ export default function Home() {
         <div className="footer-column">
           <p className="footer-title">Social</p>
           {footerSocials.map((item) => (
-            <a key={item.label} href={item.href}>
-              {item.label}
+            <a key={item.label} href={item.href} className="social-link">
+              <span className="social-badge">
+                <SocialIcon className="social-icon" label={item.label} />
+              </span>
+              <span>{item.label}</span>
             </a>
           ))}
+        </div>
+
+        <div className="footer-map">
+          <p className="footer-title">Location</p>
+          <div className="map-card" aria-label="Organization map placeholder">
+            <div className="map-grid" />
+            <div className="map-pin">
+              <span className="map-pin-dot" />
+            </div>
+            <div className="map-label">
+              <strong>{footerDetails.organizationName}</strong>
+              <span>{footerDetails.address}</span>
+            </div>
+          </div>
         </div>
 
         <div className="footer-bottom">
