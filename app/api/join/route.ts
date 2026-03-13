@@ -1,5 +1,5 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { sendSubmissionNotification } from "@/lib/notifications";
+import { saveSubmission } from "@/lib/submissions";
 
 type JoinPayload = {
   name?: string;
@@ -11,18 +11,6 @@ type JoinPayload = {
   goal?: string;
   notes?: string;
 };
-
-const dataDirectory = join(process.cwd(), "data");
-const dataFile = join(dataDirectory, "join-submissions.json");
-
-async function readEntries() {
-  try {
-    const content = await readFile(dataFile, "utf8");
-    return JSON.parse(content) as Array<Record<string, string>>;
-  } catch {
-    return [];
-  }
-}
 
 export async function POST(request: Request) {
   const payload = (await request.json()) as JoinPayload;
@@ -44,10 +32,14 @@ export async function POST(request: Request) {
     createdAt: new Date().toISOString()
   };
 
-  await mkdir(dataDirectory, { recursive: true });
-  const entries = await readEntries();
-  entries.push(entry);
-  await writeFile(dataFile, JSON.stringify(entries, null, 2), "utf8");
+  const storage = await saveSubmission(entry);
+  await sendSubmissionNotification(entry);
 
-  return Response.json({ message: "Your details have been saved." }, { status: 201 });
+  return Response.json(
+    {
+      message: "Your details have been saved.",
+      storage
+    },
+    { status: 201 }
+  );
 }

@@ -479,6 +479,7 @@ export default function Home() {
                     {item.label}
                   </a>
                 ))}
+                <a href="/admin/submissions">Admin login</a>
               </div>
 
               <div className="footer-column">

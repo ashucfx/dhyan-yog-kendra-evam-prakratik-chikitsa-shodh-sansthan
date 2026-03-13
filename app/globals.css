@@ -788,6 +788,109 @@ blockquote,
   color: #7a1f17;
 }
 
+.admin-page {
+  min-height: 100vh;
+  padding: 2rem 1rem 4rem;
+}
+
+.admin-card,
+.admin-shell {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  border-radius: 28px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.admin-card {
+  display: grid;
+  gap: 1rem;
+  max-width: 40rem;
+  padding: 2rem;
+}
+
+.admin-shell {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-copy {
+  max-width: 48rem;
+  color: var(--muted);
+}
+
+.admin-login {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-login label {
+  display: grid;
+  gap: 0.45rem;
+  font-weight: 600;
+}
+
+.admin-login input {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-strong);
+  color: var(--text);
+  font: inherit;
+}
+
+.admin-table-shell {
+  overflow-x: auto;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(255, 250, 243, 0.75);
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.95rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(122, 31, 23, 0.12);
+}
+
+.admin-table th {
+  color: var(--accent-dark);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(197, 154, 98, 0.14);
+}
+
+.admin-table td {
+  color: var(--text);
+  font-size: 0.96rem;
+}
+
 .check-list {
   display: grid;
   gap: 0.9rem;
@@ -1219,6 +1322,10 @@ blockquote,
     gap: 1rem;
     align-items: flex-start;
     flex-wrap: wrap;
+  }
+
+  .admin-header {
+    flex-direction: column;
   }
 
   .brand-lockup {
