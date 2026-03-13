@@ -219,7 +219,8 @@ export const contactOptions = [
 ];
 
 export const footerDetails = {
-  organizationName: "Dhyan Yog Kendra Sansthan",
+  organizationName: "Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan",
+  hindiName: "ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान",
   brandLine: "Yoga, meditation and natural wellness for a calmer, healthier life.",
   entityName: "Registered Wellness Organization Name Placeholder",
   phone: "+91 98765 43210",

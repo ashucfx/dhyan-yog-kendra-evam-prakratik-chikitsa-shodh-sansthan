@@ -31,8 +31,8 @@ export default function Home() {
         <a className="brand brand-lockup" href="#top">
           <BrandSeal className="nav-seal" />
           <span>
-            <strong>Dhyan Yog Kendra Sansthan</strong>
-            <small>Yoga, meditation and natural wellness</small>
+            <strong>Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan</strong>
+            <small>ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान</small>
           </span>
         </a>
         <nav className="main-nav" aria-label="Primary">
@@ -54,9 +54,9 @@ export default function Home() {
           <div className="hero-brand-row">
             <BrandSeal className="hero-seal" />
             <div className="hero-brand-copy">
-              <p className="hero-kicker">Yoga, Meditation and Natural Wellness</p>
+              <p className="hero-kicker">Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan</p>
               <p className="hero-kicker-sub">
-                Live Zoom classes, supportive batches, and a more personal path to feeling better.
+                ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान
               </p>
             </div>
           </div>
@@ -431,9 +431,10 @@ export default function Home() {
             <BrandSeal className="nav-seal" />
             <span>
               <strong>{footerDetails.organizationName}</strong>
-              <small>{footerDetails.brandLine}</small>
+              <small>{footerDetails.hindiName}</small>
             </span>
           </div>
+          <p className="footer-entity">{footerDetails.brandLine}</p>
           <p className="footer-entity">Entity: {footerDetails.entityName}</p>
           <p className="footer-contact">
             <a href={`tel:${footerDetails.phone}`}>{footerDetails.phone}</a>
