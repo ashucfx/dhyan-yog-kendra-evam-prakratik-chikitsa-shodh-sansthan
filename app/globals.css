@@ -330,7 +330,10 @@ blockquote,
 .step-grid,
 .plan-grid,
 .stats-grid,
-.therapy-grid {
+.therapy-grid,
+.condition-grid,
+.support-grid,
+.store-grid {
   display: grid;
   gap: 1.25rem;
 }
@@ -408,6 +411,18 @@ blockquote,
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.condition-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.support-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.store-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .benefit-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -437,9 +452,62 @@ blockquote,
   font-weight: 700;
 }
 
+.program-short {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.program-for {
+  margin-top: 0.9rem;
+}
+
+.mini-benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.mini-benefits span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 250, 243, 0.8);
+  border: 1px solid var(--line);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.88rem;
+}
+
 .program-card a {
   display: inline-block;
   margin-top: 1rem;
+}
+
+.condition-card,
+.support-panel,
+.store-card,
+.trust-panel {
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.condition-card a,
+.store-card a {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--accent-dark);
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+.trust-panel {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
 }
 
 .featured-plan {
@@ -625,7 +693,10 @@ blockquote,
   .story-grid,
   .step-grid,
   .plan-grid,
-  .stats-grid {
+  .stats-grid,
+  .condition-grid,
+  .support-grid,
+  .store-grid {
     grid-template-columns: 1fr;
   }
 

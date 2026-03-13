@@ -1,176 +1,21 @@
 import { BrandSeal } from "./components/brand-seal";
-
-const stats = [
-  {
-    value: "12+",
-    label: "guided programs",
-    detail: "From hormone support to better sleep and steady daily energy."
-  },
-  {
-    value: "20 min",
-    label: "simple daily practice",
-    detail: "Short enough to fit real life and powerful enough to feel the shift."
-  },
-  {
-    value: "1:1 feel",
-    label: "personal guidance",
-    detail: "A calm and supportive experience that feels warm from day one."
-  }
-];
-
-const problems = [
-  "You feel tired even after resting.",
-  "Stress keeps showing up in your body.",
-  "Your routine starts strong and fades out fast.",
-  "You want guidance that feels personal, not generic."
-];
-
-const therapies = [
-  {
-    title: "Yoga therapy",
-    body: "Gentle, goal-based movement that helps you improve flexibility, strength, posture, and body awareness."
-  },
-  {
-    title: "Meditation and breathwork",
-    body: "Simple practices that help quiet overthinking, regulate stress, and bring more calm into your day."
-  },
-  {
-    title: "Naturopathy support",
-    body: "A natural wellness approach that helps you build healthier habits and feel more balanced from the inside out."
-  }
-];
-
-const programs = [
-  {
-    title: "Yoga for PCOS and PCOD",
-    description:
-      "Discover a supportive yoga routine that helps you work with your body, not against it. These classes help support hormone balance, ease bloating, improve energy, and make healthy weight management feel more achievable.",
-    cta: "Start Feeling Better",
-    accent: "Hormone support"
-  },
-  {
-    title: "Meditation for Beginners",
-    description:
-      "If your mind feels busy all day, this is a simple place to begin. You will learn easy meditation practices that help you slow down, feel calmer, and stay focused without overcomplicating your routine.",
-    cta: "Find My Calm",
-    accent: "Calm and focus"
-  },
-  {
-    title: "Yoga for Better Sleep",
-    description:
-      "When your body is tired but your mind will not switch off, these soothing sessions help you unwind. Gentle movement and breathwork help you relax deeply, sleep more peacefully, and wake up feeling refreshed.",
-    cta: "Sleep More Deeply",
-    accent: "Night routine"
-  },
-  {
-    title: "Stress Relief and Emotional Balance",
-    description:
-      "Some days feel heavy before they even begin. This practice helps you release pressure, steady your emotions, and move through the day with more patience, clarity, and peace.",
-    cta: "Release the Stress",
-    accent: "Daily reset"
-  },
-  {
-    title: "Strength and Flexibility Flow",
-    description:
-      "Build strength, improve posture, and loosen up stiffness in a way that feels encouraging instead of intense. You will feel more open, more capable, and more confident in your body.",
-    cta: "Build My Strength",
-    accent: "Move with ease"
-  },
-  {
-    title: "Personalized Wellness Yoga",
-    description:
-      "Looking for something that feels made for you? This guided path helps you choose sessions around your body, your goals, and how you want to feel so it is easier to stay consistent and see progress.",
-    cta: "Get My Plan",
-    accent: "Made for you"
-  }
-];
-
-const benefits = [
-  {
-    title: "Feel lighter",
-    body: "Release stiffness, improve mobility, and move through the day with more ease."
-  },
-  {
-    title: "Feel calmer",
-    body: "Quiet mental overload, slow your breath, and create more peace in your routine."
-  },
-  {
-    title: "Feel stronger",
-    body: "Build flexibility, posture, and confidence with guided movement that meets you where you are."
-  },
-  {
-    title: "Feel supported",
-    body: "Follow a practice that feels warm, personal, and realistic for your life."
-  }
-];
-
-const steps = [
-  {
-    number: "01",
-    title: "Tell us what you want to change",
-    body: "Better sleep, lighter periods, less stress, more strength, or steadier energy. Start with the goal that matters most to you."
-  },
-  {
-    number: "02",
-    title: "Get a practice that fits your life",
-    body: "Choose simple guided sessions you can actually keep up with. No pressure, no complicated setup, no guesswork."
-  },
-  {
-    number: "03",
-    title: "Feel the shift week by week",
-    body: "As your body opens up and your mind calms down, everyday life starts feeling easier, steadier, and more in your control."
-  }
-];
-
-const plans = [
-  {
-    name: "Starter",
-    price: "Free",
-    intro: "A simple first step if you want to explore before committing.",
-    features: ["1 guided intro session", "Beginner breathing practice", "Goal-based class recommendations"],
-    cta: "Try a Free Session"
-  },
-  {
-    name: "Monthly Flow",
-    price: "Rs 999",
-    intro: "Best for building a steady habit and feeling real progress.",
-    features: ["Full program access", "Live and recorded sessions", "Personalized practice suggestions"],
-    cta: "Start My Monthly Plan",
-    featured: true
-  },
-  {
-    name: "Deep Support",
-    price: "Rs 2499",
-    intro: "For a more personal journey with closer guidance and structure.",
-    features: ["Everything in Monthly Flow", "Priority support", "Progress check-ins and routine guidance"],
-    cta: "Get Full Support"
-  }
-];
-
-const stories = [
-  "I joined because I felt tired all the time. Within a few weeks, my body felt lighter and my mornings felt easier.",
-  "The meditation sessions helped me relax at night. I sleep better now and I feel more steady during the day.",
-  "What I love most is how approachable everything feels. It never feels intimidating, just genuinely helpful."
-];
-
-const faqs = [
-  {
-    question: "Do I need any yoga experience?",
-    answer: "No. The sessions are beginner-friendly and easy to follow, even if you are starting from zero."
-  },
-  {
-    question: "What if I am not flexible?",
-    answer: "That is completely fine. These classes are built to help you become more comfortable in your body, not to test how flexible you already are."
-  },
-  {
-    question: "How much time do I need each day?",
-    answer: "Most people start with about 20 minutes. Short, steady practice works far better than waiting for the perfect long session."
-  },
-  {
-    question: "Can I choose a program for a specific health goal?",
-    answer: "Yes. You can begin with hormone support, stress relief, better sleep, meditation, or strength and flexibility depending on what you need most."
-  }
-];
+import {
+  benefits,
+  conditions,
+  dietFeatures,
+  faqs,
+  instructors,
+  liveClassHighlights,
+  plans,
+  problems,
+  programs,
+  stats,
+  steps,
+  storeProducts,
+  stories,
+  therapies,
+  trustPoints
+} from "./content/site-data";
 
 export default function Home() {
   return (
@@ -185,48 +30,44 @@ export default function Home() {
         </a>
         <nav className="main-nav" aria-label="Primary">
           <a href="#about">About</a>
-          <a href="#why">Why Us</a>
           <a href="#programs">Programs</a>
+          <a href="#conditions">Conditions</a>
           <a href="#plans">Plans</a>
-          <a href="#benefits">Benefits</a>
-          <a href="#stories">Results</a>
+          <a href="#store">Store</a>
           <a href="#join">Join</a>
         </nav>
         <a className="button button-small" href="#join">
-          Start Your First Session
+          Start Your Wellness Journey
         </a>
       </header>
 
       <section className="hero section" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">Yoga. Meditation. Natural wellness.</p>
+          <p className="eyebrow">Restore balance in your body and mind</p>
           <div className="hero-brand-row">
             <BrandSeal className="hero-seal" />
             <div className="hero-brand-copy">
-              <p className="hero-kicker">ध्यान योग केन्द्र एवं प्राकृतिक चिकित्सा शोध संस्थान</p>
+              <p className="hero-kicker">Yoga, Meditation and Natural Wellness</p>
               <p className="hero-kicker-sub">
-                A calmer mind, a stronger body, and a more natural path to feeling well.
+                Live Zoom classes, supportive batches, and a more personal path to feeling better.
               </p>
             </div>
           </div>
-          <h1>Build a daily practice that helps you feel lighter, calmer, and more like yourself again.</h1>
+          <h1>Join personalized yoga and meditation sessions designed around your body, your condition, and your lifestyle.</h1>
           <p className="lead">
-            If stress, low energy, hormone imbalance, sleep trouble, or daily tension has been wearing you down, you
-            are in the right place. These guided online yoga and meditation sessions help you feel more balanced,
-            more supported, and more in control of your health one gentle step at a time.
+            Whether you are dealing with stress, hormone imbalance, pregnancy wellness, low energy, or a body that
+            just feels out of rhythm, this platform helps you start with calm guidance and a plan that actually feels
+            doable from home.
           </p>
           <div className="hero-actions">
-            <a className="button" href="#programs">
-              Get My Personalized Plan
+            <a className="button" href="#join">
+              Start Your Wellness Journey
             </a>
-            <a className="button button-ghost" href="#plans">
-              View Plans
-            </a>
-            <a className="button button-secondary" href="#stories">
-              See Real Results
+            <a className="button button-secondary" href="#programs">
+              Explore Programs
             </a>
           </div>
-          <p className="microcopy">Easy to start. Gentle on your body. Designed for real life.</p>
+          <p className="microcopy">Live on Zoom. Condition-based batches. Gentle support you can stay consistent with.</p>
         </div>
 
         <aside className="hero-card" aria-label="Member benefits">
@@ -237,27 +78,27 @@ export default function Home() {
             ))}
           </ul>
           <div className="hero-note">
-            <strong>Imagine this:</strong> you finish your session feeling calmer in your head, lighter in your body,
-            and more hopeful about your routine.
+            <strong>Imagine this:</strong> you start feeling calmer, lighter, and more in control because your wellness
+            routine finally fits your life.
           </div>
         </aside>
       </section>
 
       <section className="section about-section" id="about">
         <div className="section-heading narrow">
-          <p className="eyebrow">About the center</p>
-          <h2>A warm, natural approach to better health through yoga, meditation, and mindful living.</h2>
+          <p className="eyebrow">About the platform</p>
+          <h2>A calmer, more complete wellness platform built around classes, guidance, and everyday support.</h2>
         </div>
         <div className="about-grid">
           <div className="about-copy">
             <p>
-              The logo direction sets the tone for the whole experience: stillness, growth, healing, and connection
-              with nature. The website now follows that same feeling with softer colors, calmer movement, and copy that
-              speaks directly to someone who wants help right now.
+              This is more than a yoga website. It is a guided wellness platform where students join live Zoom classes,
+              follow condition-based programs, receive practical lifestyle support, and move at a pace that feels
+              gentle and realistic.
             </p>
             <p>
-              Whether someone is coming in for hormone support, better sleep, emotional balance, or a stronger body,
-              the journey should feel personal from the very first scroll.
+              The goal is simple: help people feel better in their body, quieter in their mind, and more supported in
+              daily life.
             </p>
           </div>
           <div className="therapy-grid">
@@ -283,29 +124,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section intro" id="why">
-        <div className="section-heading">
-          <p className="eyebrow">A journey that fits you</p>
-          <h2>You do not need to be flexible, experienced, or perfectly consistent to begin.</h2>
-        </div>
-        <p>
-          Imagine starting your day with a calmer mind, a body that feels open instead of heavy, and a routine you
-          actually look forward to. That is what these sessions are built for. Simple guidance. Real support. Results
-          you can feel in your mood, your sleep, your posture, and your confidence.
-        </p>
-        <div className="feature-ribbon">
-          <span>Live classes</span>
-          <span>Recorded sessions</span>
-          <span>Breathwork</span>
-          <span>Meditation</span>
-          <span>Goal-based plans</span>
-        </div>
-      </section>
-
       <section className="section steps-section">
         <div className="section-heading narrow">
-          <p className="eyebrow">How it works</p>
-          <h2>Start simply. Stay consistent. Feel the difference in everyday life.</h2>
+          <p className="eyebrow">How classes work</p>
+          <h2>Choose your program, tell us about your condition, and get placed into the right Zoom batch.</h2>
         </div>
         <div className="step-grid">
           {steps.map((step) => (
@@ -320,18 +142,83 @@ export default function Home() {
 
       <section className="section" id="programs">
         <div className="section-heading">
-          <p className="eyebrow">Popular programs</p>
-          <h2>Choose the practice that matches what your body needs right now.</h2>
+          <p className="eyebrow">Courses and programs</p>
+          <h2>Clear programs people can join right away, each built around a real wellness need.</h2>
         </div>
         <div className="program-grid">
           {programs.map((program) => (
             <article className="program-card" key={program.title}>
               <p className="program-accent">{program.accent}</p>
               <h3>{program.title}</h3>
+              <p className="program-short">{program.shortDescription}</p>
               <p>{program.description}</p>
+              <p className="program-for">
+                <strong>Who it is for:</strong> {program.for}
+              </p>
+              <div className="mini-benefits">
+                {program.benefits.map((benefit) => (
+                  <span key={benefit}>{benefit}</span>
+                ))}
+              </div>
               <a href="#join">{program.cta}</a>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className="section conditions-section" id="conditions">
+        <div className="section-heading">
+          <p className="eyebrow">Health conditions</p>
+          <h2>Select the condition you want support with and start from there.</h2>
+        </div>
+        <div className="condition-grid">
+          {conditions.map((condition) => (
+            <article className="condition-card" key={condition.title}>
+              <h3>{condition.title}</h3>
+              <p>
+                <strong>Symptoms:</strong> {condition.symptoms}
+              </p>
+              <p>
+                <strong>How yoga helps:</strong> {condition.help}
+              </p>
+              <p>
+                <strong>Available classes:</strong> {condition.classes}
+              </p>
+              <a href="#join">Explore {condition.title}</a>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section support-grid-section">
+        <div className="support-grid">
+          <article className="support-panel">
+            <p className="eyebrow">Blood-group diet plans</p>
+            <h2>Your food guidance should support your body in a simple, practical way.</h2>
+            <p>
+              Students also receive food support based on their blood group and health condition. The goal is not to
+              make meals complicated. It is to help daily choices feel clearer and more supportive.
+            </p>
+            <ul className="check-list">
+              {dietFeatures.map((feature) => (
+                <li key={feature}>{feature}</li>
+              ))}
+            </ul>
+          </article>
+
+          <article className="support-panel">
+            <p className="eyebrow">Live Zoom classes</p>
+            <h2>Practice from home while still feeling guided, structured, and supported.</h2>
+            <p>
+              All classes are conducted live through Zoom. Students are placed into condition-based batches so the
+              classes feel relevant and more focused from the beginning.
+            </p>
+            <ul className="check-list">
+              {liveClassHighlights.map((highlight) => (
+                <li key={highlight}>{highlight}</li>
+              ))}
+            </ul>
+          </article>
         </div>
       </section>
 
@@ -374,10 +261,55 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="section store-section" id="store">
+        <div className="section-heading">
+          <p className="eyebrow">Wellness store</p>
+          <h2>Natural products that feel like an extension of the wellness journey, not a random shop.</h2>
+        </div>
+        <div className="store-grid">
+          {storeProducts.map((product) => (
+            <article className="store-card" key={product.title}>
+              <h3>{product.title}</h3>
+              <p>{product.description}</p>
+              <a href="#join">Explore wellness products</a>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section trust-section" id="trust">
+        <div className="section-heading">
+          <p className="eyebrow">Instructor and trust</p>
+          <h2>Trust matters when someone is looking for health support. This platform is designed to feel reassuring.</h2>
+        </div>
+        <div className="about-grid">
+          <div className="therapy-grid">
+            {instructors.map((item) => (
+              <article className="therapy-card" key={item.name}>
+                <h3>{item.name}</h3>
+                <p>{item.detail}</p>
+              </article>
+            ))}
+          </div>
+          <div className="trust-panel">
+            <p>
+              The teaching approach stays simple, caring, and condition-aware so people do not feel lost after joining.
+              Every part of the journey is designed to answer the same question: does this feel trustworthy enough to
+              begin with confidence?
+            </p>
+            <ul className="check-list">
+              {trustPoints.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
       <section className="section stories" id="stories">
         <div className="section-heading">
           <p className="eyebrow">What people love</p>
-          <h2>Simple classes. Real relief. Noticeable change.</h2>
+          <h2>Transformation stories help people feel the platform is real, supportive, and worth joining.</h2>
         </div>
         <div className="story-grid">
           {stories.map((story) => (
@@ -405,15 +337,15 @@ export default function Home() {
         <div className="join-panel">
           <div>
             <p className="eyebrow">Start today</p>
-            <h2>Your first yoga session is closer than you think.</h2>
+            <h2>Your body already has the power to heal. Sometimes it just needs the right guidance.</h2>
             <p>
-              Choose your goal, begin with a guided practice, and enjoy a routine that helps you feel calmer,
-              stronger, and more in control of your health.
+              Join a condition-based yoga and wellness program, get placed into the right Zoom batch, and begin a
+              routine that feels calmer, clearer, and much easier to follow.
             </p>
             <div className="join-points">
-              <span>No experience needed</span>
-              <span>Join from home</span>
-              <span>Short and guided</span>
+              <span>Live on Zoom</span>
+              <span>Condition-based batches</span>
+              <span>Diet and lifestyle support</span>
             </div>
           </div>
 
@@ -437,47 +369,16 @@ export default function Home() {
               </select>
             </label>
             <label htmlFor="message">
-              Anything you want help with?
-              <input id="message" type="text" placeholder="Stress, periods, sleep, stiffness, low energy..." />
+              Tell us your condition
+              <input id="message" type="text" placeholder="PCOS, thyroid, pregnancy wellness, stress..." />
             </label>
             <button className="button" type="button">
-              Let&apos;s Begin
+              Start My Wellness Journey Today
             </button>
-            <p className="microcopy">Friendly guidance, easy sessions, and a plan you can actually follow.</p>
+            <p className="microcopy">We will help place you into the right batch and guide you on the next step.</p>
           </form>
         </div>
       </section>
-
-      <section className="section final-cta">
-        <div className="final-cta-panel">
-          <p className="eyebrow">Ready when you are</p>
-          <h2>Give yourself one calm, supportive step forward today.</h2>
-          <p>
-            You do not need to change everything at once. Start with one session, feel the difference, and let your
-            routine grow from there.
-          </p>
-          <div className="hero-actions">
-            <a className="button" href="#join">
-              Start My Free Session
-            </a>
-            <a className="button button-secondary" href="#programs">
-              Explore Programs
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <footer className="site-footer">
-        <div>
-          <p>Dhyan Yog Kendra Sansthan</p>
-          <small>Yoga, meditation and natural wellness</small>
-        </div>
-        <div className="footer-links">
-          <a href="#top">Back to top</a>
-          <a href="#plans">Plans</a>
-          <a href="#join">Join now</a>
-        </div>
-      </footer>
     </main>
   );
 }
