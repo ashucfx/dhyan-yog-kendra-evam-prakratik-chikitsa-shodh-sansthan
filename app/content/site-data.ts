@@ -218,6 +218,44 @@ export const contactOptions = [
   }
 ];
 
+export const footerDetails = {
+  organizationName: "Dhyan Yog Kendra Sansthan",
+  brandLine: "Yoga, meditation and natural wellness for a calmer, healthier life.",
+  entityName: "Registered Wellness Organization Name Placeholder",
+  phone: "+91 98765 43210",
+  email: "hello@dhyanwellness.com"
+};
+
+export const footerNavigation = [
+  { label: "About", href: "#about" },
+  { label: "Programs", href: "#programs" },
+  { label: "Conditions", href: "#conditions" },
+  { label: "Plans", href: "#plans" },
+  { label: "Store", href: "#store" },
+  { label: "Join", href: "#join" }
+];
+
+export const footerPrograms = [
+  { label: "PCOS Yoga", href: "#programs" },
+  { label: "Stress Relief Meditation", href: "#programs" },
+  { label: "Hormonal Balance Yoga", href: "#programs" },
+  { label: "Prenatal Wellness", href: "#conditions" }
+];
+
+export const footerLegal = [
+  { label: "Privacy Policy", href: "#" },
+  { label: "Terms and Conditions", href: "#" },
+  { label: "Refund Policy", href: "#" },
+  { label: "Shipping Policy", href: "#" }
+];
+
+export const footerSocials = [
+  { label: "Instagram", href: "#" },
+  { label: "Facebook", href: "#" },
+  { label: "YouTube", href: "#" },
+  { label: "WhatsApp", href: "#" }
+];
+
 export const benefits = [
   {
     title: "Feel lighter",

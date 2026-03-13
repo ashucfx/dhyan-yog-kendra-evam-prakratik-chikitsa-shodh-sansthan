@@ -5,6 +5,11 @@ import {
   contactOptions,
   dietFeatures,
   faqs,
+  footerDetails,
+  footerLegal,
+  footerNavigation,
+  footerPrograms,
+  footerSocials,
   instructors,
   liveClassHighlights,
   plans,
@@ -419,6 +424,65 @@ export default function Home() {
           Join a Zoom Batch
         </a>
       </div>
+
+      <footer className="site-footer footer-shell">
+        <div className="footer-brand">
+          <div className="brand brand-lockup">
+            <BrandSeal className="nav-seal" />
+            <span>
+              <strong>{footerDetails.organizationName}</strong>
+              <small>{footerDetails.brandLine}</small>
+            </span>
+          </div>
+          <p className="footer-entity">Entity: {footerDetails.entityName}</p>
+          <p className="footer-contact">
+            <a href={`tel:${footerDetails.phone}`}>{footerDetails.phone}</a>
+          </p>
+          <p className="footer-contact">
+            <a href={`mailto:${footerDetails.email}`}>{footerDetails.email}</a>
+          </p>
+        </div>
+
+        <div className="footer-column">
+          <p className="footer-title">Navigation</p>
+          {footerNavigation.map((item) => (
+            <a key={item.label} href={item.href}>
+              {item.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="footer-column">
+          <p className="footer-title">Programs</p>
+          {footerPrograms.map((item) => (
+            <a key={item.label} href={item.href}>
+              {item.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="footer-column">
+          <p className="footer-title">Legal</p>
+          {footerLegal.map((item) => (
+            <a key={item.label} href={item.href}>
+              {item.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="footer-column">
+          <p className="footer-title">Social</p>
+          {footerSocials.map((item) => (
+            <a key={item.label} href={item.href}>
+              {item.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="footer-bottom">
+          <p>© 2026 {footerDetails.organizationName}. All rights reserved.</p>
+        </div>
+      </footer>
     </main>
   );
 }
