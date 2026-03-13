@@ -1,4 +1,5 @@
 import { BrandSeal } from "./components/brand-seal";
+import { JoinForm } from "./components/join-form";
 import { SocialIcon } from "./components/social-icon";
 import {
   benefits,
@@ -13,7 +14,6 @@ import {
   footerSocials,
   instructors,
   liveClassHighlights,
-  plans,
   problems,
   programs,
   proofItems,
@@ -22,10 +22,14 @@ import {
   storeProducts,
   stories,
   therapies,
-  trustPoints
+  trustPoints,
+  zoomBatches
 } from "./content/site-data";
 
 export default function Home() {
+  const organizationName = "Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan";
+  const hindiName = "ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान";
+
   return (
     <main>
       <header className="site-header">
@@ -40,7 +44,7 @@ export default function Home() {
           <a href="#about">About</a>
           <a href="#programs">Programs</a>
           <a href="#conditions">Conditions</a>
-          <a href="#plans">Plans</a>
+          <a href="#batches">Batches</a>
           <a href="#store">Store</a>
           <a href="#join">Join</a>
         </nav>
@@ -260,28 +264,36 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section plans-section" id="plans">
+      <section className="section plans-section" id="batches">
         <div className="section-heading">
-          <p className="eyebrow">Choose your pace</p>
-          <h2>Pick the level of support that feels right for you.</h2>
+          <p className="eyebrow">Zoom batches and guidance</p>
+          <h2>Choose from disease-specific, common, and merged wellness batches designed around how people actually join.</h2>
         </div>
         <div className="plan-grid">
-          {plans.map((plan) => (
-            <article className={`plan-card${plan.featured ? " featured-plan" : ""}`} key={plan.name}>
-              {plan.featured ? <p className="featured-chip">Most loved plan</p> : null}
-              <p className="plan-name">{plan.name}</p>
-              <h3 className="plan-price">{plan.price}</h3>
-              <p>{plan.intro}</p>
+          {zoomBatches.map((batch) => (
+            <article className="plan-card batch-card" key={batch.title}>
+              <p className="plan-name">{batch.title}</p>
+              <h3 className="batch-intro">{batch.intro}</h3>
+              <p>{batch.description}</p>
+              <p className="program-for">
+                <strong>Who it is for:</strong> {batch.for}
+              </p>
               <ul className="check-list">
-                {plan.features.map((feature) => (
+                {batch.includes.map((feature) => (
                   <li key={feature}>{feature}</li>
                 ))}
               </ul>
-              <a className={`button${plan.featured ? "" : " button-secondary"}`} href="#join">
-                {plan.cta}
+              <a className="button button-secondary" href="#join">
+                {batch.cta}
               </a>
             </article>
           ))}
+        </div>
+        <div className="feature-ribbon">
+          <span>Blood-group diet chart after intake</span>
+          <span>Batch placement based on your condition</span>
+          <span>Common wellness batches also available</span>
+          <span>Live support from home on Zoom</span>
         </div>
       </section>
 
@@ -368,44 +380,18 @@ export default function Home() {
             <p className="eyebrow">Start today</p>
             <h2>Your body already has the power to heal. Sometimes it just needs the right guidance.</h2>
             <p>
-              Join a condition-based yoga and wellness program, get placed into the right Zoom batch, and begin a
-              routine that feels calmer, clearer, and much easier to follow.
+              Fill in your details, tell us your condition, and share your blood group so we can place you into the
+              right Zoom batch and guide your diet chart in a more relevant way from the beginning.
             </p>
             <div className="join-points">
               <span>Live on Zoom</span>
               <span>Condition-based batches</span>
-              <span>Diet and lifestyle support</span>
+              <span>Common and merged batches</span>
+              <span>Diet chart by blood group</span>
             </div>
           </div>
 
-          <form className="signup-form">
-            <label htmlFor="name">
-              Your name
-              <input id="name" type="text" placeholder="Enter your name" />
-            </label>
-            <label htmlFor="email">
-              Email address
-              <input id="email" type="email" placeholder="you@example.com" />
-            </label>
-            <label htmlFor="goal">
-              Your main goal
-              <select id="goal" defaultValue="Balance hormones">
-                <option>Balance hormones</option>
-                <option>Reduce stress</option>
-                <option>Sleep better</option>
-                <option>Build strength</option>
-                <option>Improve focus</option>
-              </select>
-            </label>
-            <label htmlFor="message">
-              Tell us your condition
-              <input id="message" type="text" placeholder="PCOS, thyroid, pregnancy wellness, stress..." />
-            </label>
-            <button className="button" type="button">
-              Start My Wellness Journey Today
-            </button>
-            <p className="microcopy">We will help place you into the right batch and guide you on the next step.</p>
-          </form>
+          <JoinForm conditions={conditions.map((condition) => condition.title)} />
         </div>
       </section>
 
@@ -437,7 +423,7 @@ export default function Home() {
         <div className="footer-main">
           <div className="footer-brand">
             <div className="brand brand-lockup">
-              <BrandSeal className="nav-seal" />
+              <BrandSeal className="footer-seal" />
               <span>
                 <strong>{footerDetails.organizationName}</strong>
                 <small>{footerDetails.hindiName}</small>

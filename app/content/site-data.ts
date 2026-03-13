@@ -151,8 +151,39 @@ export const dietFeatures = [
 export const liveClassHighlights = [
   "All sessions happen live on Zoom",
   "Students are placed into focused wellness batches",
+  "Common wellness batches are also available for general health goals",
   "You can join from home with simple guidance",
   "Each batch feels supportive, not crowded"
+];
+
+export const zoomBatches = [
+  {
+    title: "Condition-specific batches",
+    intro: "Focused live groups for people who want support around one clear health concern.",
+    description:
+      "These batches are organized around needs like PCOS, thyroid support, diabetes support, stress relief, pregnancy wellness, and hormonal balance so the guidance feels more relevant from the start.",
+    for: "Best for people who want a more condition-aware routine and group support.",
+    includes: ["Live Zoom classes", "Condition-aware practices", "Routine guidance"],
+    cta: "Join a focused batch"
+  },
+  {
+    title: "Common wellness batches",
+    intro: "A gentle ongoing batch for people who want better energy, flexibility, calm, and consistency.",
+    description:
+      "If you want a balanced routine without joining a disease-specific group, these common batches bring together movement, breathing, meditation, and simple habit support in one approachable flow.",
+    for: "Best for beginners, general wellness, and people restarting after a long break.",
+    includes: ["Beginner-friendly yoga", "Calming breathwork", "Everyday wellness support"],
+    cta: "Explore common batches"
+  },
+  {
+    title: "Merged support batches",
+    intro: "A more practical format for people dealing with overlapping concerns like stress, sleep, fatigue, and hormone imbalance.",
+    description:
+      "Some students are dealing with more than one issue at the same time. These merged batches bring together shared support themes so you still feel guided even when your needs do not fit into one simple label.",
+    for: "Best for people with multiple lifestyle, stress, or hormonal concerns.",
+    includes: ["Mixed-condition support", "Balanced movement", "Rest and recovery guidance"],
+    cta: "See merged batch options"
+  }
 ];
 
 export const storeProducts = [
@@ -232,7 +263,7 @@ export const footerNavigation = [
   { label: "About", href: "#about" },
   { label: "Programs", href: "#programs" },
   { label: "Conditions", href: "#conditions" },
-  { label: "Plans", href: "#plans" },
+  { label: "Batches", href: "#batches" },
   { label: "Store", href: "#store" },
   { label: "Join", href: "#join" }
 ];
@@ -292,31 +323,6 @@ export const steps = [
     number: "03",
     title: "Feel the shift week by week",
     body: "As your body opens up and your mind calms down, everyday life starts feeling easier, steadier, and more in your control."
-  }
-];
-
-export const plans = [
-  {
-    name: "Starter",
-    price: "Free",
-    intro: "A simple first step if you want to explore before committing.",
-    features: ["1 guided intro session", "Beginner breathing practice", "Goal-based class recommendations"],
-    cta: "Try a Free Session"
-  },
-  {
-    name: "Monthly Flow",
-    price: "Rs 999",
-    intro: "Best for building a steady habit and feeling real progress.",
-    features: ["Full program access", "Live and recorded sessions", "Personalized practice suggestions"],
-    cta: "Start My Monthly Plan",
-    featured: true
-  },
-  {
-    name: "Deep Support",
-    price: "Rs 2499",
-    intro: "For a more personal journey with closer guidance and structure.",
-    features: ["Everything in Monthly Flow", "Priority support", "Progress check-ins and routine guidance"],
-    cta: "Get Full Support"
   }
 ];
 
