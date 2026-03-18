@@ -1,237 +1,374 @@
+export const brand = {
+  organizationName: "Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan",
+  hindiName: "ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान",
+  brandLine: "Yoga, meditation and natural wellness for a calmer, healthier life."
+};
+
+export const heroHighlights = [
+  "Live Zoom classes",
+  "Condition-based wellness",
+  "Blood-group diet guidance"
+];
+
+export const proofItems = [
+  "Personalized intake before batch placement",
+  "Common and condition-specific Zoom batches",
+  "Blood-group diet chart guidance",
+  "Natural wellness store support"
+];
+
 export const stats = [
   {
     value: "12+",
     label: "guided programs",
-    detail: "From hormone support to better sleep and steady daily energy."
+    detail: "From hormone support to calming evening practices and everyday mobility."
+  },
+  {
+    value: "3",
+    label: "batch formats",
+    detail: "Condition-specific, common wellness, and merged support batches."
   },
   {
     value: "20 min",
-    label: "simple daily practice",
-    detail: "Short enough to fit real life and powerful enough to feel the shift."
-  },
-  {
-    value: "1:1 feel",
-    label: "personal guidance",
-    detail: "A calm and supportive experience that feels warm from day one."
+    label: "daily feel-good practice",
+    detail: "Light enough to keep up with and structured enough to feel the shift."
   }
 ];
 
-export const problems = [
-  "You feel tired even after resting.",
-  "Stress keeps showing up in your body.",
-  "Your routine starts strong and fades out fast.",
-  "You want guidance that feels personal, not generic."
+export const heroProblems = [
+  "You want real support, not generic fitness content.",
+  "You are trying to manage stress, hormones, fatigue, or sleep issues.",
+  "You need a routine you can actually follow from home.",
+  "You want a calmer, more personal wellness path."
 ];
+
+export const aboutStory = {
+  title: "A calmer, more complete wellness platform built around classes, guidance, and everyday support.",
+  body: [
+    "This is more than a yoga website. It is a live wellness platform where students join Zoom classes, follow practical guidance, and receive support based on how their body actually feels.",
+    "Some people join for PCOS, some for pregnancy wellness, some for stress, energy, or flexibility. The experience is designed to feel caring, personal, and much easier to stay consistent with."
+  ],
+  image: "/media/wellness-portrait.jpg"
+};
 
 export const therapies = [
   {
     title: "Yoga therapy",
-    body: "Gentle, goal-based movement that helps you improve flexibility, strength, posture, and body awareness."
+    body: "Gentle, guided movement that helps your body feel stronger, more open, and more at ease."
   },
   {
     title: "Meditation and breathwork",
-    body: "Simple practices that help quiet overthinking, regulate stress, and bring more calm into your day."
+    body: "Simple practices that help slow overthinking, settle the nervous system, and bring more calm into your day."
   },
   {
     title: "Naturopathy support",
-    body: "A natural wellness approach that helps you build healthier habits and feel more balanced from the inside out."
+    body: "A holistic layer that helps people build daily habits around sleep, food, routine, and recovery."
+  }
+];
+
+export const steps = [
+  {
+    number: "01",
+    title: "Choose your concern",
+    body: "Pick the area you want support with, whether that is hormones, stress, pregnancy wellness, sleep, or a full-body reset."
+  },
+  {
+    number: "02",
+    title: "Share your intake details",
+    body: "Tell us your condition, blood group, and your goal so we can guide batch placement and diet support more clearly."
+  },
+  {
+    number: "03",
+    title: "Get placed in the right batch",
+    body: "We assign you to the most relevant Zoom batch, whether that is a focused condition batch, a common batch, or a merged support batch."
   }
 ];
 
 export const programs = [
   {
     title: "Yoga for PCOS and PCOD",
-    shortDescription:
-      "If you are dealing with irregular cycles, fatigue, or hormonal ups and downs, these sessions are built to support your body gently.",
+    concern: "Hormones",
+    image: "/media/program-home-yoga.jpg",
+    shortDescription: "Support your body gently with movement, breathwork, and a calmer daily rhythm.",
     description:
-      "Discover a supportive yoga routine that helps you work with your body, not against it. These classes help support hormone balance, ease bloating, improve energy, and make healthy weight management feel more achievable.",
-    for: "Women looking for natural support with cycles, stress, and daily energy.",
+      "Designed for women dealing with irregular cycles, bloating, fatigue, or hormone-related stress. The sessions aim to help you feel lighter, steadier, and more supported in your routine.",
+    for: "Women looking for natural support with cycle health, stress, and daily energy.",
     benefits: ["Calmer hormones", "Better energy", "Less stress"],
-    cta: "Start Feeling Better",
-    accent: "Hormone support"
+    cta: "Join PCOS Yoga"
   },
   {
-    title: "Meditation for Beginners",
-    shortDescription: "A gentle starting point if your mind feels noisy, busy, or hard to switch off.",
+    title: "Prenatal Yoga",
+    concern: "Pregnancy",
+    image: "/media/program-prenatal.jpg",
+    shortDescription: "A soft, supportive space to move, breathe, and feel more comfortable during pregnancy.",
     description:
-      "If your mind feels busy all day, this is a simple place to begin. You will learn easy meditation practices that help you slow down, feel calmer, and stay focused without overcomplicating your routine.",
-    for: "Anyone who wants to feel calmer, sleep better, and think more clearly.",
-    benefits: ["Less overthinking", "More focus", "More calm"],
-    cta: "Find My Calm",
-    accent: "Calm and focus"
+      "Trimester-aware practices designed to support posture, breath, confidence, and rest so pregnancy feels more supported and less overwhelming.",
+    for: "Expecting mothers who want a safe and gentle movement routine.",
+    benefits: ["Gentle mobility", "Calmer mind", "Breath support"],
+    cta: "Explore Prenatal Batches"
   },
   {
-    title: "Yoga for Better Sleep",
-    shortDescription: "Designed for evenings when your body is tired but your thoughts keep running.",
+    title: "Stress Relief Meditation",
+    concern: "Stress",
+    image: "/media/program-meditation.jpg",
+    shortDescription: "A calmer reset for busy minds, emotional overload, and restless evenings.",
     description:
-      "When your body is tired but your mind will not switch off, these soothing sessions help you unwind. Gentle movement and breathwork help you relax deeply, sleep more peacefully, and wake up feeling refreshed.",
-    for: "People dealing with poor sleep, night stress, and restless routines.",
-    benefits: ["Deeper sleep", "Calmer nights", "Better mornings"],
-    cta: "Sleep More Deeply",
-    accent: "Night routine"
+      "These guided meditation sessions help quiet mental noise, support better sleep, and create more emotional steadiness through the week.",
+    for: "Anyone dealing with stress, overthinking, poor sleep, or emotional fatigue.",
+    benefits: ["Less overthinking", "More calm", "Better sleep"],
+    cta: "Start Feeling Calmer"
   },
   {
-    title: "Stress Relief and Emotional Balance",
-    shortDescription: "A softer reset for days that feel heavy, rushed, or emotionally full.",
+    title: "Hormonal Balance Yoga",
+    concern: "Hormones",
+    image: "/media/hero-yoga.jpg",
+    shortDescription: "A supportive practice for fatigue, mood swings, bloating, and cycle-related imbalance.",
     description:
-      "Some days feel heavy before they even begin. This practice helps you release pressure, steady your emotions, and move through the day with more patience, clarity, and peace.",
-    for: "Busy people carrying stress, tension, and emotional overload.",
-    benefits: ["Steadier mood", "Less pressure", "More patience"],
-    cta: "Release the Stress",
-    accent: "Daily reset"
+      "This program blends movement, breath, and restorative rhythm to help the body feel less overwhelmed and more balanced day by day.",
+    for: "Students who want steadier energy and a body routine that feels kinder.",
+    benefits: ["Steadier mood", "More balance", "Gentle strength"],
+    cta: "Find My Best Batch"
   },
   {
-    title: "Strength and Flexibility Flow",
-    shortDescription: "Move in a way that helps your body feel stronger without feeling pushed too hard.",
+    title: "Common Wellness Flow",
+    concern: "General Wellness",
+    image: "/media/wellness-portrait.jpg",
+    shortDescription: "A friendly place to start if you want flexibility, calm, and consistent movement without a disease-specific label.",
     description:
-      "Build strength, improve posture, and loosen up stiffness in a way that feels encouraging instead of intense. You will feel more open, more capable, and more confident in your body.",
-    for: "Anyone wanting better posture, flexibility, and full-body strength.",
-    benefits: ["Better posture", "More flexibility", "More confidence"],
-    cta: "Build My Strength",
-    accent: "Move with ease"
+      "This batch is built for people who want a regular yoga and wellness routine with support around posture, energy, flexibility, and everyday calm.",
+    for: "Beginners, returning learners, and general wellness seekers.",
+    benefits: ["Easy to start", "More flexibility", "Daily calm"],
+    cta: "Join a Common Batch"
   },
   {
-    title: "Personalized Wellness Yoga",
-    shortDescription: "A more guided path for people who want a plan that feels personal from the start.",
+    title: "Evening Sleep and Recovery Yoga",
+    concern: "Sleep",
+    image: "/media/program-meditation.jpg",
+    shortDescription: "A slower evening routine for people who feel tired in body but busy in mind.",
     description:
-      "Looking for something that feels made for you? This guided path helps you choose sessions around your body, your goals, and how you want to feel so it is easier to stay consistent and see progress.",
-    for: "Students who want support based on their body, habits, and goals.",
-    benefits: ["More clarity", "Better consistency", "Personal direction"],
-    cta: "Get My Plan",
-    accent: "Made for you"
+      "A blend of calming stretches, breathwork, and restorative flow to help you unwind at night and wake up feeling more settled.",
+    for: "People dealing with poor sleep, tension, and heavy evenings.",
+    benefits: ["Calmer nights", "Better rest", "More ease"],
+    cta: "Improve My Sleep"
   }
 ];
+
+export const programFilters = ["All", "Hormones", "Pregnancy", "Stress", "Sleep", "General Wellness"];
 
 export const conditions = [
   {
     title: "PCOS",
-    symptoms: "Irregular cycles, bloating, mood changes, low energy",
-    help: "Yoga helps your body slowly return to balance while reducing stress and supporting hormone health.",
-    classes: "PCOS yoga, breathwork, lifestyle support"
+    symptoms: "Irregular cycles, bloating, low energy, mood changes",
+    help: "Yoga and breathwork help your body return to a calmer, steadier rhythm.",
+    classes: "PCOS yoga, stress support, diet chart guidance"
   },
   {
     title: "Thyroid imbalance",
-    symptoms: "Weight shifts, tiredness, sluggishness, stress",
-    help: "Gentle movement and breathwork help improve circulation, ease tension, and support a steadier routine.",
-    classes: "Hormonal balance yoga, meditation, daily movement"
+    symptoms: "Tiredness, sluggishness, weight shifts, routine instability",
+    help: "A gentle guided routine can support better movement, circulation, and consistency.",
+    classes: "Hormonal balance yoga, meditation, common wellness batches"
   },
   {
     title: "Diabetes support",
-    symptoms: "Fatigue, low energy, stress, lifestyle imbalance",
-    help: "A consistent practice can support better habits, more movement, and a calmer daily rhythm.",
-    classes: "Metabolic wellness yoga, breath-led sessions, guided habits"
+    symptoms: "Low energy, stress, lifestyle imbalance, heaviness",
+    help: "Supportive movement and habit-led classes can help daily life feel more active and balanced.",
+    classes: "Metabolic wellness flow, merged support batches, food guidance"
   },
   {
     title: "Stress and anxiety",
-    symptoms: "Overthinking, restlessness, poor sleep, tightness in the body",
-    help: "Meditation and gentle yoga help slow things down so your body can relax and reset.",
-    classes: "Stress relief meditation, calming flow, evening release"
+    symptoms: "Overthinking, poor sleep, tightness, emotional overload",
+    help: "Meditation and calming movement help the body slow down and feel safer again.",
+    classes: "Stress relief meditation, evening recovery yoga, merged support batches"
   },
   {
     title: "Pregnancy wellness",
-    symptoms: "Body changes, stiffness, emotional ups and downs, sleep shifts",
-    help: "Trimester-friendly yoga helps you move safely, breathe more deeply, and feel supported through each stage.",
+    symptoms: "Body changes, breath shifts, stiffness, emotional ups and downs",
+    help: "Trimester-friendly movement helps you feel safer, steadier, and more supported.",
     classes: "Prenatal yoga, breathwork, guided relaxation"
   },
   {
     title: "Hormonal imbalance",
-    symptoms: "Mood swings, fatigue, cycle changes, bloating",
-    help: "A more supportive routine can help your body feel less overwhelmed and more steady day to day.",
-    classes: "Hormonal balance yoga, restorative practice, lifestyle guidance"
+    symptoms: "Mood swings, fatigue, bloating, irregular rhythm",
+    help: "Gentle consistency helps your body feel less overwhelmed and more in balance.",
+    classes: "Hormonal balance yoga, restorative support, blood-group diet chart"
   }
 ];
 
 export const dietFeatures = [
   "Blood-group based food suggestions",
   "Condition-aware meal guidance",
-  "Practical daily swaps you can actually follow",
-  "Support that works alongside your yoga routine"
+  "Simple daily food swaps",
+  "Support that fits around your yoga practice"
 ];
 
 export const liveClassHighlights = [
-  "All sessions happen live on Zoom",
-  "Students are placed into focused wellness batches",
-  "Common wellness batches are also available for general health goals",
-  "You can join from home with simple guidance",
-  "Each batch feels supportive, not crowded"
+  "All classes happen live on Zoom",
+  "Batches are kept focused and supportive",
+  "Common wellness groups are also available",
+  "Merged support batches help people with overlapping concerns",
+  "You can join from home with a routine that feels realistic"
 ];
 
 export const zoomBatches = [
   {
     title: "Condition-specific batches",
-    intro: "Focused live groups for people who want support around one clear health concern.",
+    intro: "Focused groups for one clear health concern.",
     description:
-      "These batches are organized around needs like PCOS, thyroid support, diabetes support, stress relief, pregnancy wellness, and hormonal balance so the guidance feels more relevant from the start.",
-    for: "Best for people who want a more condition-aware routine and group support.",
-    includes: ["Live Zoom classes", "Condition-aware practices", "Routine guidance"],
-    cta: "Join a focused batch"
+      "These batches are built around conditions like PCOS, pregnancy wellness, thyroid imbalance, diabetes support, or stress recovery so the flow feels relevant from the start.",
+    includes: ["Targeted Zoom sessions", "Condition-aware guidance", "Diet chart direction"],
+    mood: "Focused support"
   },
   {
     title: "Common wellness batches",
-    intro: "A gentle ongoing batch for people who want better energy, flexibility, calm, and consistency.",
+    intro: "Balanced classes for everyday health and consistency.",
     description:
-      "If you want a balanced routine without joining a disease-specific group, these common batches bring together movement, breathing, meditation, and simple habit support in one approachable flow.",
-    for: "Best for beginners, general wellness, and people restarting after a long break.",
-    includes: ["Beginner-friendly yoga", "Calming breathwork", "Everyday wellness support"],
-    cta: "Explore common batches"
+      "Perfect for people who want better flexibility, calm, posture, and daily energy without entering a disease-specific batch.",
+    includes: ["Friendly mixed-level classes", "General body support", "Steady weekly rhythm"],
+    mood: "Gentle reset"
   },
   {
     title: "Merged support batches",
-    intro: "A more practical format for people dealing with overlapping concerns like stress, sleep, fatigue, and hormone imbalance.",
+    intro: "Helpful when your concerns overlap.",
     description:
-      "Some students are dealing with more than one issue at the same time. These merged batches bring together shared support themes so you still feel guided even when your needs do not fit into one simple label.",
-    for: "Best for people with multiple lifestyle, stress, or hormonal concerns.",
-    includes: ["Mixed-condition support", "Balanced movement", "Rest and recovery guidance"],
-    cta: "See merged batch options"
+      "Some students are managing stress, poor sleep, fatigue, and hormone imbalance together. These batches are designed for that real-life overlap.",
+    includes: ["Multi-concern support", "Restorative practices", "Practical habit guidance"],
+    mood: "Real-life support"
+  }
+];
+
+export const benefits = [
+  {
+    title: "Feel calmer",
+    body: "The classes lower the noise in your day and help your body settle more naturally."
+  },
+  {
+    title: "Feel seen",
+    body: "Batch placement and intake details make the experience feel more relevant from the start."
+  },
+  {
+    title: "Feel consistent",
+    body: "Shorter, guided practices make it much easier to keep showing up week after week."
+  },
+  {
+    title: "Feel supported",
+    body: "You are not just joining a video. You are joining a guided wellness environment."
+  }
+];
+
+export const schedules = [
+  {
+    label: "Morning",
+    title: "Morning energy batches",
+    copy: "Start the day with lighter movement, breath, and body-opening practices that help you feel clear and steady.",
+    sessions: [
+      "6:00 AM - Common wellness flow",
+      "7:00 AM - Hormonal balance yoga",
+      "8:00 AM - Stress relief breathwork"
+    ]
+  },
+  {
+    label: "Women's Health",
+    title: "Women's wellness and pregnancy batches",
+    copy: "Structured sessions for PCOS, hormonal support, prenatal wellness, and recovery-focused routines.",
+    sessions: [
+      "10:00 AM - PCOS and PCOD yoga",
+      "11:30 AM - Prenatal yoga",
+      "5:30 PM - Hormonal balance batch"
+    ]
+  },
+  {
+    label: "Evening",
+    title: "Evening calm and sleep batches",
+    copy: "Slower sessions for mental calm, body release, and a gentler transition into the night.",
+    sessions: [
+      "6:30 PM - Merged support batch",
+      "7:30 PM - Stress relief meditation",
+      "8:30 PM - Evening sleep and recovery yoga"
+    ]
   }
 ];
 
 export const storeProducts = [
   {
     title: "Herbal wellness support",
-    description: "Natural support products selected to complement your daily wellness routine."
+    description: "Supportive herbal options selected to complement your routine and recovery journey.",
+    image: "/media/store-herbal-support.svg"
   },
   {
     title: "Natural medicines",
-    description: "A calm extension of the platform for people who want a more holistic path."
+    description: "A natural extension of the platform for people who want a more holistic wellness path.",
+    image: "/media/store-natural-medicines.svg"
   },
   {
     title: "Yoga accessories",
-    description: "Simple essentials that make your home practice feel easier and more comfortable."
+    description: "Comfort-focused tools that make home practice easier, softer, and more consistent.",
+    image: "/media/store-accessories.svg"
   },
   {
     title: "Wellness essentials",
-    description: "Supportive products for sleep, calm, energy, and everyday balance."
+    description: "Practical support for daily calm, rest, energy, and easy self-care routines.",
+    image: "/media/store-wellness-essentials.svg"
   }
 ];
 
 export const instructors = [
   {
     name: "Lead wellness guide",
-    detail: "Experienced in yoga, meditation, and condition-based class guidance for everyday health support."
+    image: "/media/instructor-calm.jpg",
+    detail: "A calm, human teaching style focused on gentle guidance, body awareness, and routines people can actually keep."
   },
   {
-    name: "Batch-based teaching approach",
-    detail: "Students are grouped by wellness needs so classes feel more relevant, focused, and supportive."
-  },
-  {
-    name: "Practical teaching philosophy",
-    detail: "Simple movement, calm instruction, and routines people can actually stay consistent with."
+    name: "Women's wellness mentor",
+    image: "/media/program-prenatal.jpg",
+    detail: "Supports hormone balance, pregnancy wellness, and batch guidance with an encouraging and grounded approach."
   }
 ];
 
 export const trustPoints = [
-  "Live Zoom sessions with structured batches",
-  "Wellness plans shaped around health conditions",
-  "Diet support based on blood group and lifestyle",
-  "A store that supports the wellness journey"
+  "Live Zoom classes with structure and warmth",
+  "Batch placement guided by intake details",
+  "Diet support shaped by blood group and goals",
+  "A client-friendly admin dashboard for inquiries"
 ];
 
-export const proofItems = [
-  "Live on Zoom",
-  "Condition-based batches",
-  "Blood-group diet support",
-  "Wellness store support"
+export const stories = [
+  {
+    name: "Aarohi",
+    role: "PCOS batch student",
+    image: "/media/wellness-portrait.jpg",
+    quote: "I finally felt like someone understood what my body needed. The batch structure made it so much easier to stay consistent."
+  },
+  {
+    name: "Meera",
+    role: "Prenatal learner",
+    image: "/media/program-prenatal.jpg",
+    quote: "The sessions made me feel calmer and more comfortable in my body. It felt supportive, not overwhelming."
+  },
+  {
+    name: "Ritika",
+    role: "Stress relief meditation student",
+    image: "/media/program-meditation.jpg",
+    quote: "The evening classes changed how my nights feel. I sleep better, and my mind does not race the same way anymore."
+  }
+];
+
+export const faqs = [
+  {
+    question: "Do I need any yoga experience before joining?",
+    answer: "No. The classes are beginner-friendly and the batches are designed to help people ease into the practice comfortably."
+  },
+  {
+    question: "Will I be placed into the right Zoom batch automatically?",
+    answer: "Yes. Your intake form helps the team understand your condition, blood group, and main goal so placement feels more relevant."
+  },
+  {
+    question: "What if I do not fit into one condition only?",
+    answer: "That is exactly why merged support batches are available. They are designed for real-life overlap like stress, sleep, fatigue, and hormonal imbalance together."
+  },
+  {
+    question: "Do I receive food guidance too?",
+    answer: "Yes. Students can receive simple diet chart support based on blood group, wellness concern, and routine."
+  }
 ];
 
 export const contactOptions = [
@@ -241,38 +378,29 @@ export const contactOptions = [
   },
   {
     title: "Get class guidance",
-    detail: "Share your health goal and we will help you choose the best place to begin."
+    detail: "Share your wellness goal and we will guide you toward the best place to begin."
   },
   {
     title: "Join from anywhere",
-    detail: "All you need is Zoom, a little space, and a routine you can show up for."
+    detail: "All you need is Zoom, a little space at home, and a routine you can actually show up for."
   }
 ];
 
 export const footerDetails = {
-  organizationName: "Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan",
-  hindiName: "ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान",
-  brandLine: "Yoga, meditation and natural wellness for a calmer, healthier life.",
+  organizationName: brand.organizationName,
+  hindiName: brand.hindiName,
+  brandLine: brand.brandLine,
   entityName: "Registered Wellness Organization Name Placeholder",
   phone: "+91 98765 43210",
   email: "hello@dhyanwellness.com",
   address: "Organization address placeholder, City, State, India"
 };
 
-export const footerNavigation = [
-  { label: "About", href: "#about" },
-  { label: "Programs", href: "#programs" },
-  { label: "Conditions", href: "#conditions" },
-  { label: "Batches", href: "#batches" },
-  { label: "Store", href: "#store" },
-  { label: "Join", href: "#join" }
-];
-
 export const footerPrograms = [
   { label: "PCOS Yoga", href: "#programs" },
-  { label: "Stress Relief Meditation", href: "#programs" },
-  { label: "Hormonal Balance Yoga", href: "#programs" },
-  { label: "Prenatal Wellness", href: "#conditions" }
+  { label: "Prenatal Yoga", href: "#programs" },
+  { label: "Stress Meditation", href: "#programs" },
+  { label: "Evening Recovery", href: "#batches" }
 ];
 
 export const footerLegal = [
@@ -287,66 +415,4 @@ export const footerSocials = [
   { label: "Facebook", href: "#" },
   { label: "YouTube", href: "#" },
   { label: "WhatsApp", href: "#" }
-];
-
-export const benefits = [
-  {
-    title: "Feel lighter",
-    body: "Release stiffness, improve mobility, and move through the day with more ease."
-  },
-  {
-    title: "Feel calmer",
-    body: "Quiet mental overload, slow your breath, and create more peace in your routine."
-  },
-  {
-    title: "Feel stronger",
-    body: "Build flexibility, posture, and confidence with guided movement that meets you where you are."
-  },
-  {
-    title: "Feel supported",
-    body: "Follow a practice that feels warm, personal, and realistic for your life."
-  }
-];
-
-export const steps = [
-  {
-    number: "01",
-    title: "Tell us what you want to change",
-    body: "Better sleep, lighter periods, less stress, more strength, or steadier energy. Start with the goal that matters most to you."
-  },
-  {
-    number: "02",
-    title: "Get a practice that fits your life",
-    body: "Choose simple guided sessions you can actually keep up with. No pressure, no complicated setup, no guesswork."
-  },
-  {
-    number: "03",
-    title: "Feel the shift week by week",
-    body: "As your body opens up and your mind calms down, everyday life starts feeling easier, steadier, and more in your control."
-  }
-];
-
-export const stories = [
-  "I joined because I felt tired all the time. Within a few weeks, my body felt lighter and my mornings felt easier.",
-  "The meditation sessions helped me relax at night. I sleep better now and I feel more steady during the day.",
-  "What I love most is how approachable everything feels. It never feels intimidating, just genuinely helpful."
-];
-
-export const faqs = [
-  {
-    question: "Do I need any yoga experience?",
-    answer: "No. The sessions are beginner-friendly and easy to follow, even if you are starting from zero."
-  },
-  {
-    question: "What if I am not flexible?",
-    answer: "That is completely fine. These classes are built to help you become more comfortable in your body, not to test how flexible you already are."
-  },
-  {
-    question: "How much time do I need each day?",
-    answer: "Most people start with about 20 minutes. Short, steady practice works far better than waiting for the perfect long session."
-  },
-  {
-    question: "Can I choose a program for a specific health goal?",
-    answer: "Yes. You can begin with hormone support, stress relief, better sleep, meditation, or strength and flexibility depending on what you need most."
-  }
 ];

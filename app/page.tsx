@@ -1,22 +1,30 @@
+import Image from "next/image";
 import { BrandSeal } from "./components/brand-seal";
 import { JoinForm } from "./components/join-form";
+import { ProgramExplorer } from "./components/program-explorer";
+import { Reveal, StaggerItem, StaggerList } from "./components/reveal";
+import { ScheduleView } from "./components/schedule-view";
 import { SocialIcon } from "./components/social-icon";
 import {
+  aboutStory,
   benefits,
+  brand,
   conditions,
   contactOptions,
   dietFeatures,
   faqs,
   footerDetails,
   footerLegal,
-  footerNavigation,
   footerPrograms,
   footerSocials,
+  heroHighlights,
+  heroProblems,
   instructors,
   liveClassHighlights,
-  problems,
+  programFilters,
   programs,
   proofItems,
+  schedules,
   stats,
   steps,
   storeProducts,
@@ -27,24 +35,21 @@ import {
 } from "./content/site-data";
 
 export default function Home() {
-  const organizationName = "Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan";
-  const hindiName = "ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान";
-
   return (
     <main>
       <header className="site-header">
         <a className="brand brand-lockup" href="#top">
           <BrandSeal className="nav-seal" />
           <span>
-            <strong>Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan</strong>
-            <small>ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान</small>
+            <strong>{brand.organizationName}</strong>
+            <small>{brand.hindiName}</small>
           </span>
         </a>
         <nav className="main-nav" aria-label="Primary">
           <a href="#about">About</a>
           <a href="#programs">Programs</a>
-          <a href="#conditions">Conditions</a>
           <a href="#batches">Batches</a>
+          <a href="#stories">Stories</a>
           <a href="#store">Store</a>
           <a href="#join">Join</a>
         </nav>
@@ -53,364 +58,391 @@ export default function Home() {
         </a>
       </header>
 
-      <section className="hero section" id="top">
-        <div className="hero-copy">
-          <p className="eyebrow">Restore balance in your body and mind</p>
-          <div className="hero-pills">
-            <span>Live Zoom classes</span>
-            <span>Condition-based wellness</span>
-            <span>Diet and lifestyle support</span>
-          </div>
-          <div className="hero-brand-row">
-            <BrandSeal className="hero-seal" />
-            <div className="hero-brand-copy">
-              <p className="hero-kicker">Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan</p>
-              <p className="hero-kicker-sub">ध्यान योग केंद्र एवं प्राकृतिक चिकित्सा शोध संस्थान</p>
+      <section className="hero visual-hero" id="top">
+        <div className="hero-backdrop">
+          <Image src="/media/hero-yoga.jpg" alt="Woman practicing yoga at home in soft sunlight" fill priority className="hero-background-image" />
+          <div className="hero-background-overlay" />
+        </div>
+
+        <div className="section hero-shell">
+          <Reveal className="hero-story">
+            <div className="hero-pills">
+              {heroHighlights.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
             </div>
-          </div>
-          <h1>Join personalized yoga and meditation sessions designed around your body, your condition, and your lifestyle.</h1>
-          <p className="lead">
-            Whether you are dealing with stress, hormone imbalance, pregnancy wellness, low energy, or a body that
-            just feels out of rhythm, this platform helps you start with calm guidance and a plan that actually feels
-            doable from home.
-          </p>
-          <div className="hero-actions">
-            <a className="button" href="#join">
-              Start Your Wellness Journey
-            </a>
-            <a className="button button-secondary" href="#programs">
-              Explore Programs
-            </a>
-          </div>
-          <p className="microcopy">Live on Zoom. Condition-based batches. Gentle support you can stay consistent with.</p>
-        </div>
 
-        <aside className="hero-card" aria-label="Member benefits">
-          <div className="card-topline">This is for you if</div>
-          <ul className="check-list">
-            {problems.map((problem) => (
-              <li key={problem}>{problem}</li>
-            ))}
-          </ul>
-          <div className="hero-note">
-            <strong>Imagine this:</strong> you start feeling calmer, lighter, and more in control because your wellness
-            routine finally fits your life.
-          </div>
-        </aside>
-      </section>
+            <div className="hero-brand-row">
+              <BrandSeal className="hero-seal" />
+              <div className="hero-brand-copy">
+                <p className="hero-kicker">{brand.organizationName}</p>
+                <p className="hero-kicker-sub">{brand.hindiName}</p>
+              </div>
+            </div>
 
-      <section className="section proof-strip" aria-label="Quick trust points">
-        <div className="proof-row">
-          {proofItems.map((item) => (
-            <span key={item}>{item}</span>
-          ))}
-        </div>
-      </section>
-
-      <section className="section about-section" id="about">
-        <div className="section-heading narrow">
-          <p className="eyebrow">About the platform</p>
-          <h2>A calmer, more complete wellness platform built around classes, guidance, and everyday support.</h2>
-        </div>
-        <div className="about-grid">
-          <div className="about-copy">
-            <p>
-              This is more than a yoga website. It is a guided wellness platform where students join live Zoom classes,
-              follow condition-based programs, receive practical lifestyle support, and move at a pace that feels
-              gentle and realistic.
+            <p className="eyebrow hero-eyebrow">Restore balance in your body and mind</p>
+            <h1>Live yoga and meditation batches that feel personal, calming, and easy to stay with.</h1>
+            <p className="lead hero-lead">
+              Imagine practicing from home with a batch that actually fits your condition, your energy, and your daily
+              life. From hormones and pregnancy wellness to stress, sleep, and flexibility, this platform helps you
+              feel guided from day one.
             </p>
-            <p>
-              The goal is simple: help people feel better in their body, quieter in their mind, and more supported in
-              daily life.
-            </p>
-          </div>
-          <div className="therapy-grid">
-            {therapies.map((therapy) => (
-              <article className="therapy-card" key={therapy.title}>
-                <h3>{therapy.title}</h3>
-                <p>{therapy.body}</p>
-              </article>
-            ))}
-          </div>
+
+            <div className="hero-actions">
+              <a className="button" href="#join">
+                Join My First Batch
+              </a>
+              <a className="button button-ghost" href="#programs">
+                Explore Programs
+              </a>
+            </div>
+
+            <div className="hero-proof-strip">
+              {proofItems.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+          </Reveal>
+
+          <Reveal className="hero-side-panel" delay={0.1}>
+            <div className="hero-side-card glass-card">
+              <p className="card-topline">This is for you if</p>
+              <ul className="check-list">
+                {heroProblems.map((problem) => (
+                  <li key={problem}>{problem}</li>
+                ))}
+              </ul>
+              <div className="hero-note">
+                <strong>Imagine this:</strong> you feel calmer, lighter, and more supported because your wellness
+                routine finally fits real life.
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      <section className="section stats-strip" aria-label="Quick highlights">
-        <div className="stats-grid">
+      <section className="section visual-proof">
+        <StaggerList className="stats-grid">
           {stats.map((stat) => (
-            <article className="stat-card" key={stat.label}>
-              <p className="stat-value">{stat.value}</p>
-              <h2 className="stat-label">{stat.label}</h2>
-              <p>{stat.detail}</p>
-            </article>
+            <StaggerItem key={stat.label}>
+              <article className="stat-card">
+                <p className="stat-value">{stat.value}</p>
+                <h2 className="stat-label">{stat.label}</h2>
+                <p>{stat.detail}</p>
+              </article>
+            </StaggerItem>
           ))}
+        </StaggerList>
+      </section>
+
+      <section className="section alternating-section" id="about">
+        <div className="split-layout">
+          <Reveal className="split-media">
+            <div className="image-panel">
+              <Image src={aboutStory.image} alt="Calm lifestyle wellness portrait" fill className="section-image" />
+            </div>
+          </Reveal>
+
+          <Reveal className="split-copy" delay={0.08}>
+            <p className="eyebrow">About the platform</p>
+            <h2>{aboutStory.title}</h2>
+            {aboutStory.body.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+            <div className="therapy-grid compact-therapy-grid">
+              {therapies.map((therapy) => (
+                <article className="therapy-card" key={therapy.title}>
+                  <h3>{therapy.title}</h3>
+                  <p>{therapy.body}</p>
+                </article>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      <section className="section steps-section">
+      <section className="section process-section">
         <div className="section-heading narrow">
-          <p className="eyebrow">How classes work</p>
-          <h2>Choose your program, tell us about your condition, and get placed into the right Zoom batch.</h2>
+          <p className="eyebrow">How your journey flows</p>
+          <h2>Simple, human steps that make the whole experience feel guided instead of confusing.</h2>
         </div>
-        <div className="step-grid">
+        <StaggerList className="step-grid visual-step-grid">
           {steps.map((step) => (
-            <article className="step-card" key={step.number}>
-              <p className="step-number">{step.number}</p>
-              <h3>{step.title}</h3>
-              <p>{step.body}</p>
-            </article>
+            <StaggerItem key={step.number}>
+              <article className="step-card visual-card">
+                <p className="step-number">{step.number}</p>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </article>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </section>
 
       <section className="section" id="programs">
         <div className="section-heading">
-          <p className="eyebrow">Courses and programs</p>
-          <h2>Clear programs people can join right away, each built around a real wellness need.</h2>
+          <p className="eyebrow">Programs that feel real</p>
+          <h2>Every program now shows the life behind it, not just a block of text.</h2>
         </div>
-        <div className="program-grid">
-          {programs.map((program) => (
-            <article className="program-card" key={program.title}>
-              <p className="program-accent">{program.accent}</p>
-              <h3>{program.title}</h3>
-              <p className="program-short">{program.shortDescription}</p>
-              <p>{program.description}</p>
-              <p className="program-for">
-                <strong>Who it is for:</strong> {program.for}
-              </p>
-              <div className="mini-benefits">
-                {program.benefits.map((benefit) => (
-                  <span key={benefit}>{benefit}</span>
-                ))}
-              </div>
-              <a className="card-cta" href="#join">
-                {program.cta}
-              </a>
-            </article>
-          ))}
-        </div>
+        <ProgramExplorer filters={programFilters} programs={programs} />
       </section>
 
-      <section className="section conditions-section" id="conditions">
-        <div className="section-heading">
-          <p className="eyebrow">Health conditions</p>
-          <h2>Select the condition you want support with and start from there.</h2>
-        </div>
-        <div className="condition-grid">
-          {conditions.map((condition) => (
-            <article className="condition-card" key={condition.title}>
-              <h3>{condition.title}</h3>
-              <p>
-                <strong>Symptoms:</strong> {condition.symptoms}
-              </p>
-              <p>
-                <strong>How yoga helps:</strong> {condition.help}
-              </p>
-              <p>
-                <strong>Available classes:</strong> {condition.classes}
-              </p>
-              <a className="card-cta" href="#join">
-                Explore {condition.title}
-              </a>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section support-grid-section">
-        <div className="support-grid">
-          <article className="support-panel">
-            <p className="eyebrow">Blood-group diet plans</p>
-            <h2>Your food guidance should support your body in a simple, practical way.</h2>
-            <p>
-              Students also receive food support based on their blood group and health condition. The goal is not to
-              make meals complicated. It is to help daily choices feel clearer and more supportive.
-            </p>
-            <ul className="check-list">
-              {dietFeatures.map((feature) => (
-                <li key={feature}>{feature}</li>
+      <section className="section alternating-section">
+        <div className="split-layout reverse-on-desktop">
+          <Reveal className="split-copy">
+            <p className="eyebrow">Condition support + diet guidance</p>
+            <h2>Choose your concern, then get guidance that feels more relevant to your body and routine.</h2>
+            <div className="condition-grid">
+              {conditions.map((condition) => (
+                <article className="condition-card visual-card" key={condition.title}>
+                  <h3>{condition.title}</h3>
+                  <p>
+                    <strong>Symptoms:</strong> {condition.symptoms}
+                  </p>
+                  <p>
+                    <strong>How yoga helps:</strong> {condition.help}
+                  </p>
+                  <p>
+                    <strong>Classes:</strong> {condition.classes}
+                  </p>
+                  <a className="card-cta" href="#join">
+                    Explore {condition.title}
+                  </a>
+                </article>
               ))}
-            </ul>
-          </article>
-
-          <article className="support-panel">
-            <p className="eyebrow">Live Zoom classes</p>
-            <h2>Practice from home while still feeling guided, structured, and supported.</h2>
-            <p>
-              All classes are conducted live through Zoom. Students are placed into condition-based batches so the
-              classes feel relevant and more focused from the beginning.
-            </p>
-            <ul className="check-list">
-              {liveClassHighlights.map((highlight) => (
-                <li key={highlight}>{highlight}</li>
-              ))}
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section className="section benefits" id="benefits">
-        <div className="section-heading">
-          <p className="eyebrow">Why it works</p>
-          <h2>Small, steady steps can change how you feel every day.</h2>
-        </div>
-        <div className="benefit-grid">
-          {benefits.map((benefit) => (
-            <div key={benefit.title}>
-              <h3>{benefit.title}</h3>
-              <p>{benefit.body}</p>
             </div>
-          ))}
+          </Reveal>
+
+          <Reveal className="split-media" delay={0.08}>
+            <div className="stacked-panels">
+              <article className="support-panel media-panel">
+                <div className="panel-image-shell">
+                  <Image src="/media/program-home-yoga.jpg" alt="Woman practicing yoga at home" fill className="section-image" />
+                </div>
+                <div className="panel-copy">
+                  <p className="eyebrow">Blood-group diet plans</p>
+                  <h3>Your food guidance should feel practical, not overwhelming.</h3>
+                  <ul className="check-list">
+                    {dietFeatures.map((feature) => (
+                      <li key={feature}>{feature}</li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+
+              <article className="support-panel media-panel">
+                <div className="panel-image-shell">
+                  <Image src="/media/program-meditation.jpg" alt="Meditation scene in warm natural light" fill className="section-image" />
+                </div>
+                <div className="panel-copy">
+                  <p className="eyebrow">Live Zoom classes</p>
+                  <h3>Practice from home while still feeling structured, guided, and seen.</h3>
+                  <ul className="check-list">
+                    {liveClassHighlights.map((feature) => (
+                      <li key={feature}>{feature}</li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      <section className="section plans-section" id="batches">
+      <section className="section" id="batches">
         <div className="section-heading">
-          <p className="eyebrow">Zoom batches and guidance</p>
-          <h2>Choose from disease-specific, common, and merged wellness batches designed around how people actually join.</h2>
+          <p className="eyebrow">Zoom batches that feel organized</p>
+          <h2>Choose the kind of batch that matches how your life and health actually look right now.</h2>
         </div>
-        <div className="plan-grid">
+
+        <StaggerList className="plan-grid">
           {zoomBatches.map((batch) => (
-            <article className="plan-card batch-card" key={batch.title}>
-              <p className="plan-name">{batch.title}</p>
-              <h3 className="batch-intro">{batch.intro}</h3>
-              <p>{batch.description}</p>
-              <p className="program-for">
-                <strong>Who it is for:</strong> {batch.for}
-              </p>
-              <ul className="check-list">
-                {batch.includes.map((feature) => (
-                  <li key={feature}>{feature}</li>
-                ))}
-              </ul>
-              <a className="button button-secondary" href="#join">
-                {batch.cta}
-              </a>
-            </article>
+            <StaggerItem key={batch.title}>
+              <article className="plan-card batch-card visual-card">
+                <p className="plan-name">{batch.mood}</p>
+                <h3 className="batch-intro">{batch.title}</h3>
+                <p className="program-short">{batch.intro}</p>
+                <p>{batch.description}</p>
+                <ul className="check-list">
+                  {batch.includes.map((feature) => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+                <a className="button button-secondary" href="#join">
+                  {batch.title}
+                </a>
+              </article>
+            </StaggerItem>
           ))}
+        </StaggerList>
+
+        <Reveal className="schedule-strip" delay={0.08}>
+          <div className="section-heading narrow">
+            <p className="eyebrow">Interactive class rhythm</p>
+            <h2>Preview how different Zoom schedules can feel before you even join.</h2>
+          </div>
+          <ScheduleView schedules={schedules} />
+        </Reveal>
+      </section>
+
+      <section className="section benefits">
+        <div className="section-heading narrow">
+          <p className="eyebrow">Why people stay</p>
+          <h2>Because it feels human, calming, and much easier to trust.</h2>
         </div>
-        <div className="feature-ribbon">
-          <span>Blood-group diet chart after intake</span>
-          <span>Batch placement based on your condition</span>
-          <span>Common wellness batches also available</span>
-          <span>Live support from home on Zoom</span>
+        <StaggerList className="benefit-grid">
+          {benefits.map((benefit) => (
+            <StaggerItem key={benefit.title}>
+              <div className="benefit-card">
+                <h3>{benefit.title}</h3>
+                <p>{benefit.body}</p>
+              </div>
+            </StaggerItem>
+          ))}
+        </StaggerList>
+      </section>
+
+      <section className="section trust-section">
+        <div className="section-heading">
+          <p className="eyebrow">Instructors and trust</p>
+          <h2>People trust people. Show the faces, energy, and teaching approach behind the wellness journey.</h2>
         </div>
+
+        <StaggerList className="instructor-grid">
+          {instructors.map((instructor) => (
+            <StaggerItem key={instructor.name}>
+              <article className="instructor-card visual-card">
+                <div className="instructor-photo-shell">
+                  <Image src={instructor.image} alt={instructor.name} fill className="section-image" />
+                </div>
+                <div className="instructor-copy">
+                  <h3>{instructor.name}</h3>
+                  <p>{instructor.detail}</p>
+                </div>
+              </article>
+            </StaggerItem>
+          ))}
+        </StaggerList>
+
+        <Reveal className="trust-panel expanded-trust-panel" delay={0.1}>
+          <p>
+            The teaching style is designed to feel gentle, grounded, and supportive. People should not feel like they
+            are entering a cold system. They should feel like they are stepping into a space where someone will guide
+            them well.
+          </p>
+          <ul className="check-list">
+            {trustPoints.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+        </Reveal>
+      </section>
+
+      <section className="section stories" id="stories">
+        <div className="section-heading">
+          <p className="eyebrow">Real voices</p>
+          <h2>Faces and names make the platform feel lived-in, trustworthy, and much more real.</h2>
+        </div>
+        <StaggerList className="story-grid visual-story-grid">
+          {stories.map((story) => (
+            <StaggerItem key={story.name}>
+              <article className="story-card">
+                <div className="story-avatar-shell">
+                  <Image src={story.image} alt={story.name} fill className="story-avatar" />
+                </div>
+                <div className="story-copy">
+                  <span className="quote-mark">“</span>
+                  <p>{story.quote}</p>
+                  <strong>{story.name}</strong>
+                  <small>{story.role}</small>
+                </div>
+              </article>
+            </StaggerItem>
+          ))}
+        </StaggerList>
       </section>
 
       <section className="section store-section" id="store">
         <div className="section-heading">
           <p className="eyebrow">Wellness store</p>
-          <h2>Natural products that feel like an extension of the wellness journey, not a random shop.</h2>
+          <h2>Products now feel like part of the brand experience, not an afterthought.</h2>
         </div>
-        <div className="store-grid">
+        <StaggerList className="store-grid">
           {storeProducts.map((product) => (
-            <article className="store-card" key={product.title}>
-              <h3>{product.title}</h3>
-              <p>{product.description}</p>
-              <a className="card-cta" href="#join">
-                Shop wellness products
-              </a>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section trust-section" id="trust">
-        <div className="section-heading">
-          <p className="eyebrow">Instructor and trust</p>
-          <h2>Trust matters when someone is looking for health support. This platform is designed to feel reassuring.</h2>
-        </div>
-        <div className="about-grid">
-          <div className="therapy-grid">
-            {instructors.map((item) => (
-              <article className="therapy-card" key={item.name}>
-                <h3>{item.name}</h3>
-                <p>{item.detail}</p>
+            <StaggerItem key={product.title}>
+              <article className="store-card visual-card product-card">
+                <div className="product-image-shell">
+                  <Image src={product.image} alt={product.title} fill className="product-image" />
+                </div>
+                <h3>{product.title}</h3>
+                <p>{product.description}</p>
+                <a className="card-cta" href="#join">
+                  Explore wellness products
+                </a>
               </article>
-            ))}
-          </div>
-          <div className="trust-panel">
-            <p>
-              The teaching approach stays simple, caring, and condition-aware so people do not feel lost after joining.
-              Every part of the journey is designed to answer the same question: does this feel trustworthy enough to
-              begin with confidence?
-            </p>
-            <ul className="check-list">
-              {trustPoints.map((point) => (
-                <li key={point}>{point}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="section stories" id="stories">
-        <div className="section-heading">
-          <p className="eyebrow">What people love</p>
-          <h2>Transformation stories help people feel the platform is real, supportive, and worth joining.</h2>
-        </div>
-        <div className="story-grid">
-          {stories.map((story) => (
-            <blockquote key={story}>
-              <span className="quote-mark">“</span>
-              {story}
-            </blockquote>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </section>
 
       <section className="section faq-section">
         <div className="section-heading narrow">
-          <p className="eyebrow">Questions you may have</p>
-          <h2>You can begin gently, even if your routine has not worked before.</h2>
+          <p className="eyebrow">Questions people often ask</p>
+          <h2>You can begin gently, even if wellness routines have felt hard to maintain before.</h2>
         </div>
         <div className="faq-list">
           {faqs.map((faq) => (
-            <details className="faq-item" key={faq.question}>
-              <summary>{faq.question}</summary>
-              <p>{faq.answer}</p>
-            </details>
+            <Reveal key={faq.question}>
+              <details className="faq-item">
+                <summary>{faq.question}</summary>
+                <p>{faq.answer}</p>
+              </details>
+            </Reveal>
           ))}
         </div>
       </section>
 
       <section className="section join" id="join">
-        <div className="join-panel">
-          <div>
-            <p className="eyebrow">Start today</p>
-            <h2>Your body already has the power to heal. Sometimes it just needs the right guidance.</h2>
+        <div className="join-panel join-visual-panel">
+          <Reveal>
+            <p className="eyebrow">Begin with your real life</p>
+            <h2>Your next step should feel inviting, not heavy.</h2>
             <p>
-              Fill in your details, tell us your condition, and share your blood group so we can place you into the
-              right Zoom batch and guide your diet chart in a more relevant way from the beginning.
+              Fill in your concern, your blood group, and your wellness goal. We use that to guide your batch
+              placement, diet chart direction, and first steps after signup.
             </p>
             <div className="join-points">
               <span>Live on Zoom</span>
-              <span>Condition-based batches</span>
-              <span>Common and merged batches</span>
+              <span>Condition-aware batches</span>
+              <span>Common and merged groups</span>
               <span>Diet chart by blood group</span>
             </div>
-          </div>
+          </Reveal>
 
-          <JoinForm conditions={conditions.map((condition) => condition.title)} />
+          <Reveal delay={0.08}>
+            <JoinForm conditions={conditions.map((condition) => condition.title)} />
+          </Reveal>
         </div>
       </section>
 
       <section className="section contact-section">
         <div className="section-heading narrow">
           <p className="eyebrow">Need help before joining?</p>
-          <h2>You do not have to figure everything out on your own before you start.</h2>
+          <h2>You do not have to figure out everything before taking the first step.</h2>
         </div>
-        <div className="contact-grid">
+        <StaggerList className="contact-grid">
           {contactOptions.map((option) => (
-            <article className="store-card" key={option.title}>
-              <h3>{option.title}</h3>
-              <p>{option.detail}</p>
-              <a className="card-cta" href="#join">
-                Get guidance
-              </a>
-            </article>
+            <StaggerItem key={option.title}>
+              <article className="store-card visual-card contact-card">
+                <h3>{option.title}</h3>
+                <p>{option.detail}</p>
+                <a className="card-cta" href="#join">
+                  Let&apos;s begin
+                </a>
+              </article>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </section>
 
       <div className="mobile-cta">
