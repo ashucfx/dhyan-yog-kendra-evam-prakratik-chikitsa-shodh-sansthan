@@ -53,7 +53,7 @@ export default function JoinPage() {
         <div className="page-cta-strip">
           <div>
             <p className="eyebrow">Want to look around first?</p>
-            <h3>See the program details or student stories before you book.</h3>
+            <h3>See the program details or student stories before you book your call.</h3>
           </div>
           <div className="booking-actions">
             <Link className="button button-secondary" href="/programs">

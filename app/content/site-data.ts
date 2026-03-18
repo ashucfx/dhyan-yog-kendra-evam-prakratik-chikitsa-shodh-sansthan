@@ -392,10 +392,10 @@ export const footerDetails = {
   organizationName: brand.organizationName,
   hindiName: brand.hindiName,
   brandLine: brand.brandLine,
-  entityName: "Registered Wellness Organization Name Placeholder",
-  phone: "+91 98765 43210",
+  entityName: brand.organizationName,
+  phone: "+91 63780 03480",
   email: "hello@dhyanwellness.com",
-  address: "Organization address placeholder, City, State, India"
+  address: "Devsar Gaon, Bhiwani City, Haryana, 127021"
 };
 
 export const footerPrograms = [
@@ -413,8 +413,8 @@ export const footerLegal = [
 ];
 
 export const footerSocials = [
-  { label: "Instagram", href: "#" },
-  { label: "Facebook", href: "#" },
-  { label: "YouTube", href: "#" },
-  { label: "WhatsApp", href: "#" }
+  { label: "Instagram", href: "https://www.instagram.com/dhyanveda_global" },
+  { label: "YouTube", href: "https://www.youtube.com/@DhyanVedaGlobal" },
+  { label: "Twitter", href: "https://x.com/DhyanVedaG" },
+  { label: "WhatsApp", href: "https://wa.me/916378003480" }
 ];

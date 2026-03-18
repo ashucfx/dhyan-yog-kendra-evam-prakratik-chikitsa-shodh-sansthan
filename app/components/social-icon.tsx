@@ -45,6 +45,15 @@ export function SocialIcon({ label, className }: SocialIconProps) {
           />
         </svg>
       );
+    case "Twitter":
+      return (
+        <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            className="social-icon-fill"
+            d="M18.9 4H21l-4.6 5.2 5.4 7.8h-4.2l-3.3-4.8-4.2 4.8H8l4.9-5.6L7.7 4h4.3l3 4.4L18.9 4Z"
+          />
+        </svg>
+      );
     default:
       return (
         <svg className={className} viewBox="0 0 24 24" aria-hidden="true">

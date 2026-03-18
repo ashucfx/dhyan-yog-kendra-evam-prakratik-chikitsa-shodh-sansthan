@@ -574,6 +574,10 @@ textarea:focus-visible {
   z-index: 2;
 }
 
+.visual-proof .stats-grid {
+  gap: 1rem;
+}
+
 .stats-grid,
 .step-grid,
 .program-grid,
@@ -654,6 +658,16 @@ textarea:focus-visible {
   padding: 1.5rem;
 }
 
+.stat-card {
+  min-height: 100%;
+  gap: 0.45rem;
+  justify-content: space-between;
+  padding: 1.3rem 1.35rem;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 244, 0.96), rgba(250, 239, 226, 0.92)),
+    radial-gradient(circle at top right, rgba(214, 167, 110, 0.18), transparent 28%);
+}
+
 .condition-card p:last-of-type,
 .store-card p:last-of-type,
 .contact-card p:last-of-type,
@@ -669,7 +683,11 @@ textarea:focus-visible {
 }
 
 .stat-label {
-  font-size: 1.25rem;
+  font-size: 1.02rem;
+  line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-dark);
 }
 
 .alternating-section .split-layout {
@@ -1058,13 +1076,16 @@ textarea:focus-visible {
 }
 
 .product-card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0.9rem;
+  height: 100%;
   padding: 1.2rem;
 }
 
 .product-image-shell {
   position: relative;
-  min-height: 200px;
-  margin-bottom: 1rem;
+  min-height: 220px;
   border-radius: 22px;
   overflow: hidden;
   background: linear-gradient(180deg, rgba(255, 249, 240, 0.96), rgba(244, 231, 213, 0.92));
@@ -1072,6 +1093,15 @@ textarea:focus-visible {
 
 .product-image {
   object-fit: cover;
+}
+
+.product-card h3 {
+  min-height: 2.7em;
+  margin-bottom: 0;
+}
+
+.product-card p {
+  margin: 0;
 }
 
 .faq-list {
@@ -1089,6 +1119,14 @@ textarea:focus-visible {
   gap: 2rem;
 }
 
+.home-section-heading {
+  max-width: 50rem;
+}
+
+.home-section-heading h2 {
+  max-width: 14ch;
+}
+
 .page-cta-strip,
 .booking-panel {
   display: flex;
@@ -1098,13 +1136,23 @@ textarea:focus-visible {
   padding: 1.5rem 1.6rem;
   border-radius: var(--radius-xl);
   border: 1px solid var(--line);
-  background: rgba(255, 249, 242, 0.78);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 244, 0.94), rgba(250, 239, 226, 0.88)),
+    radial-gradient(circle at top right, rgba(214, 167, 110, 0.14), transparent 26%);
   box-shadow: var(--shadow);
 }
 
 .page-cta-strip h3,
 .booking-panel h2 {
   margin-bottom: 0;
+}
+
+.page-cta-strip {
+  margin-top: 0.4rem;
+}
+
+.page-cta-strip > div:first-child {
+  max-width: 38rem;
 }
 
 .booking-actions {
@@ -1298,7 +1346,7 @@ textarea:focus-visible {
 
 .footer-side {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.75rem;
   padding: 0.95rem 1rem;
   border-radius: 20px;
@@ -1723,6 +1771,10 @@ textarea:focus-visible {
   .page-title {
     max-width: 100%;
     font-size: 2.55rem;
+  }
+
+  .home-section-heading h2 {
+    max-width: 100%;
   }
 
   .button,

@@ -125,9 +125,9 @@ export default function Home() {
       </section>
 
       <section className="section home-preview-section">
-        <div className="section-heading">
+        <div className="section-heading home-section-heading">
           <p className="eyebrow">Choose your starting point</p>
-          <h2>Begin with the program that sounds closest to your body, your phase of life, or your current struggle.</h2>
+          <h2>Start with the program that feels closest to what you want help with.</h2>
         </div>
 
         <StaggerList className="visual-program-grid preview-grid">
@@ -155,18 +155,18 @@ export default function Home() {
         <div className="page-cta-strip">
           <div>
             <p className="eyebrow">Want to compare properly?</p>
-            <h3>See all programs, conditions, and diet guidance on one dedicated page.</h3>
+            <h3>See the full program page with conditions, classes, and diet guidance in one place.</h3>
           </div>
           <Link className="button" href="/programs">
-            Open Programs Page
+            View all programs
           </Link>
         </div>
       </section>
 
       <section className="section home-preview-section">
-        <div className="section-heading narrow">
+        <div className="section-heading narrow home-section-heading">
           <p className="eyebrow">Batch flow</p>
-          <h2>You do not have to fit perfectly into one label. There is a batch structure for real life.</h2>
+          <h2>Choose the batch style that matches your life, not just a label.</h2>
         </div>
 
         <StaggerList className="plan-grid preview-grid">
