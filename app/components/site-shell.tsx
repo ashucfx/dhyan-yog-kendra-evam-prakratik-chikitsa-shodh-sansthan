@@ -38,7 +38,36 @@ export function SiteShell({ children }: SiteShellProps) {
           ))}
         </nav>
 
-        <CalendlyButton className="button button-small" label="Book Your Free Consultation" source="header_cta" />
+        <CalendlyButton
+          className="button button-small desktop-header-cta"
+          label="Book Your Free Consultation"
+          source="header_cta"
+        />
+
+        <details className="mobile-menu">
+          <summary className="mobile-menu-trigger" aria-label="Open navigation menu">
+            <span className="mobile-menu-icon" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+            <span>Menu</span>
+          </summary>
+          <div className="mobile-menu-panel">
+            <nav className="mobile-nav" aria-label="Mobile primary">
+              {primaryNav.map((item) => (
+                <Link key={item.label} href={item.href}>
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            <CalendlyButton
+              className="button button-small mobile-menu-cta"
+              label="Book Your Free Consultation"
+              source="mobile_menu_cta"
+            />
+          </div>
+        </details>
       </header>
 
       {children}
