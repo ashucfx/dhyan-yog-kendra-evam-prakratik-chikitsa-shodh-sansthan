@@ -101,7 +101,7 @@ export function JoinForm({ conditions }: JoinFormProps) {
         <input
           id="email"
           type="email"
-          placeholder="you@example.com"
+          placeholder="dhyanvedaglobal@gmail.com"
           value={form.email}
           onChange={(event) => updateField("email", event.target.value)}
           required

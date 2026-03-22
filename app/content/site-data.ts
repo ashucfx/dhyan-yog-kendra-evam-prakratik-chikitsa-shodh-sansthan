@@ -10,6 +10,11 @@ export const heroHighlights = [
   "Blood-group diet guidance"
 ];
 
+export const booking = {
+  calendlyUrl: "https://calendly.com/dhyanvedaglobal",
+  supportEmail: "dhyanvedaglobal@gmail.com"
+};
+
 export const proofItems = [
   "Personalized intake before batch placement",
   "Common and condition-specific Zoom batches",
@@ -394,7 +399,7 @@ export const footerDetails = {
   brandLine: brand.brandLine,
   entityName: brand.organizationName,
   phone: "+91 63780 03480",
-  email: "hello@dhyanwellness.com",
+  email: booking.supportEmail,
   address: "Devsar Gaon, Bhiwani City, Haryana, 127021"
 };
 
