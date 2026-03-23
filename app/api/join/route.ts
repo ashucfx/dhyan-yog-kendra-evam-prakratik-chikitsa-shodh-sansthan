@@ -1,6 +1,6 @@
 import { sendSubmissionNotification } from "@/lib/notifications";
 import { formatE164, getCountryRuleByIso, isValidPhoneForRule, normalizePhoneDigits } from "@/lib/country-phone";
-import { saveSubmission } from "@/lib/submissions";
+import { DuplicateSubmissionError, saveSubmission } from "@/lib/submissions";
 
 type JoinPayload = {
   name?: string;
@@ -105,6 +105,10 @@ export async function POST(request: Request) {
   try {
     storage = await saveSubmission(entry);
   } catch (error) {
+    if (error instanceof DuplicateSubmissionError) {
+      return Response.json({ message: error.message, field: error.field }, { status: 409 });
+    }
+
     return Response.json(
       {
         message: "We could not save your details right now. Please try again in a moment.",

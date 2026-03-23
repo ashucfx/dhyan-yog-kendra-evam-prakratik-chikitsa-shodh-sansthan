@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { isAdminAuthenticated, isAdminKeyConfigured } from "@/lib/admin-auth";
 import { getStorageLabel, listSubmissions } from "@/lib/submissions";
+import { DeleteSubmissionButton } from "./delete-submission-button";
 
 export default async function AdminSubmissionsPage({
   searchParams
 }: {
-  searchParams: Promise<{ error?: "invalid" | "config" }>;
+  searchParams: Promise<{ error?: "invalid" | "config"; delete?: "success" | "failed" | "missing" }>;
 }) {
   const authenticated = await isAdminAuthenticated();
   const configured = isAdminKeyConfigured();
@@ -84,6 +85,15 @@ export default async function AdminSubmissionsPage({
         </div>
 
         <div className="admin-table-shell">
+          {resolvedSearchParams.delete === "success" ? (
+            <p className="form-status form-status-success">Submission deleted successfully.</p>
+          ) : null}
+          {resolvedSearchParams.delete === "failed" ? (
+            <p className="form-status form-status-error">Unable to delete the submission right now.</p>
+          ) : null}
+          {resolvedSearchParams.delete === "missing" ? (
+            <p className="form-status form-status-error">Submission id was missing from the delete request.</p>
+          ) : null}
           {dashboardError ? (
             <p className="form-status form-status-error">Dashboard error: {dashboardError}</p>
           ) : null}
@@ -100,6 +110,7 @@ export default async function AdminSubmissionsPage({
                 <th>Goal</th>
                 <th>Notes</th>
                 <th>Submitted</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -116,11 +127,14 @@ export default async function AdminSubmissionsPage({
                     <td>{item.goal}</td>
                     <td>{item.notes || "-"}</td>
                     <td>{new Date(item.createdAt).toLocaleString("en-IN")}</td>
+                    <td>
+                      <DeleteSubmissionButton id={item.id} />
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={10}>No submissions yet.</td>
+                  <td colSpan={11}>No submissions yet.</td>
                 </tr>
               )}
             </tbody>

@@ -176,9 +176,13 @@ export function JoinForm({ conditions }: JoinFormProps) {
         })
       });
 
-      const result = (await response.json()) as { message?: string };
+      const result = (await response.json()) as { message?: string; field?: keyof FormState };
 
       if (!response.ok) {
+        if (response.status === 409 && result.field && (result.field === "email" || result.field === "phone")) {
+          setErrors((current) => ({ ...current, [result.field!]: result.message || "This detail has already been used." }));
+          setTouched((current) => ({ ...current, [result.field!]: true }));
+        }
         throw new Error(result.message || "Something went wrong while saving your details.");
       }
 
@@ -381,4 +385,3 @@ export function JoinForm({ conditions }: JoinFormProps) {
     </form>
   );
 }
-

@@ -38,3 +38,5 @@ alter table public.submissions alter column country_code set not null;
 alter table public.submissions alter column phone_national set not null;
 
 create index if not exists submissions_created_at_idx on public.submissions (created_at desc);
+create unique index if not exists submissions_email_unique_idx on public.submissions (lower(email));
+create unique index if not exists submissions_phone_unique_idx on public.submissions (phone);

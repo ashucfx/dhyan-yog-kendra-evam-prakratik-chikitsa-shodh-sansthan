@@ -19,6 +19,16 @@ export type SubmissionRecord = {
   createdAt: string;
 };
 
+export class DuplicateSubmissionError extends Error {
+  constructor(
+    public field: "email" | "phone",
+    message = "A submission with these details already exists."
+  ) {
+    super(message);
+    this.name = "DuplicateSubmissionError";
+  }
+}
+
 const dataDirectory = join(process.cwd(), "data");
 const dataFile = join(dataDirectory, "join-submissions.json");
 
@@ -70,7 +80,44 @@ export async function writeLocalSubmission(entry: SubmissionRecord) {
   await writeFile(dataFile, JSON.stringify(entries, null, 2), "utf8");
 }
 
+async function findExistingSubmission(email: string, phone: string) {
+  const supabase = getSupabaseClient();
+
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("submissions")
+      .select("id, email, phone")
+      .or(`email.eq.${email},phone.eq.${phone}`)
+      .limit(5);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data.find((item) => item.email === email || item.phone === phone) ?? null;
+  }
+
+  const entries = await readLocalSubmissions();
+  return entries.find((item) => item.email === email || item.phone === phone) ?? null;
+}
+
 export async function saveSubmission(entry: SubmissionRecord) {
+  const existing = await findExistingSubmission(entry.email, entry.phone);
+
+  if (existing) {
+    if (existing.email === entry.email) {
+      throw new DuplicateSubmissionError(
+        "email",
+        "You already submitted a response with this email address. Kindly wait for our team to get back to you."
+      );
+    }
+
+    throw new DuplicateSubmissionError(
+      "phone",
+      "You already submitted a response with this mobile number. Kindly wait for our team to get back to you."
+    );
+  }
+
   const supabase = getSupabaseClient();
 
   if (supabase) {
@@ -92,6 +139,22 @@ export async function saveSubmission(entry: SubmissionRecord) {
     });
 
     if (error) {
+      if (error.code === "23505") {
+        if (error.message.toLowerCase().includes("email")) {
+          throw new DuplicateSubmissionError(
+            "email",
+            "You already submitted a response with this email address. Kindly wait for our team to get back to you."
+          );
+        }
+
+        if (error.message.toLowerCase().includes("phone")) {
+          throw new DuplicateSubmissionError(
+            "phone",
+            "You already submitted a response with this mobile number. Kindly wait for our team to get back to you."
+          );
+        }
+      }
+
       throw new Error(error.message);
     }
 
@@ -135,6 +198,26 @@ export async function listSubmissions() {
 
   const localEntries = await readLocalSubmissions();
   return [...localEntries].sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+}
+
+export async function deleteSubmission(id: string) {
+  const supabase = getSupabaseClient();
+
+  if (supabase) {
+    const { error } = await supabase.from("submissions").delete().eq("id", id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return "supabase";
+  }
+
+  const entries = await readLocalSubmissions();
+  const nextEntries = entries.filter((item) => item.id !== id);
+  await mkdir(dataDirectory, { recursive: true });
+  await writeFile(dataFile, JSON.stringify(nextEntries, null, 2), "utf8");
+  return "local";
 }
 
 export function getStorageLabel() {
