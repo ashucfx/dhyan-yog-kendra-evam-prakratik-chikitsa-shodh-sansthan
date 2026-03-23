@@ -3,6 +3,7 @@ import { saveSubmission } from "@/lib/submissions";
 
 type JoinPayload = {
   name?: string;
+  countryCode?: string;
   phone?: string;
   email?: string;
   bloodGroup?: string;
@@ -14,26 +15,33 @@ type JoinPayload = {
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function normalizePhone(phone: string) {
-  return phone.replace(/[^\d+]/g, "");
+function normalizeCountryCode(code: string) {
+  const value = code.trim().replace(/[^\d+]/g, "");
+  return value.startsWith("+") ? value : `+${value.replace(/\+/g, "")}`;
 }
 
-function isValidIndianPhone(phone: string) {
-  const normalized = normalizePhone(phone);
+function normalizePhoneDigits(phone: string) {
+  return phone.replace(/\D/g, "");
+}
 
-  if (/^\d{10}$/.test(normalized)) {
-    return true;
+function isValidPhoneByCountry(countryCode: string, phoneDigits: string) {
+  if (countryCode === "+91") {
+    return /^[6-9]\d{9}$/.test(phoneDigits);
   }
 
-  if (/^91\d{10}$/.test(normalized)) {
-    return true;
-  }
+  return /^\d{6,14}$/.test(phoneDigits);
+}
 
-  if (/^\+91\d{10}$/.test(normalized)) {
-    return true;
-  }
+function sanitizeName(name: string) {
+  return name.trim().replace(/\s+/g, " ");
+}
 
-  return false;
+function sanitizeEmail(email: string) {
+  return email.trim().toLowerCase();
+}
+
+function sanitizeText(text: string | undefined) {
+  return text?.trim() || "";
 }
 
 export async function POST(request: Request) {
@@ -49,14 +57,15 @@ export async function POST(request: Request) {
     return Response.json({ message: "Please fill in the required details so we can place you properly." }, { status: 400 });
   }
 
-  const cleanedName = payload.name.trim().replace(/\s+/g, " ");
-  const cleanedPhone = payload.phone.trim();
-  const cleanedEmail = payload.email.trim().toLowerCase();
-  const cleanedBloodGroup = payload.bloodGroup.trim();
-  const cleanedCondition = payload.condition.trim();
-  const cleanedBatchType = payload.batchType.trim();
-  const cleanedGoal = payload.goal.trim();
-  const cleanedNotes = payload.notes?.trim() || "";
+  const cleanedName = sanitizeName(payload.name);
+  const cleanedEmail = sanitizeEmail(payload.email);
+  const cleanedCountryCode = normalizeCountryCode(payload.countryCode || "+91");
+  const cleanedPhoneDigits = normalizePhoneDigits(payload.phone);
+  const cleanedBloodGroup = sanitizeText(payload.bloodGroup);
+  const cleanedCondition = sanitizeText(payload.condition);
+  const cleanedBatchType = sanitizeText(payload.batchType);
+  const cleanedGoal = sanitizeText(payload.goal);
+  const cleanedNotes = sanitizeText(payload.notes);
 
   if (cleanedName.length < 2 || cleanedName.length > 80) {
     return Response.json({ message: "Please enter a valid full name." }, { status: 400 });
@@ -66,8 +75,12 @@ export async function POST(request: Request) {
     return Response.json({ message: "Please enter a valid email address." }, { status: 400 });
   }
 
-  if (!isValidIndianPhone(cleanedPhone)) {
-    return Response.json({ message: "Please enter a valid 10-digit mobile number." }, { status: 400 });
+  if (!/^\+\d{1,4}$/.test(cleanedCountryCode)) {
+    return Response.json({ message: "Please select a valid country code." }, { status: 400 });
+  }
+
+  if (!isValidPhoneByCountry(cleanedCountryCode, cleanedPhoneDigits)) {
+    return Response.json({ message: "Please enter a valid mobile number." }, { status: 400 });
   }
 
   if (cleanedNotes.length > 800) {
@@ -77,7 +90,7 @@ export async function POST(request: Request) {
   const entry = {
     id: crypto.randomUUID(),
     name: cleanedName,
-    phone: cleanedPhone,
+    phone: `${cleanedCountryCode} ${cleanedPhoneDigits}`,
     email: cleanedEmail,
     bloodGroup: cleanedBloodGroup,
     condition: cleanedCondition,
