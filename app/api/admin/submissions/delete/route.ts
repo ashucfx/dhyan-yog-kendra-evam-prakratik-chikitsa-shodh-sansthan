@@ -5,21 +5,26 @@ export async function POST(request: Request) {
   const authenticated = await isAdminAuthenticated();
 
   if (!authenticated) {
-    return Response.redirect(new URL("/admin/submissions?error=invalid", request.url), 303);
+    return Response.json({ message: "Unauthorized." }, { status: 401 });
   }
 
   const formData = await request.formData();
   const id = String(formData.get("id") || "").trim();
 
   if (!id) {
-    return Response.redirect(new URL("/admin/submissions?delete=missing", request.url), 303);
+    return Response.json({ message: "Submission id was missing from the delete request." }, { status: 400 });
   }
 
   try {
     await deleteSubmission(id);
-  } catch {
-    return Response.redirect(new URL("/admin/submissions?delete=failed", request.url), 303);
+  } catch (error) {
+    return Response.json(
+      {
+        message: error instanceof Error ? error.message : "Unable to delete the submission right now."
+      },
+      { status: 500 }
+    );
   }
 
-  return Response.redirect(new URL("/admin/submissions?delete=success", request.url), 303);
+  return Response.json({ message: "Submission deleted successfully." }, { status: 200 });
 }

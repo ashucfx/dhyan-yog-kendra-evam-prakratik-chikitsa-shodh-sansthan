@@ -1776,6 +1776,11 @@ textarea:focus-visible {
   padding: 1.5rem;
 }
 
+.admin-dashboard {
+  display: grid;
+  gap: 1.4rem;
+}
+
 .admin-header {
   display: flex;
   align-items: flex-start;
@@ -1793,6 +1798,146 @@ textarea:focus-visible {
 .admin-copy {
   max-width: 48rem;
   color: var(--muted);
+}
+
+.admin-kicker {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-summary-grid,
+.admin-crm-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-insight-card,
+.admin-spotlight-card,
+.admin-feed-card,
+.admin-control-panel {
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 244, 0.95), rgba(250, 239, 226, 0.88)),
+    radial-gradient(circle at top right, rgba(214, 167, 110, 0.15), transparent 24%);
+  box-shadow: var(--shadow);
+}
+
+.admin-insight-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.25rem 1.3rem;
+}
+
+.admin-insight-card strong {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  color: var(--accent-dark);
+  line-height: 1;
+}
+
+.admin-insight-card span,
+.admin-lead-item p,
+.admin-notes-preview,
+.admin-spotlight-copy p {
+  color: var(--muted);
+}
+
+.admin-control-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+}
+
+.admin-search-shell {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.admin-search-shell input {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 250, 243, 0.96);
+  color: var(--text);
+  font: inherit;
+}
+
+.admin-filter-row,
+.admin-pill-row,
+.admin-spotlight-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.admin-crm-grid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+}
+
+.admin-spotlight-card,
+.admin-feed-card {
+  padding: 1.35rem;
+}
+
+.admin-spotlight-copy {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 0.8rem;
+}
+
+.admin-spotlight-copy h2 {
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+}
+
+.admin-spotlight-meta span,
+.admin-pill-row span,
+.admin-lead-item span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 247, 238, 0.88);
+  border: 1px solid var(--line);
+  font-size: 0.88rem;
+}
+
+.admin-notes-preview {
+  margin: 0;
+  padding: 1rem 1.05rem;
+  border-radius: 18px;
+  background: rgba(255, 250, 243, 0.88);
+  border: 1px solid var(--line);
+}
+
+.admin-lead-stack {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.admin-lead-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: rgba(255, 250, 243, 0.88);
+  border: 1px solid var(--line);
+}
+
+.admin-lead-item strong,
+.admin-lead-item p {
+  margin: 0;
 }
 
 .admin-login {
@@ -1852,7 +1997,9 @@ textarea:focus-visible {
   .instructor-grid,
   .contact-grid,
   .compact-therapy-grid,
-  .legal-grid {
+  .legal-grid,
+  .admin-summary-grid,
+  .admin-crm-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
@@ -1946,6 +2093,11 @@ textarea:focus-visible {
 
   .admin-header {
     flex-direction: column;
+  }
+
+  .admin-summary-grid,
+  .admin-crm-grid {
+    grid-template-columns: 1fr;
   }
 
   .page-cta-strip,

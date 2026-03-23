@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { isAdminAuthenticated, isAdminKeyConfigured } from "@/lib/admin-auth";
 import { getStorageLabel, listSubmissions } from "@/lib/submissions";
-import { DeleteSubmissionButton } from "./delete-submission-button";
+import { DashboardClient } from "./dashboard-client";
 
 export default async function AdminSubmissionsPage({
   searchParams
 }: {
-  searchParams: Promise<{ error?: "invalid" | "config"; delete?: "success" | "failed" | "missing" }>;
+  searchParams: Promise<{ error?: "invalid" | "config" }>;
 }) {
   const authenticated = await isAdminAuthenticated();
   const configured = isAdminKeyConfigured();
@@ -68,78 +68,7 @@ export default async function AdminSubmissionsPage({
   return (
     <main className="admin-page">
       <section className="admin-shell">
-        <div className="admin-header">
-          <div>
-            <p className="eyebrow">Client dashboard</p>
-            <h1>Submission table</h1>
-            <p className="admin-copy">Every inquiry sent from the website appears here, with blood group and batch preference included.</p>
-          </div>
-          <div className="admin-actions">
-            <span className="entity-chip">Storage: {storageLabel}</span>
-            <form action="/api/admin/logout" method="post">
-              <button className="button button-secondary" type="submit">
-                Log out
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <div className="admin-table-shell">
-          {resolvedSearchParams.delete === "success" ? (
-            <p className="form-status form-status-success">Submission deleted successfully.</p>
-          ) : null}
-          {resolvedSearchParams.delete === "failed" ? (
-            <p className="form-status form-status-error">Unable to delete the submission right now.</p>
-          ) : null}
-          {resolvedSearchParams.delete === "missing" ? (
-            <p className="form-status form-status-error">Submission id was missing from the delete request.</p>
-          ) : null}
-          {dashboardError ? (
-            <p className="form-status form-status-error">Dashboard error: {dashboardError}</p>
-          ) : null}
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Country</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Blood group</th>
-                <th>Condition</th>
-                <th>Batch</th>
-                <th>Goal</th>
-                <th>Notes</th>
-                <th>Submitted</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {submissions.length ? (
-                submissions.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.name}</td>
-                    <td>{item.country} ({item.countryCode})</td>
-                    <td>{item.phone}</td>
-                    <td>{item.email}</td>
-                    <td>{item.bloodGroup}</td>
-                    <td>{item.condition}</td>
-                    <td>{item.batchType}</td>
-                    <td>{item.goal}</td>
-                    <td>{item.notes || "-"}</td>
-                    <td>{new Date(item.createdAt).toLocaleString("en-IN")}</td>
-                    <td>
-                      <DeleteSubmissionButton id={item.id} />
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={11}>No submissions yet.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <DashboardClient initialSubmissions={submissions} storageLabel={storageLabel} initialError={dashboardError} />
       </section>
     </main>
   );
