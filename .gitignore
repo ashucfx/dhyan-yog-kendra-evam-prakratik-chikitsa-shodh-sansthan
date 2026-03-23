@@ -1,7 +1,5 @@
 .next
-.next-app
 .next_stale*
-.next-app_stale*
 node_modules
 out
 dist
