@@ -22,10 +22,15 @@ const emptyProduct: ProductInput = {
   description: "",
   badge: "",
   image: "/media/store-herbal-support.svg",
+  gallery: ["/media/store-herbal-support.svg"],
   basePrice: 0,
   salePrice: 0,
   stock: 0,
   featured: false,
+  rating: 4.7,
+  reviewCount: 0,
+  videoUrl: "",
+  reviews: [],
   benefits: []
 };
 
@@ -75,6 +80,30 @@ export function CommerceDashboardClient({ initialSnapshot }: CommerceDashboardCl
   function notify(tone: "success" | "error", message: string) {
     setToast({ tone, message });
     window.setTimeout(() => setToast(null), 2800);
+  }
+
+  function loadProductIntoForm(product: CommerceSnapshot["products"][number]) {
+    setProductForm({
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      sku: product.sku,
+      categorySlug: product.categorySlug,
+      shortDescription: product.shortDescription,
+      description: product.description,
+      badge: product.badge,
+      image: product.image,
+      gallery: product.gallery ?? [product.image],
+      basePrice: product.basePrice,
+      salePrice: product.salePrice,
+      stock: product.stock,
+      featured: product.featured,
+      rating: product.rating ?? 4.7,
+      reviewCount: product.reviewCount ?? 0,
+      videoUrl: product.videoUrl ?? "",
+      reviews: product.reviews ?? [],
+      benefits: product.benefits
+    });
   }
 
   async function saveProduct() {
@@ -289,6 +318,16 @@ export function CommerceDashboardClient({ initialSnapshot }: CommerceDashboardCl
               onChange={(event) => setProductForm((current) => ({ ...current, image: event.target.value }))}
             />
             <input
+              placeholder="Gallery image paths comma separated"
+              value={productForm.gallery.join(", ")}
+              onChange={(event) =>
+                setProductForm((current) => ({
+                  ...current,
+                  gallery: event.target.value.split(",").map((item) => item.trim()).filter(Boolean)
+                }))
+              }
+            />
+            <input
               placeholder="Base price"
               type="number"
               value={productForm.basePrice}
@@ -305,6 +344,26 @@ export function CommerceDashboardClient({ initialSnapshot }: CommerceDashboardCl
               type="number"
               value={productForm.stock}
               onChange={(event) => setProductForm((current) => ({ ...current, stock: Number(event.target.value) }))}
+            />
+            <input
+              placeholder="Rating"
+              type="number"
+              step="0.1"
+              min="0"
+              max="5"
+              value={productForm.rating}
+              onChange={(event) => setProductForm((current) => ({ ...current, rating: Number(event.target.value) }))}
+            />
+            <input
+              placeholder="Review count"
+              type="number"
+              value={productForm.reviewCount}
+              onChange={(event) => setProductForm((current) => ({ ...current, reviewCount: Number(event.target.value) }))}
+            />
+            <input
+              placeholder="Video URL"
+              value={productForm.videoUrl}
+              onChange={(event) => setProductForm((current) => ({ ...current, videoUrl: event.target.value }))}
             />
             <input
               placeholder="Short description"
@@ -334,6 +393,27 @@ export function CommerceDashboardClient({ initialSnapshot }: CommerceDashboardCl
               value={productForm.description}
               onChange={(event) => setProductForm((current) => ({ ...current, description: event.target.value }))}
             />
+            <textarea
+              placeholder="Reviews one per line: Name|Rating|Comment"
+              value={productForm.reviews.map((review) => `${review.author}|${review.rating}|${review.comment}`).join("\n")}
+              onChange={(event) =>
+                setProductForm((current) => ({
+                  ...current,
+                  reviews: event.target.value
+                    .split("\n")
+                    .map((line) => line.trim())
+                    .filter(Boolean)
+                    .map((line) => {
+                      const [author = "", rating = "5", comment = ""] = line.split("|");
+                      return {
+                        author: author.trim(),
+                        rating: Number(rating.trim() || 5),
+                        comment: comment.trim()
+                      };
+                    })
+                }))
+              }
+            />
           </div>
           <div className="admin-actions">
             <button className="button button-small" type="button" disabled={busyAction === "product-save"} onClick={saveProduct}>
@@ -353,7 +433,7 @@ export function CommerceDashboardClient({ initialSnapshot }: CommerceDashboardCl
                   </p>
                 </div>
                 <div className="commerce-list-side">
-                  <button className="button button-secondary button-small" type="button" onClick={() => setProductForm(product)}>
+                  <button className="button button-secondary button-small" type="button" onClick={() => loadProductIntoForm(product)}>
                     Edit
                   </button>
                   <button

@@ -140,10 +140,19 @@ export type ProductInput = {
   description: string;
   badge: string;
   image: string;
+  gallery: string[];
   basePrice: number;
   salePrice: number;
   stock: number;
   featured: boolean;
+  rating: number;
+  reviewCount: number;
+  videoUrl: string;
+  reviews: {
+    author: string;
+    rating: number;
+    comment: string;
+  }[];
   benefits: string[];
 };
 
@@ -234,7 +243,7 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
         supabase
           .from("products")
           .select(
-            "id, slug, name, sku, category_slug, short_description, description, badge, image_url, base_price, sale_price, stock, featured, benefits"
+            "id, slug, name, sku, category_slug, short_description, description, badge, image_url, gallery, base_price, sale_price, stock, featured, rating, review_count, video_url, reviews, benefits"
           )
           .order("featured", { ascending: false })
           .order("name"),
@@ -314,15 +323,15 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
         description: item.description ?? "",
         badge: item.badge ?? "",
         image: item.image_url,
-        gallery: [item.image_url],
+        gallery: Array.isArray(item.gallery) ? item.gallery : [item.image_url],
         basePrice: item.base_price,
         salePrice: item.sale_price,
         stock: item.stock,
         featured: item.featured,
-        rating: 4.7,
-        reviewCount: 0,
-        videoUrl: undefined,
-        reviews: [],
+        rating: item.rating ?? 4.7,
+        reviewCount: item.review_count ?? 0,
+        videoUrl: item.video_url ?? "",
+        reviews: Array.isArray(item.reviews) ? item.reviews : [],
         benefits: Array.isArray(item.benefits) ? item.benefits : []
       })),
       offers: (offersResult.data ?? []).map((item) => ({
@@ -424,6 +433,26 @@ function ensureBenefits(value: string[]) {
   return value.map((item) => sanitizeText(item)).filter(Boolean);
 }
 
+function ensureGallery(value: string[]) {
+  return value.map((item) => item.trim()).filter(Boolean);
+}
+
+function ensureReviews(
+  value: {
+    author: string;
+    rating: number;
+    comment: string;
+  }[]
+) {
+  return value
+    .map((review) => ({
+      author: sanitizeText(review.author),
+      rating: sanitizeCurrency(review.rating),
+      comment: sanitizeText(review.comment)
+    }))
+    .filter((review) => review.author && review.comment);
+}
+
 function cloneLocalSnapshot(snapshot: CommerceSnapshot): Omit<CommerceSnapshot, "source"> {
   return {
     settings: snapshot.settings,
@@ -456,15 +485,15 @@ export async function upsertProduct(input: ProductInput) {
     description: input.description.trim(),
     badge: sanitizeText(input.badge),
     image: input.image.trim(),
-    gallery: [input.image.trim()],
+    gallery: ensureGallery(input.gallery.length ? input.gallery : [input.image.trim()]),
     basePrice: sanitizeCurrency(input.basePrice),
     salePrice: sanitizeCurrency(input.salePrice),
     stock: sanitizeCurrency(input.stock),
     featured: Boolean(input.featured),
-    rating: 4.7,
-    reviewCount: 0,
-    videoUrl: undefined,
-    reviews: [],
+    rating: Number.isFinite(input.rating) ? Math.max(0, Math.min(5, input.rating)) : 4.7,
+    reviewCount: sanitizeCurrency(input.reviewCount),
+    videoUrl: input.videoUrl.trim(),
+    reviews: ensureReviews(input.reviews),
     benefits: ensureBenefits(input.benefits)
   } satisfies CommerceProduct;
 
@@ -481,10 +510,15 @@ export async function upsertProduct(input: ProductInput) {
       description: payload.description,
       badge: payload.badge,
       image_url: payload.image,
+      gallery: payload.gallery,
       base_price: payload.basePrice,
       sale_price: payload.salePrice,
       stock: payload.stock,
       featured: payload.featured,
+      rating: payload.rating,
+      review_count: payload.reviewCount,
+      video_url: payload.videoUrl || null,
+      reviews: payload.reviews,
       benefits: payload.benefits,
       active: true
     });
