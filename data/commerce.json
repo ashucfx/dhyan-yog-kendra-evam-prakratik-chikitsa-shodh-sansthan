@@ -1,0 +1,429 @@
+{
+  "settings": {
+    "currencyCode": "INR",
+    "currencySymbol": "Rs.",
+    "supportEmail": "dhyanvedaglobal@gmail.com",
+    "supportPhone": "+91 63780 03480",
+    "payments": [
+      {
+        "provider": "Razorpay",
+        "status": "planned",
+        "description": "Primary domestic gateway for UPI, cards, netbanking, and wallets."
+      },
+      {
+        "provider": "PayPal",
+        "status": "planned",
+        "description": "Secondary gateway for international customers."
+      }
+    ],
+    "shippingPartners": [
+      {
+        "name": "Shiprocket",
+        "status": "planned",
+        "coverage": "India"
+      },
+      {
+        "name": "Manual international dispatch",
+        "status": "planned",
+        "coverage": "Outside India"
+      }
+    ]
+  },
+  "categories": [
+    {
+      "id": "cat-herbal",
+      "slug": "herbal-support",
+      "name": "Herbal Support",
+      "description": "Herbal blends and natural support products aligned with wellness routines."
+    },
+    {
+      "id": "cat-accessories",
+      "slug": "practice-accessories",
+      "name": "Practice Accessories",
+      "description": "Tools that make home yoga and recovery routines easier to maintain."
+    },
+    {
+      "id": "cat-medicine",
+      "slug": "natural-medicines",
+      "name": "Natural Medicines",
+      "description": "Natural health support products that fit into a guided care plan."
+    },
+    {
+      "id": "cat-essentials",
+      "slug": "wellness-essentials",
+      "name": "Wellness Essentials",
+      "description": "Daily self-care products for calm, recovery, and steady energy."
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-herbal-balance",
+      "slug": "herbal-hormone-balance-kit",
+      "name": "Herbal Hormone Balance Kit",
+      "sku": "DYK-HHB-001",
+      "categorySlug": "herbal-support",
+      "shortDescription": "A curated herbal bundle designed for women balancing stress and cycle rhythm.",
+      "description": "A bundled wellness product positioned for customers already enrolled in hormone and recovery routines.",
+      "badge": "Best Seller",
+      "image": "/media/store-herbal-support.svg",
+      "gallery": [
+        "/media/store-herbal-support.svg",
+        "/media/store-wellness-essentials.svg",
+        "/media/store-natural-medicines.svg"
+      ],
+      "basePrice": 1899,
+      "salePrice": 1599,
+      "stock": 24,
+      "featured": true,
+      "rating": 4.8,
+      "reviewCount": 124,
+      "videoUrl": "https://www.youtube.com/embed/4pKly2JojMw",
+      "reviews": [
+        {
+          "author": "Aarohi",
+          "rating": 5,
+          "comment": "Easy to include in my routine and it feels consistent with the wellness guidance."
+        },
+        {
+          "author": "Neha",
+          "rating": 4,
+          "comment": "The product positioning feels trustworthy and the kit is easy to understand."
+        }
+      ],
+      "benefits": [
+        "Structured routine support",
+        "Pairs with yoga therapy plans",
+        "High-margin flagship product"
+      ]
+    },
+    {
+      "id": "prod-herbal-calm",
+      "slug": "night-calm-herbal-support",
+      "name": "Night Calm Herbal Support",
+      "sku": "DYK-NCH-002",
+      "categorySlug": "herbal-support",
+      "shortDescription": "An evening wellness support product for calmer nights and better recovery.",
+      "description": "Positioned for students using meditation and evening relaxation batches.",
+      "badge": "Sleep Support",
+      "image": "/media/store-wellness-essentials.svg",
+      "gallery": [
+        "/media/store-wellness-essentials.svg",
+        "/media/store-herbal-support.svg",
+        "/media/store-accessories.svg"
+      ],
+      "basePrice": 1299,
+      "salePrice": 1099,
+      "stock": 36,
+      "featured": true,
+      "rating": 4.7,
+      "reviewCount": 89,
+      "videoUrl": "https://www.youtube.com/embed/inpok4MKVLM",
+      "reviews": [
+        {
+          "author": "Ritika",
+          "rating": 5,
+          "comment": "A strong fit with the evening meditation routine and the store guidance."
+        },
+        {
+          "author": "Pooja",
+          "rating": 4,
+          "comment": "Packaging and product story both feel premium."
+        }
+      ],
+      "benefits": [
+        "Cross-sells with evening programs",
+        "Clear use case",
+        "Subscription-ready format"
+      ]
+    },
+    {
+      "id": "prod-accessory-mat",
+      "slug": "dhyan-yoga-mat-set",
+      "name": "Dhyan Yoga Mat Set",
+      "sku": "DYK-MAT-003",
+      "categorySlug": "practice-accessories",
+      "shortDescription": "A clean, branded mat and strap set for home practice consistency.",
+      "description": "Accessory line item suited for bundles and first-order offers.",
+      "badge": "Starter Pick",
+      "image": "/media/store-accessories.svg",
+      "gallery": [
+        "/media/store-accessories.svg",
+        "/media/store-herbal-support.svg",
+        "/media/store-wellness-essentials.svg"
+      ],
+      "basePrice": 1499,
+      "salePrice": 1299,
+      "stock": 18,
+      "featured": false,
+      "rating": 4.6,
+      "reviewCount": 61,
+      "videoUrl": "https://www.youtube.com/embed/v7AYKMP6rOE",
+      "reviews": [
+        {
+          "author": "Megha",
+          "rating": 5,
+          "comment": "Good grip and simple to use for home sessions."
+        }
+      ],
+      "benefits": [
+        "Improves average order value",
+        "Supports home classes",
+        "Easy gifting product"
+      ]
+    },
+    {
+      "id": "prod-medicine-immunity",
+      "slug": "natural-immunity-support-pack",
+      "name": "Natural Immunity Support Pack",
+      "sku": "DYK-NIS-004",
+      "categorySlug": "natural-medicines",
+      "shortDescription": "A practical product line for buyers who want seasonal wellness support.",
+      "description": "Useful as a repeat-purchase product tied to customer retention campaigns.",
+      "badge": "Repeat Order",
+      "image": "/media/store-natural-medicines.svg",
+      "gallery": [
+        "/media/store-natural-medicines.svg",
+        "/media/store-herbal-support.svg",
+        "/media/store-wellness-essentials.svg"
+      ],
+      "basePrice": 999,
+      "salePrice": 899,
+      "stock": 42,
+      "featured": false,
+      "rating": 4.5,
+      "reviewCount": 47,
+      "videoUrl": "https://www.youtube.com/embed/ZToicYcHIOU",
+      "reviews": [
+        {
+          "author": "Sunita",
+          "rating": 4,
+          "comment": "Clear value and easy to reorder."
+        }
+      ],
+      "benefits": [
+        "Retention-friendly SKU",
+        "Lightweight for shipping",
+        "Simple promotional angle"
+      ]
+    },
+    {
+      "id": "prod-essentials-detox",
+      "slug": "daily-detox-wellness-essentials",
+      "name": "Daily Detox Wellness Essentials",
+      "sku": "DYK-DDW-005",
+      "categorySlug": "wellness-essentials",
+      "shortDescription": "An easy add-on product for daily reset and care routines.",
+      "description": "Merchandised as a low-friction add-on during checkout or bundle campaigns.",
+      "badge": "Add-On",
+      "image": "/media/store-wellness-essentials.svg",
+      "gallery": [
+        "/media/store-wellness-essentials.svg",
+        "/media/store-natural-medicines.svg",
+        "/media/store-accessories.svg"
+      ],
+      "basePrice": 799,
+      "salePrice": 699,
+      "stock": 64,
+      "featured": false,
+      "rating": 4.4,
+      "reviewCount": 38,
+      "videoUrl": "https://www.youtube.com/embed/1ZYbU82GVz4",
+      "reviews": [
+        {
+          "author": "Komal",
+          "rating": 4,
+          "comment": "A simple add-on that works well with a wellness basket."
+        }
+      ],
+      "benefits": [
+        "Ideal checkout add-on",
+        "Low shipping complexity",
+        "Good coupon attach rate"
+      ]
+    },
+    {
+      "id": "prod-essentials-prenatal",
+      "slug": "prenatal-comfort-wellness-kit",
+      "name": "Prenatal Comfort Wellness Kit",
+      "sku": "DYK-PCW-006",
+      "categorySlug": "wellness-essentials",
+      "shortDescription": "A gentle wellness kit aligned with prenatal support and comfort routines.",
+      "description": "Designed for a higher-trust audience that benefits from guided recommendations.",
+      "badge": "Premium Care",
+      "image": "/media/store-herbal-support.svg",
+      "gallery": [
+        "/media/store-herbal-support.svg",
+        "/media/store-wellness-essentials.svg",
+        "/media/store-natural-medicines.svg"
+      ],
+      "basePrice": 2499,
+      "salePrice": 2199,
+      "stock": 10,
+      "featured": true,
+      "rating": 4.9,
+      "reviewCount": 52,
+      "videoUrl": "https://www.youtube.com/embed/N41s4rZWuxk",
+      "reviews": [
+        {
+          "author": "Meera",
+          "rating": 5,
+          "comment": "The product page explanation and care positioning felt thoughtful and reassuring."
+        },
+        {
+          "author": "Ishita",
+          "rating": 5,
+          "comment": "Looks premium and fits the prenatal collection well."
+        }
+      ],
+      "benefits": [
+        "Premium positioning",
+        "High value bundle",
+        "Strong program-store bridge"
+      ]
+    }
+  ],
+  "offers": [
+    {
+      "id": "offer-launch",
+      "title": "Store launch offer",
+      "description": "10% off on all featured wellness products this month.",
+      "kind": "sitewide",
+      "discountType": "percent",
+      "discountValue": 10,
+      "active": true
+    },
+    {
+      "id": "offer-bundle",
+      "title": "Starter bundle push",
+      "description": "Accessory and essentials combinations positioned for higher first-order value.",
+      "kind": "bundle",
+      "discountType": "flat",
+      "discountValue": 200,
+      "active": true
+    }
+  ],
+  "coupons": [
+    {
+      "id": "coupon-welcome",
+      "code": "WELCOME10",
+      "description": "New customer acquisition coupon.",
+      "discountType": "percent",
+      "discountValue": 10,
+      "minimumOrderAmount": 999,
+      "active": true
+    },
+    {
+      "id": "coupon-repeat",
+      "code": "RETURN200",
+      "description": "Retention coupon for returning buyers.",
+      "discountType": "flat",
+      "discountValue": 200,
+      "minimumOrderAmount": 1999,
+      "active": true
+    }
+  ],
+  "orders": [
+    {
+      "id": "order-1001",
+      "customerName": "Aarohi Sharma",
+      "customerEmail": "aarohi@example.com",
+      "status": "paid",
+      "fulfillmentStatus": "packed",
+      "paymentProvider": "Razorpay",
+      "paymentStatus": "captured",
+      "subtotal": 2698,
+      "discount": 200,
+      "shipping": 0,
+      "total": 2498,
+      "createdAt": "2026-03-22T09:30:00.000Z"
+    },
+    {
+      "id": "order-1002",
+      "customerName": "Meera Nanda",
+      "customerEmail": "meera@example.com",
+      "status": "pending_payment",
+      "fulfillmentStatus": "awaiting_payment",
+      "paymentProvider": "PayPal",
+      "paymentStatus": "created",
+      "subtotal": 2199,
+      "discount": 0,
+      "shipping": 150,
+      "total": 2349,
+      "createdAt": "2026-03-23T11:10:00.000Z"
+    },
+    {
+      "id": "order-1003",
+      "customerName": "Ritika Verma",
+      "customerEmail": "ritika@example.com",
+      "status": "paid",
+      "fulfillmentStatus": "shipped",
+      "paymentProvider": "Razorpay",
+      "paymentStatus": "captured",
+      "subtotal": 1599,
+      "discount": 160,
+      "shipping": 0,
+      "total": 1439,
+      "createdAt": "2026-03-24T05:00:00.000Z"
+    }
+  ],
+  "orderItems": [
+    {
+      "id": "order-item-1",
+      "orderId": "order-1001",
+      "productId": "prod-herbal-balance",
+      "productName": "Herbal Hormone Balance Kit",
+      "sku": "DYK-HHB-001",
+      "quantity": 1,
+      "unitPrice": 1599,
+      "totalPrice": 1599
+    },
+    {
+      "id": "order-item-2",
+      "orderId": "order-1001",
+      "productId": "prod-accessory-mat",
+      "productName": "Dhyan Yoga Mat Set",
+      "sku": "DYK-MAT-003",
+      "quantity": 1,
+      "unitPrice": 1299,
+      "totalPrice": 1299
+    },
+    {
+      "id": "order-item-3",
+      "orderId": "order-1002",
+      "productId": "prod-essentials-prenatal",
+      "productName": "Prenatal Comfort Wellness Kit",
+      "sku": "DYK-PCW-006",
+      "quantity": 1,
+      "unitPrice": 2199,
+      "totalPrice": 2199
+    },
+    {
+      "id": "order-item-4",
+      "orderId": "order-1003",
+      "productId": "prod-herbal-balance",
+      "productName": "Herbal Hormone Balance Kit",
+      "sku": "DYK-HHB-001",
+      "quantity": 1,
+      "unitPrice": 1599,
+      "totalPrice": 1599
+    }
+  ],
+  "shipments": [
+    {
+      "id": "ship-7001",
+      "orderId": "order-1001",
+      "partner": "Shiprocket",
+      "awb": "SR123456789",
+      "status": "pickup_scheduled",
+      "trackingUrl": "https://www.shiprocket.in/shipment-tracking/"
+    },
+    {
+      "id": "ship-7002",
+      "orderId": "order-1003",
+      "partner": "Shiprocket",
+      "awb": "SR987654321",
+      "status": "in_transit",
+      "trackingUrl": "https://www.shiprocket.in/shipment-tracking/"
+    }
+  ]
+}

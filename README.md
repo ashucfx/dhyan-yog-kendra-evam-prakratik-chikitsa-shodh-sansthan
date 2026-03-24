@@ -10,6 +10,7 @@ This project is designed to feel calm, trustworthy, and conversion-focused while
 - Condition-specific and common Zoom batch positioning
 - Blood-group-aware intake form
 - Admin submissions dashboard
+- Commerce starter layer for products, offers, coupons, orders, and shipment visibility
 - Local JSON fallback storage for form responses
 - Supabase-ready production database integration
 - Resend-ready email notification flow
@@ -47,6 +48,7 @@ This project is designed to feel calm, trustworthy, and conversion-focused while
 
 ```text
 app/
+  admin/page.tsx                  Commerce admin dashboard
   admin/submissions/page.tsx      Admin dashboard UI
   api/admin/login/route.ts        Admin login route
   api/admin/logout/route.ts       Admin logout route
@@ -65,6 +67,7 @@ data/
 
 lib/
   admin-auth.ts                   Admin session helpers
+  commerce.ts                     Commerce data layer and helpers
   notifications.ts                Resend email notification helper
   submissions.ts                  Submission storage abstraction
 
@@ -73,8 +76,25 @@ public/
   logo-icon.png                   Favicon/app icon source
 
 supabase/
+  commerce.sql                    Commerce schema for products/orders/coupons/shipments
   submissions.sql                 SQL schema for production submissions table
 ```
+
+## Commerce Expansion
+
+The website now includes a production-oriented commerce starter layer:
+
+- dynamic store data from [commerce.ts](/c:/Users/ashut/OneDrive/Desktop/dhyan-yog-kendra-sansthan/lib/commerce.ts)
+- local starter catalog in [commerce.json](/c:/Users/ashut/OneDrive/Desktop/dhyan-yog-kendra-sansthan/data/commerce.json)
+- commerce admin overview at `/admin`
+- Supabase schema for products, offers, coupons, orders, order items, and shipments in [commerce.sql](/c:/Users/ashut/OneDrive/Desktop/dhyan-yog-kendra-sansthan/supabase/commerce.sql)
+
+Current state:
+
+- the storefront is data-driven
+- the admin dashboard shows commerce operations
+- Razorpay, PayPal, and Shiprocket are represented in environment/config readiness
+- full checkout capture, webhook sync, and admin CRUD routes still need to be implemented on top of this foundation
 
 ## Local Development
 

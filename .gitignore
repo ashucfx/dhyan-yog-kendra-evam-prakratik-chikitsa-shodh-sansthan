@@ -1,4 +1,6 @@
 .next
+.next-app
+.next-app_stale*
 .next_stale*
 node_modules
 out
