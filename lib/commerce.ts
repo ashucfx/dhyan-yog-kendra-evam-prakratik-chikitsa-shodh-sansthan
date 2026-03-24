@@ -43,15 +43,17 @@ export type CommerceProduct = {
   salePrice: number;
   stock: number;
   featured: boolean;
-  rating?: number;
-  reviewCount?: number;
   videoUrl?: string;
-  reviews?: {
-    author: string;
-    rating: number;
-    comment: string;
-  }[];
   benefits: string[];
+};
+
+export type CommerceProductReview = {
+  id: string;
+  productId: string;
+  author: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
 };
 
 export type CommerceOffer = {
@@ -127,6 +129,7 @@ export type CommerceSnapshot = {
   orders: CommerceOrder[];
   orderItems: CommerceOrderItem[];
   shipments: CommerceShipment[];
+  productReviews: CommerceProductReview[];
   source: "supabase" | "local";
 };
 
@@ -145,14 +148,7 @@ export type ProductInput = {
   salePrice: number;
   stock: number;
   featured: boolean;
-  rating: number;
-  reviewCount: number;
   videoUrl: string;
-  reviews: {
-    author: string;
-    rating: number;
-    comment: string;
-  }[];
   benefits: string[];
 };
 
@@ -236,14 +232,14 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
   }
 
   try {
-    const [settingsResult, categoriesResult, productsResult, offersResult, couponsResult, ordersResult, orderItemsResult, shipmentsResult] =
+    const [settingsResult, categoriesResult, productsResult, offersResult, couponsResult, ordersResult, orderItemsResult, shipmentsResult, productReviewsResult] =
       await Promise.all([
         supabase.from("store_settings").select("currency_code, currency_symbol, support_email, support_phone").limit(1).maybeSingle(),
         supabase.from("categories").select("id, slug, name, description").order("name"),
         supabase
           .from("products")
           .select(
-            "id, slug, name, sku, category_slug, short_description, description, badge, image_url, gallery, base_price, sale_price, stock, featured, rating, review_count, video_url, reviews, benefits"
+            "id, slug, name, sku, category_slug, short_description, description, badge, image_url, gallery, base_price, sale_price, stock, featured, video_url, benefits"
           )
           .order("featured", { ascending: false })
           .order("name"),
@@ -263,10 +259,11 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
           .from("order_items")
           .select("id, order_id, product_id, product_name, sku, quantity, unit_price, total_price")
           .limit(100),
-        supabase.from("shipments").select("id, order_id, partner, awb, status, tracking_url").order("id", { ascending: false }).limit(12)
+        supabase.from("shipments").select("id, order_id, partner, awb, status, tracking_url").order("id", { ascending: false }).limit(12),
+        supabase.from("product_reviews").select("id, product_id, author, rating, comment, created_at").order("created_at", { ascending: false }).limit(250)
       ]);
 
-    const results = [settingsResult, categoriesResult, productsResult, offersResult, couponsResult, ordersResult, orderItemsResult, shipmentsResult];
+    const results = [settingsResult, categoriesResult, productsResult, offersResult, couponsResult, ordersResult, orderItemsResult, shipmentsResult, productReviewsResult];
     const firstError = results.find((result) => result.error)?.error;
 
     if (firstError) {
@@ -328,10 +325,7 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
         salePrice: item.sale_price,
         stock: item.stock,
         featured: item.featured,
-        rating: item.rating ?? 4.7,
-        reviewCount: item.review_count ?? 0,
         videoUrl: item.video_url ?? "",
-        reviews: Array.isArray(item.reviews) ? item.reviews : [],
         benefits: Array.isArray(item.benefits) ? item.benefits : []
       })),
       offers: (offersResult.data ?? []).map((item) => ({
@@ -387,6 +381,14 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
         status: item.status,
         trackingUrl: item.tracking_url
       })),
+      productReviews: (productReviewsResult.data ?? []).map((item) => ({
+        id: item.id,
+        productId: item.product_id,
+        author: item.author,
+        rating: item.rating,
+        comment: item.comment,
+        createdAt: item.created_at
+      })),
       source: "supabase"
     };
   } catch {
@@ -437,22 +439,6 @@ function ensureGallery(value: string[]) {
   return value.map((item) => item.trim()).filter(Boolean);
 }
 
-function ensureReviews(
-  value: {
-    author: string;
-    rating: number;
-    comment: string;
-  }[]
-) {
-  return value
-    .map((review) => ({
-      author: sanitizeText(review.author),
-      rating: sanitizeCurrency(review.rating),
-      comment: sanitizeText(review.comment)
-    }))
-    .filter((review) => review.author && review.comment);
-}
-
 function cloneLocalSnapshot(snapshot: CommerceSnapshot): Omit<CommerceSnapshot, "source"> {
   return {
     settings: snapshot.settings,
@@ -462,7 +448,8 @@ function cloneLocalSnapshot(snapshot: CommerceSnapshot): Omit<CommerceSnapshot, 
     coupons: snapshot.coupons,
     orders: snapshot.orders,
     orderItems: snapshot.orderItems,
-    shipments: snapshot.shipments
+    shipments: snapshot.shipments,
+    productReviews: snapshot.productReviews
   };
 }
 
@@ -490,10 +477,7 @@ export async function upsertProduct(input: ProductInput) {
     salePrice: sanitizeCurrency(input.salePrice),
     stock: sanitizeCurrency(input.stock),
     featured: Boolean(input.featured),
-    rating: Number.isFinite(input.rating) ? Math.max(0, Math.min(5, input.rating)) : 4.7,
-    reviewCount: sanitizeCurrency(input.reviewCount),
     videoUrl: input.videoUrl.trim(),
-    reviews: ensureReviews(input.reviews),
     benefits: ensureBenefits(input.benefits)
   } satisfies CommerceProduct;
 
@@ -515,10 +499,7 @@ export async function upsertProduct(input: ProductInput) {
       sale_price: payload.salePrice,
       stock: payload.stock,
       featured: payload.featured,
-      rating: payload.rating,
-      review_count: payload.reviewCount,
       video_url: payload.videoUrl || null,
-      reviews: payload.reviews,
       benefits: payload.benefits,
       active: true
     });
@@ -559,7 +540,58 @@ export async function deleteProduct(productId: string) {
   const local = cloneLocalSnapshot(snapshot);
   local.products = local.products.filter((item) => item.id !== productId);
   local.orderItems = local.orderItems.filter((item) => item.productId !== productId);
+  local.productReviews = local.productReviews.filter((item) => item.productId !== productId);
   await writeLocalSnapshot(local);
+}
+
+export async function createProductReview(input: {
+  productId: string;
+  author: string;
+  rating: number;
+  comment: string;
+}) {
+  const review: CommerceProductReview = {
+    id: crypto.randomUUID(),
+    productId: input.productId,
+    author: sanitizeText(input.author),
+    rating: Math.max(1, Math.min(5, Math.round(input.rating))),
+    comment: sanitizeText(input.comment),
+    createdAt: new Date().toISOString()
+  };
+
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    const { error } = await supabase.from("product_reviews").insert({
+      id: review.id,
+      product_id: review.productId,
+      author: review.author,
+      rating: review.rating,
+      comment: review.comment,
+      created_at: review.createdAt
+    });
+    if (error) {
+      throw new Error(error.message);
+    }
+    return review;
+  }
+
+  const snapshot = await loadCommerceSnapshot();
+  const local = cloneLocalSnapshot(snapshot);
+  local.productReviews.unshift(review);
+  await writeLocalSnapshot(local);
+  return review;
+}
+
+export function getProductReviews(snapshot: CommerceSnapshot, productId: string) {
+  const reviews = snapshot.productReviews.filter((review) => review.productId === productId);
+  const reviewCount = reviews.length;
+  const rating = reviewCount ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / reviewCount).toFixed(1)) : 0;
+
+  return {
+    reviews,
+    reviewCount,
+    rating
+  };
 }
 
 export async function upsertOffer(input: OfferInput) {

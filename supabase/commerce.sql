@@ -33,14 +33,20 @@ create table if not exists public.products (
   sale_price integer not null check (sale_price >= 0),
   stock integer not null default 0 check (stock >= 0),
   featured boolean not null default false,
-  rating numeric(2,1) not null default 4.7,
-  review_count integer not null default 0,
   video_url text,
-  reviews jsonb not null default '[]'::jsonb,
   benefits jsonb not null default '[]'::jsonb,
   active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
+);
+
+create table if not exists public.product_reviews (
+  id uuid primary key default gen_random_uuid(),
+  product_id uuid not null references public.products(id) on delete cascade,
+  author text not null,
+  rating integer not null check (rating between 1 and 5),
+  comment text not null,
+  created_at timestamptz not null default now()
 );
 
 create table if not exists public.offers (
@@ -123,3 +129,4 @@ create index if not exists products_featured_idx on public.products(featured);
 create index if not exists orders_created_at_idx on public.orders(created_at desc);
 create index if not exists orders_payment_status_idx on public.orders(payment_status);
 create index if not exists shipments_order_id_idx on public.shipments(order_id);
+create index if not exists product_reviews_product_id_idx on public.product_reviews(product_id);

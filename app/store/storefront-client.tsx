@@ -10,6 +10,7 @@ type StorefrontClientProps = {
   products: CommerceProduct[];
   categories: CommerceCategory[];
   settings: CommerceSettings;
+  reviewSummaryByProduct: Record<string, { rating: number; reviewCount: number }>;
 };
 
 const priceRanges = [
@@ -19,7 +20,7 @@ const priceRanges = [
   { label: "Rs. 2,000+", min: 2000, max: Number.MAX_SAFE_INTEGER }
 ];
 
-export function StorefrontClient({ products, categories, settings }: StorefrontClientProps) {
+export function StorefrontClient({ products, categories, settings, reviewSummaryByProduct }: StorefrontClientProps) {
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [priceFilter, setPriceFilter] = useState(priceRanges[0].label);
@@ -100,7 +101,10 @@ export function StorefrontClient({ products, categories, settings }: StorefrontC
           <p>{filteredProducts.length} products</p>
         </div>
         <div className="store-grid shopper-store-grid">
-          {filteredProducts.map((product) => (
+          {filteredProducts.map((product) => {
+            const reviewSummary = reviewSummaryByProduct[product.id] ?? { rating: 0, reviewCount: 0 };
+
+            return (
             <article className="store-card shopper-product-card" key={product.id}>
               <Link className="shopper-product-link" href={`/store/${product.slug}`}>
                 <div className="shopper-image-frame">
@@ -111,7 +115,7 @@ export function StorefrontClient({ products, categories, settings }: StorefrontC
                   <h3>{product.name}</h3>
                   <p className="shopper-description">{product.shortDescription}</p>
                   <p className="shopper-rating">
-                    {product.rating?.toFixed(1) ?? "4.7"} / 5 | {product.reviewCount ?? 0} reviews
+                    {reviewSummary.reviewCount ? reviewSummary.rating.toFixed(1) : "New"} / 5 | {reviewSummary.reviewCount} reviews
                   </p>
                   <div className="commerce-price-row">
                     <strong>{formatStoreCurrency(product.salePrice, settings)}</strong>
@@ -129,7 +133,8 @@ export function StorefrontClient({ products, categories, settings }: StorefrontC
                 </Link>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </section>
     </>

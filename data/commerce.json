@@ -75,21 +75,7 @@
       "salePrice": 1599,
       "stock": 24,
       "featured": true,
-      "rating": 4.8,
-      "reviewCount": 124,
       "videoUrl": "https://www.youtube.com/embed/4pKly2JojMw",
-      "reviews": [
-        {
-          "author": "Aarohi",
-          "rating": 5,
-          "comment": "Easy to include in my routine and it feels consistent with the wellness guidance."
-        },
-        {
-          "author": "Neha",
-          "rating": 4,
-          "comment": "The product positioning feels trustworthy and the kit is easy to understand."
-        }
-      ],
       "benefits": [
         "Structured routine support",
         "Pairs with yoga therapy plans",
@@ -115,21 +101,7 @@
       "salePrice": 1099,
       "stock": 36,
       "featured": true,
-      "rating": 4.7,
-      "reviewCount": 89,
       "videoUrl": "https://www.youtube.com/embed/inpok4MKVLM",
-      "reviews": [
-        {
-          "author": "Ritika",
-          "rating": 5,
-          "comment": "A strong fit with the evening meditation routine and the store guidance."
-        },
-        {
-          "author": "Pooja",
-          "rating": 4,
-          "comment": "Packaging and product story both feel premium."
-        }
-      ],
       "benefits": [
         "Cross-sells with evening programs",
         "Clear use case",
@@ -155,16 +127,7 @@
       "salePrice": 1299,
       "stock": 18,
       "featured": false,
-      "rating": 4.6,
-      "reviewCount": 61,
       "videoUrl": "https://www.youtube.com/embed/v7AYKMP6rOE",
-      "reviews": [
-        {
-          "author": "Megha",
-          "rating": 5,
-          "comment": "Good grip and simple to use for home sessions."
-        }
-      ],
       "benefits": [
         "Improves average order value",
         "Supports home classes",
@@ -190,16 +153,7 @@
       "salePrice": 899,
       "stock": 42,
       "featured": false,
-      "rating": 4.5,
-      "reviewCount": 47,
       "videoUrl": "https://www.youtube.com/embed/ZToicYcHIOU",
-      "reviews": [
-        {
-          "author": "Sunita",
-          "rating": 4,
-          "comment": "Clear value and easy to reorder."
-        }
-      ],
       "benefits": [
         "Retention-friendly SKU",
         "Lightweight for shipping",
@@ -225,16 +179,7 @@
       "salePrice": 699,
       "stock": 64,
       "featured": false,
-      "rating": 4.4,
-      "reviewCount": 38,
       "videoUrl": "https://www.youtube.com/embed/1ZYbU82GVz4",
-      "reviews": [
-        {
-          "author": "Komal",
-          "rating": 4,
-          "comment": "A simple add-on that works well with a wellness basket."
-        }
-      ],
       "benefits": [
         "Ideal checkout add-on",
         "Low shipping complexity",
@@ -260,26 +205,86 @@
       "salePrice": 2199,
       "stock": 10,
       "featured": true,
-      "rating": 4.9,
-      "reviewCount": 52,
       "videoUrl": "https://www.youtube.com/embed/N41s4rZWuxk",
-      "reviews": [
-        {
-          "author": "Meera",
-          "rating": 5,
-          "comment": "The product page explanation and care positioning felt thoughtful and reassuring."
-        },
-        {
-          "author": "Ishita",
-          "rating": 5,
-          "comment": "Looks premium and fits the prenatal collection well."
-        }
-      ],
       "benefits": [
         "Premium positioning",
         "High value bundle",
         "Strong program-store bridge"
       ]
+    }
+  ],
+  "productReviews": [
+    {
+      "id": "review-1",
+      "productId": "prod-herbal-balance",
+      "author": "Aarohi",
+      "rating": 5,
+      "comment": "Easy to include in my routine and it feels consistent with the wellness guidance.",
+      "createdAt": "2026-03-18T09:00:00.000Z"
+    },
+    {
+      "id": "review-2",
+      "productId": "prod-herbal-balance",
+      "author": "Neha",
+      "rating": 4,
+      "comment": "The product positioning feels trustworthy and the kit is easy to understand.",
+      "createdAt": "2026-03-19T12:00:00.000Z"
+    },
+    {
+      "id": "review-3",
+      "productId": "prod-herbal-calm",
+      "author": "Ritika",
+      "rating": 5,
+      "comment": "A strong fit with the evening meditation routine and the store guidance.",
+      "createdAt": "2026-03-20T08:30:00.000Z"
+    },
+    {
+      "id": "review-4",
+      "productId": "prod-herbal-calm",
+      "author": "Pooja",
+      "rating": 4,
+      "comment": "Packaging and product story both feel premium.",
+      "createdAt": "2026-03-21T15:30:00.000Z"
+    },
+    {
+      "id": "review-5",
+      "productId": "prod-accessory-mat",
+      "author": "Megha",
+      "rating": 5,
+      "comment": "Good grip and simple to use for home sessions.",
+      "createdAt": "2026-03-21T10:00:00.000Z"
+    },
+    {
+      "id": "review-6",
+      "productId": "prod-medicine-immunity",
+      "author": "Sunita",
+      "rating": 4,
+      "comment": "Clear value and easy to reorder.",
+      "createdAt": "2026-03-22T11:00:00.000Z"
+    },
+    {
+      "id": "review-7",
+      "productId": "prod-essentials-detox",
+      "author": "Komal",
+      "rating": 4,
+      "comment": "A simple add-on that works well with a wellness basket.",
+      "createdAt": "2026-03-22T16:00:00.000Z"
+    },
+    {
+      "id": "review-8",
+      "productId": "prod-essentials-prenatal",
+      "author": "Meera",
+      "rating": 5,
+      "comment": "The product page explanation and care positioning felt thoughtful and reassuring.",
+      "createdAt": "2026-03-23T09:00:00.000Z"
+    },
+    {
+      "id": "review-9",
+      "productId": "prod-essentials-prenatal",
+      "author": "Ishita",
+      "rating": 5,
+      "comment": "Looks premium and fits the prenatal collection well.",
+      "createdAt": "2026-03-23T13:00:00.000Z"
     }
   ],
   "offers": [

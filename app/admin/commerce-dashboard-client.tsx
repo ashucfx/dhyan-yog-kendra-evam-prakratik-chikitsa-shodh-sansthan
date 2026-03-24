@@ -27,10 +27,7 @@ const emptyProduct: ProductInput = {
   salePrice: 0,
   stock: 0,
   featured: false,
-  rating: 4.7,
-  reviewCount: 0,
   videoUrl: "",
-  reviews: [],
   benefits: []
 };
 
@@ -98,10 +95,7 @@ export function CommerceDashboardClient({ initialSnapshot }: CommerceDashboardCl
       salePrice: product.salePrice,
       stock: product.stock,
       featured: product.featured,
-      rating: product.rating ?? 4.7,
-      reviewCount: product.reviewCount ?? 0,
       videoUrl: product.videoUrl ?? "",
-      reviews: product.reviews ?? [],
       benefits: product.benefits
     });
   }
@@ -346,21 +340,6 @@ export function CommerceDashboardClient({ initialSnapshot }: CommerceDashboardCl
               onChange={(event) => setProductForm((current) => ({ ...current, stock: Number(event.target.value) }))}
             />
             <input
-              placeholder="Rating"
-              type="number"
-              step="0.1"
-              min="0"
-              max="5"
-              value={productForm.rating}
-              onChange={(event) => setProductForm((current) => ({ ...current, rating: Number(event.target.value) }))}
-            />
-            <input
-              placeholder="Review count"
-              type="number"
-              value={productForm.reviewCount}
-              onChange={(event) => setProductForm((current) => ({ ...current, reviewCount: Number(event.target.value) }))}
-            />
-            <input
               placeholder="Video URL"
               value={productForm.videoUrl}
               onChange={(event) => setProductForm((current) => ({ ...current, videoUrl: event.target.value }))}
@@ -392,27 +371,6 @@ export function CommerceDashboardClient({ initialSnapshot }: CommerceDashboardCl
               placeholder="Description"
               value={productForm.description}
               onChange={(event) => setProductForm((current) => ({ ...current, description: event.target.value }))}
-            />
-            <textarea
-              placeholder="Reviews one per line: Name|Rating|Comment"
-              value={productForm.reviews.map((review) => `${review.author}|${review.rating}|${review.comment}`).join("\n")}
-              onChange={(event) =>
-                setProductForm((current) => ({
-                  ...current,
-                  reviews: event.target.value
-                    .split("\n")
-                    .map((line) => line.trim())
-                    .filter(Boolean)
-                    .map((line) => {
-                      const [author = "", rating = "5", comment = ""] = line.split("|");
-                      return {
-                        author: author.trim(),
-                        rating: Number(rating.trim() || 5),
-                        comment: comment.trim()
-                      };
-                    })
-                }))
-              }
             />
           </div>
           <div className="admin-actions">
