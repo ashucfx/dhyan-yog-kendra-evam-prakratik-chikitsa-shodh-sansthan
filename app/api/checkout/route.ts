@@ -1,10 +1,16 @@
 import { createCommerceOrder } from "@/lib/commerce";
 import { createPayPalOrder, createRazorpayOrder } from "@/lib/commerce-integrations";
+import { getAuthenticatedUser } from "@/lib/auth-user";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
   try {
+    const user = await getAuthenticatedUser();
+    if (!user) {
+      return Response.json({ message: "Please sign in before checkout." }, { status: 401 });
+    }
+
     const payload = (await request.json()) as Parameters<typeof createCommerceOrder>[0];
 
     if (!payload.customerName || !payload.customerEmail || !payload.customerPhone || !payload.items?.length) {
@@ -15,7 +21,10 @@ export async function POST(request: Request) {
       return Response.json({ message: "Please enter a valid email address." }, { status: 400 });
     }
 
-    const result = await createCommerceOrder(payload);
+    const result = await createCommerceOrder({
+      ...payload,
+      userId: user.id
+    });
     const origin = new URL(request.url).origin;
 
     if (payload.paymentProvider === "Razorpay") {

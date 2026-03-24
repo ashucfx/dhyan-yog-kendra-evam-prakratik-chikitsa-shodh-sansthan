@@ -4,6 +4,7 @@ import { BrandSeal } from "./brand-seal";
 import { SocialIcon } from "./social-icon";
 import { CalendlyButton } from "./calendly";
 import { brand, footerDetails, footerLegal, footerPrograms, footerSocials } from "../content/site-data";
+import { getAuthenticatedUser } from "@/lib/auth-user";
 
 type SiteShellProps = {
   children: ReactNode;
@@ -18,7 +19,9 @@ const primaryNav = [
   { label: "Join", href: "/join" }
 ];
 
-export function SiteShell({ children }: SiteShellProps) {
+export async function SiteShell({ children }: SiteShellProps) {
+  const user = await getAuthenticatedUser();
+
   return (
     <main>
       <header className="site-header">
@@ -36,6 +39,8 @@ export function SiteShell({ children }: SiteShellProps) {
               {item.label}
             </Link>
           ))}
+          <Link href="/cart">Cart</Link>
+          <Link href={user ? "/account" : "/auth/sign-in"}>{user ? "Account" : "Sign In"}</Link>
         </nav>
 
         <CalendlyButton
@@ -60,6 +65,8 @@ export function SiteShell({ children }: SiteShellProps) {
                   {item.label}
                 </Link>
               ))}
+              <Link href="/cart">Cart</Link>
+              <Link href={user ? "/account" : "/auth/sign-in"}>{user ? "Account" : "Sign In"}</Link>
             </nav>
             <CalendlyButton
               className="button button-small mobile-menu-cta"

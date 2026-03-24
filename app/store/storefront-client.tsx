@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { CommerceCategory, CommerceProduct, CommerceSettings } from "@/lib/commerce";
 import { formatStoreCurrency, getStoreDiscountPercent, getStoreProductCategoryName } from "@/lib/commerce-ui";
+import { AddToCartButton } from "@/app/components/add-to-cart-button";
 
 type StorefrontClientProps = {
   products: CommerceProduct[];
@@ -128,9 +129,7 @@ export function StorefrontClient({ products, categories, settings, reviewSummary
                 <Link className="card-cta" href={`/store/${product.slug}`}>
                   View Details
                 </Link>
-                <Link className="button button-secondary button-small" href={`/checkout?product=${product.id}`}>
-                  Buy
-                </Link>
+                <AddToCartButton productId={product.id} checkoutHref={`/checkout?product=${product.id}`} compact />
               </div>
             </article>
             );

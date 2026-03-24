@@ -10,6 +10,29 @@ create table if not exists public.store_settings (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text not null,
+  full_name text,
+  phone text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.addresses (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  label text,
+  full_name text not null,
+  phone text not null,
+  line1 text not null,
+  city text not null,
+  state text not null,
+  postal_code text not null,
+  country text not null default 'India',
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.categories (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,
@@ -79,6 +102,7 @@ create table if not exists public.coupons (
 
 create table if not exists public.orders (
   id text primary key,
+  user_id uuid references auth.users(id) on delete set null,
   customer_name text not null,
   customer_email text not null,
   customer_phone text,
@@ -126,7 +150,9 @@ create table if not exists public.shipments (
 
 create index if not exists products_category_slug_idx on public.products(category_slug);
 create index if not exists products_featured_idx on public.products(featured);
+create index if not exists addresses_user_id_idx on public.addresses(user_id);
 create index if not exists orders_created_at_idx on public.orders(created_at desc);
+create index if not exists orders_user_id_idx on public.orders(user_id);
 create index if not exists orders_payment_status_idx on public.orders(payment_status);
 create index if not exists shipments_order_id_idx on public.shipments(order_id);
 create index if not exists product_reviews_product_id_idx on public.product_reviews(product_id);

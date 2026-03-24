@@ -1,21 +1,26 @@
 import { createProductReview, getProductReviews, loadCommerceSnapshot } from "@/lib/commerce";
+import { getAuthenticatedUser } from "@/lib/auth-user";
 
 export async function POST(request: Request) {
   try {
+    const user = await getAuthenticatedUser();
+    if (!user) {
+      return Response.json({ message: "Please sign in before posting a review." }, { status: 401 });
+    }
+
     const payload = (await request.json()) as {
       productId?: string;
-      author?: string;
       rating?: number;
       comment?: string;
     };
 
-    if (!payload.productId || !payload.author || !payload.comment || !payload.rating) {
-      return Response.json({ message: "Product, name, rating, and comment are required." }, { status: 400 });
+    if (!payload.productId || !payload.comment || !payload.rating) {
+      return Response.json({ message: "Product, rating, and comment are required." }, { status: 400 });
     }
 
     const review = await createProductReview({
       productId: payload.productId,
-      author: payload.author,
+      author: user.name || user.email,
       rating: payload.rating,
       comment: payload.comment
     });

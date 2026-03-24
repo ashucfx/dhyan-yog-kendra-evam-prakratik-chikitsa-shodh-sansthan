@@ -2489,6 +2489,89 @@ textarea:focus-visible {
   font-weight: 700;
 }
 
+.auth-shell {
+  min-height: 100vh;
+  padding: 2rem 1rem 4rem;
+}
+
+.auth-card {
+  max-width: 38rem;
+}
+
+.auth-form-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.auth-form-grid input {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 250, 243, 0.95);
+  color: var(--text);
+  font: inherit;
+}
+
+.cart-line {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.cart-thumb {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: rgba(255, 250, 243, 0.9);
+}
+
+.product-review-form {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.product-review-form input,
+.product-review-form select,
+.product-review-form textarea {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 250, 243, 0.95);
+  color: var(--text);
+  font: inherit;
+}
+
+.product-review-form textarea {
+  min-height: 8rem;
+}
+
+.product-main-media iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.product-video-thumb {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(143, 37, 27, 0.12), rgba(45, 121, 119, 0.16));
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
+.active-thumb {
+  outline: 3px solid rgba(214, 167, 110, 0.72);
+  outline-offset: 3px;
+}
+
 @media (max-width: 1120px) {
   .visual-program-grid,
   .store-grid,

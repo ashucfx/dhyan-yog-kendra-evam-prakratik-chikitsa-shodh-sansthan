@@ -4,11 +4,15 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { CommerceCoupon, CommerceProduct, CommerceSettings } from "@/lib/commerce";
 import { formatStoreCurrency } from "@/lib/commerce-ui";
+import { useCart } from "@/app/components/cart-provider";
 
 type CheckoutClientProps = {
   products: CommerceProduct[];
   coupons: CommerceCoupon[];
   settings: CommerceSettings;
+  initialName: string;
+  initialEmail: string;
+  initialPhone: string;
 };
 
 type RazorpayWindow = Window & {
@@ -31,17 +35,22 @@ async function loadRazorpayScript() {
   });
 }
 
-export function CheckoutClient({ products, coupons, settings }: CheckoutClientProps) {
+export function CheckoutClient({
+  products,
+  coupons,
+  settings,
+  initialName,
+  initialEmail,
+  initialPhone
+}: CheckoutClientProps) {
   const searchParams = useSearchParams();
+  const { items, addItem, clearCart } = useCart();
   const selectedProductId = searchParams.get("product");
   const paypalInternalOrder = searchParams.get("internal_order");
   const paypalToken = searchParams.get("token");
-  const [quantities, setQuantities] = useState<Record<string, number>>(() =>
-    Object.fromEntries(products.map((product) => [product.id, product.id === selectedProductId ? 1 : 0]))
-  );
-  const [customerName, setCustomerName] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerName, setCustomerName] = useState(initialName);
+  const [customerEmail, setCustomerEmail] = useState(initialEmail);
+  const [customerPhone, setCustomerPhone] = useState(initialPhone);
   const [line1, setLine1] = useState("");
   const [city, setCity] = useState("");
   const [stateName, setStateName] = useState("");
@@ -51,6 +60,12 @@ export function CheckoutClient({ products, coupons, settings }: CheckoutClientPr
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"success" | "error">("success");
+
+  useEffect(() => {
+    if (selectedProductId && !items.find((item) => item.productId === selectedProductId)) {
+      addItem(selectedProductId, 1);
+    }
+  }, [addItem, items, selectedProductId]);
 
   useEffect(() => {
     async function capturePayPalReturn() {
@@ -72,6 +87,7 @@ export function CheckoutClient({ products, coupons, settings }: CheckoutClientPr
         if (!response.ok) {
           throw new Error(result.message || "Unable to confirm PayPal payment.");
         }
+        clearCart();
         setMessageTone("success");
         setMessage(result.message || "PayPal payment confirmed.");
       } catch (error) {
@@ -83,17 +99,17 @@ export function CheckoutClient({ products, coupons, settings }: CheckoutClientPr
     }
 
     void capturePayPalReturn();
-  }, [paypalInternalOrder, paypalToken]);
+  }, [clearCart, paypalInternalOrder, paypalToken]);
 
   const selectedItems = useMemo(
     () =>
-      products
-        .map((product) => ({
-          product,
-          quantity: quantities[product.id] || 0
-        }))
-        .filter((item) => item.quantity > 0),
-    [products, quantities]
+      items
+        .map((item) => {
+          const product = products.find((entry) => entry.id === item.productId);
+          return product ? { product, quantity: item.quantity } : null;
+        })
+        .filter((item): item is { product: CommerceProduct; quantity: number } => Boolean(item)),
+    [items, products]
   );
 
   const subtotal = selectedItems.reduce((sum, item) => sum + item.product.salePrice * item.quantity, 0);
@@ -110,7 +126,7 @@ export function CheckoutClient({ products, coupons, settings }: CheckoutClientPr
   async function handleCheckout() {
     if (!selectedItems.length) {
       setMessageTone("error");
-      setMessage("Select at least one product before checkout.");
+      setMessage("Add products to your cart before checkout.");
       return;
     }
 
@@ -147,6 +163,11 @@ export function CheckoutClient({ products, coupons, settings }: CheckoutClientPr
         gateway?: Record<string, unknown>;
       };
 
+      if (response.status === 401) {
+        window.location.href = "/auth/sign-in?redirectTo=/checkout";
+        return;
+      }
+
       if (!response.ok || !result.order || !result.gateway) {
         throw new Error(result.message || "Unable to create order.");
       }
@@ -162,6 +183,7 @@ export function CheckoutClient({ products, coupons, settings }: CheckoutClientPr
           if (!confirm.ok) {
             throw new Error(confirmResult.message || "Unable to confirm mock payment.");
           }
+          clearCart();
           setMessageTone("success");
           setMessage("Order placed successfully. Payment was confirmed in demo mode.");
           return;
@@ -206,6 +228,7 @@ export function CheckoutClient({ products, coupons, settings }: CheckoutClientPr
             if (!verifyResponse.ok) {
               throw new Error(verifyResult.message || "Unable to verify payment.");
             }
+            clearCart();
             setMessageTone("success");
             setMessage("Payment completed successfully.");
           },
@@ -229,6 +252,7 @@ export function CheckoutClient({ products, coupons, settings }: CheckoutClientPr
         if (!confirm.ok) {
           throw new Error(confirmResult.message || "Unable to confirm demo payment.");
         }
+        clearCart();
         setMessageTone("success");
         setMessage("Order placed successfully. Payment was confirmed in demo mode.");
         return;
@@ -248,35 +272,27 @@ export function CheckoutClient({ products, coupons, settings }: CheckoutClientPr
       <div className="commerce-panel">
         <div className="section-heading narrow">
           <p className="eyebrow">Checkout</p>
-          <h1 className="page-title">Review your products and complete your order.</h1>
+          <h1 className="page-title">Review your cart and complete your order.</h1>
         </div>
 
         <div className="commerce-list">
-          {products.map((product) => (
-            <div className="commerce-list-item" key={product.id}>
-              <div>
-                <strong>{product.name}</strong>
-                <p>{formatStoreCurrency(product.salePrice, settings)}</p>
+          {selectedItems.length ? (
+            selectedItems.map((item) => (
+              <div className="commerce-list-item" key={item.product.id}>
+                <div>
+                  <strong>{item.product.name}</strong>
+                  <p>
+                    {formatStoreCurrency(item.product.salePrice, settings)} x {item.quantity}
+                  </p>
+                </div>
+                <div className="commerce-list-side">
+                  <span>{formatStoreCurrency(item.product.salePrice * item.quantity, settings)}</span>
+                </div>
               </div>
-              <div className="commerce-list-side">
-                <button
-                  className="button button-secondary button-small"
-                  type="button"
-                  onClick={() => setQuantities((current) => ({ ...current, [product.id]: Math.max(0, (current[product.id] || 0) - 1) }))}
-                >
-                  -
-                </button>
-                <span className="entity-chip entity-chip-dark">{quantities[product.id] || 0}</span>
-                <button
-                  className="button button-secondary button-small"
-                  type="button"
-                  onClick={() => setQuantities((current) => ({ ...current, [product.id]: (current[product.id] || 0) + 1 }))}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="admin-copy">Your cart is empty.</p>
+          )}
         </div>
       </div>
 

@@ -78,6 +78,7 @@ export type CommerceCoupon = {
 
 export type CommerceOrder = {
   id: string;
+  userId?: string;
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
@@ -178,6 +179,7 @@ export type CheckoutItemInput = {
 };
 
 export type CreateOrderInput = {
+  userId?: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -251,7 +253,7 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
         supabase
           .from("orders")
           .select(
-            "id, customer_name, customer_email, status, fulfillment_status, payment_provider, payment_status, subtotal, discount, shipping, total, created_at"
+            "id, user_id, customer_name, customer_email, status, fulfillment_status, payment_provider, payment_status, subtotal, discount, shipping, total, created_at"
           )
           .order("created_at", { ascending: false })
           .limit(12),
@@ -348,6 +350,7 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
       })),
       orders: (ordersResult.data ?? []).map((item) => ({
         id: item.id,
+        userId: item.user_id ?? undefined,
         customerName: item.customer_name,
         customerEmail: item.customer_email,
         customerPhone: undefined,
@@ -742,6 +745,7 @@ export async function createCommerceOrder(input: CreateOrderInput) {
 
   const order: CommerceOrder = {
     id: orderId,
+    userId: input.userId,
     customerName: sanitizeText(input.customerName),
     customerEmail: input.customerEmail.trim().toLowerCase(),
     customerPhone: input.customerPhone.trim(),
@@ -773,6 +777,7 @@ export async function createCommerceOrder(input: CreateOrderInput) {
   if (supabase) {
     const { error: orderError } = await supabase.from("orders").insert({
       id: order.id,
+      user_id: order.userId ?? null,
       customer_name: order.customerName,
       customer_email: order.customerEmail,
       customer_phone: input.customerPhone.trim(),
@@ -911,6 +916,11 @@ export async function createShipmentRecord(orderId: string, partner: string, awb
   local.shipments.unshift(shipment);
   await writeLocalSnapshot(local);
   return shipment;
+}
+
+export async function listOrdersForUser(userId: string) {
+  const snapshot = await loadCommerceSnapshot();
+  return snapshot.orders.filter((order) => order.userId === userId).sort((left, right) => right.createdAt.localeCompare(left.createdAt));
 }
 
 export function formatCurrency(amount: number, settings: CommerceSettings) {

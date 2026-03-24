@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { CommerceProduct, CommerceProductReview, CommerceSettings } from "@/lib/commerce";
 import { formatStoreCurrency, getStoreDiscountPercent } from "@/lib/commerce-ui";
+import { AddToCartButton } from "@/app/components/add-to-cart-button";
 
 type ProductDetailClientProps = {
   product: CommerceProduct;
@@ -37,7 +38,6 @@ export function ProductDetailClient({
   const [reviews, setReviews] = useState(initialReviews);
   const [rating, setRating] = useState(initialRating);
   const [reviewCount, setReviewCount] = useState(initialReviewCount);
-  const [author, setAuthor] = useState("");
   const [score, setScore] = useState(5);
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
@@ -56,7 +56,6 @@ export function ProductDetailClient({
         },
         body: JSON.stringify({
           productId: product.id,
-          author,
           rating: score,
           comment
         })
@@ -79,7 +78,6 @@ export function ProductDetailClient({
       setReviews(result.summary.reviews);
       setRating(result.summary.rating);
       setReviewCount(result.summary.reviewCount);
-      setAuthor("");
       setScore(5);
       setComment("");
       setMessageTone("success");
@@ -149,9 +147,7 @@ export function ProductDetailClient({
             ))}
           </div>
           <div className="product-cta-row">
-            <Link className="button" href={`/checkout?product=${product.id}`}>
-              Buy Now
-            </Link>
+            <AddToCartButton productId={product.id} checkoutHref={`/checkout?product=${product.id}`} />
             <Link className="button button-secondary" href="/store">
               Back to Store
             </Link>
@@ -190,7 +186,6 @@ export function ProductDetailClient({
 
           <div className="product-review-form">
             <h3>Add your review</h3>
-            <input placeholder="Your name" value={author} onChange={(event) => setAuthor(event.target.value)} />
             <select value={score} onChange={(event) => setScore(Number(event.target.value))}>
               <option value={5}>5</option>
               <option value={4}>4</option>
