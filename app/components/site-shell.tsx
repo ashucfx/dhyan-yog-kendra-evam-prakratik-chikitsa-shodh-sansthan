@@ -5,12 +5,13 @@ import { SocialIcon } from "./social-icon";
 import { CalendlyButton } from "./calendly";
 import { brand, footerDetails, footerLegal, footerPrograms, footerSocials } from "../content/site-data";
 import { getAuthenticatedUser } from "@/lib/auth-user";
+import { SiteNavigation, MobileNavigation } from "./site-navigation";
 
 type SiteShellProps = {
   children: ReactNode;
 };
 
-const primaryNav = [
+const footerNav = [
   { label: "About", href: "/" },
   { label: "Programs", href: "/programs" },
   { label: "Batches", href: "/batches" },
@@ -33,48 +34,34 @@ export async function SiteShell({ children }: SiteShellProps) {
           </span>
         </Link>
 
-        <nav className="main-nav" aria-label="Primary">
-          {primaryNav.map((item) => (
-            <Link key={item.label} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
-          <Link href="/cart">Cart</Link>
-          <Link href={user ? "/account" : "/auth/sign-in"}>{user ? "Account" : "Sign In"}</Link>
-        </nav>
+        <SiteNavigation user={user} />
 
-        <CalendlyButton
-          className="button button-small desktop-header-cta"
-          label="Book Your Free Consultation"
-          source="header_cta"
-        />
+        <div className="header-actions">
+          <CalendlyButton
+            className="button button-small desktop-header-cta"
+            label="Consultation"
+            source="header_cta"
+          />
 
-        <details className="mobile-menu">
-          <summary className="mobile-menu-trigger" aria-label="Open navigation menu">
-            <span className="mobile-menu-icon" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </span>
-            <span>Menu</span>
-          </summary>
-          <div className="mobile-menu-panel">
-            <nav className="mobile-nav" aria-label="Mobile primary">
-              {primaryNav.map((item) => (
-                <Link key={item.label} href={item.href}>
-                  {item.label}
-                </Link>
-              ))}
-              <Link href="/cart">Cart</Link>
-              <Link href={user ? "/account" : "/auth/sign-in"}>{user ? "Account" : "Sign In"}</Link>
-            </nav>
-            <CalendlyButton
-              className="button button-small mobile-menu-cta"
-              label="Book Your Free Consultation"
-              source="mobile_menu_cta"
-            />
-          </div>
-        </details>
+          <details className="mobile-menu">
+            <summary className="mobile-menu-trigger" aria-label="Open navigation menu">
+              <span className="mobile-menu-icon" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </span>
+              <span>Menu</span>
+            </summary>
+            <div className="mobile-menu-panel">
+              <MobileNavigation user={user} />
+              <CalendlyButton
+                className="button button-small mobile-menu-cta"
+                label="Book Your Free Consultation"
+                source="mobile_menu_cta"
+              />
+            </div>
+          </details>
+        </div>
       </header>
 
       {children}
@@ -133,7 +120,7 @@ export async function SiteShell({ children }: SiteShellProps) {
             <div className="footer-side">
               <div className="footer-column">
                 <p className="footer-title">Pages</p>
-                {primaryNav.slice(1).map((item) => (
+                {footerNav.map((item) => (
                   <Link key={item.label} href={item.href}>
                     {item.label}
                   </Link>
