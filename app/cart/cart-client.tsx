@@ -14,7 +14,9 @@ export function CartClient({ products, settings }: { products: CommerceProduct[]
     () =>
       items
         .map((item) => {
-          const product = products.find((entry) => entry.id === item.productId);
+          const product =
+            products.find((entry) => entry.id === item.productId) ??
+            products.find((entry) => entry.slug === item.productId);
           return product ? { product, quantity: item.quantity } : null;
         })
         .filter((item): item is { product: CommerceProduct; quantity: number } => Boolean(item)),
@@ -31,29 +33,32 @@ export function CartClient({ products, settings }: { products: CommerceProduct[]
           <h1 className="page-title">Review the products you want to buy.</h1>
         </div>
 
+        {!authenticated && !loading ? (
+          <p className="guest-cart-hint admin-copy">
+            You are browsing as a guest.{" "}
+            <Link className="inline-link" href="/auth/sign-in?redirectTo=/cart">
+              Sign in
+            </Link>{" "}
+            to sync this cart across devices.
+          </p>
+        ) : null}
+
         <div className="commerce-list">
           {loading ? (
             <p className="admin-copy">Loading your cart...</p>
-          ) : !authenticated ? (
-            <div className="commerce-empty-state">
-              <p className="admin-copy">Sign in to save products to your cart across devices.</p>
-              <Link className="button button-small" href="/auth/sign-in?redirectTo=/cart">
-                Sign In to Continue
-              </Link>
-            </div>
           ) : cartItems.length ? (
             cartItems.map(({ product, quantity }) => (
               <div className="commerce-list-item" key={product.id}>
                 <div className="cart-line">
                   <div className="cart-thumb">
-                    <Image src={product.image} alt={product.name} fill className="product-image" />
+                    <Image src={product.image} alt={product.name} fill className="product-image" sizes="80px" />
                   </div>
                   <div>
                     <strong>{product.name}</strong>
                     <p>{formatStoreCurrency(product.salePrice, settings)}</p>
                   </div>
                 </div>
-                <div className="commerce-list-side">
+                <div className="commerce-list-side cart-line-actions">
                   <button className="button button-secondary button-small" type="button" onClick={() => void updateQuantity(product.id, quantity - 1)}>
                     -
                   </button>
@@ -82,7 +87,7 @@ export function CartClient({ products, settings }: { products: CommerceProduct[]
           <span className="status-pill status-neutral">{cartItems.length} products</span>
         </div>
         <Link className="button" href={authenticated ? "/checkout" : "/auth/sign-in?redirectTo=/checkout"}>
-          Proceed to Checkout
+          {authenticated ? "Proceed to Checkout" : "Sign in to Checkout"}
         </Link>
       </div>
     </section>

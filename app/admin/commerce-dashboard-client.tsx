@@ -645,6 +645,7 @@ export function CommerceDashboardClient({ initialSnapshot }: CommerceDashboardCl
                   disabled={busyAction === `fulfillment-${order.id}`}
                 >
                   <option value="awaiting_payment">Awaiting payment</option>
+                  <option value="processing">Processing</option>
                   <option value="packed">Packed</option>
                   <option value="pickup_scheduled">Pickup scheduled</option>
                   <option value="shipped">Shipped</option>

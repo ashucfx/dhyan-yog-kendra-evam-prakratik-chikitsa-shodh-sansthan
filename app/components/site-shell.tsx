@@ -38,9 +38,10 @@ export async function SiteShell({ children }: SiteShellProps) {
 
         <div className="header-actions">
           <CalendlyButton
-            className="button button-small desktop-header-cta"
-            label="Consultation"
+            className="button button-small desktop-header-cta pulse-cta"
+            label="Start Your Journey"
             source="header_cta"
+            mode="popup"
           />
 
           <details className="mobile-menu">
@@ -58,6 +59,7 @@ export async function SiteShell({ children }: SiteShellProps) {
                 className="button button-small mobile-menu-cta"
                 label="Book Your Free Consultation"
                 source="mobile_menu_cta"
+                mode="popup"
               />
             </div>
           </details>
@@ -67,11 +69,11 @@ export async function SiteShell({ children }: SiteShellProps) {
       {children}
 
       <div className="mobile-cta">
-        <CalendlyButton className="button" label="Book a Free Session" source="mobile_sticky_cta" />
+        <CalendlyButton className="button" label="Book a Free Session" source="mobile_sticky_cta" mode="popup" />
       </div>
 
       <div className="floating-cta">
-        <CalendlyButton className="button button-floating" label="Book a Free Session" source="floating_cta" />
+        <CalendlyButton className="button button-floating" label="Book a Free Session" source="floating_cta" mode="popup" />
       </div>
 
       <footer className="site-footer footer-shell">

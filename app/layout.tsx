@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "./components/cart-provider";
+import { CalendlyAssets } from "./components/calendly";
 
 export const metadata: Metadata = {
   title: "Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan | Dhyan Yog Kendra Evam Prakratik Chikitsa Shodh Sansthan",
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <CalendlyAssets />
         <CartProvider>{children}</CartProvider>
       </body>
     </html>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { isAdminAuthenticated, isAdminKeyConfigured } from "@/lib/admin-auth";
-import { formatCurrency, getCommerceOverview, loadCommerceSnapshot } from "@/lib/commerce";
+import { formatCurrency, getCommerceOverview, listCustomerProfiles, loadCommerceSnapshot } from "@/lib/commerce";
 import { CommerceDashboardClient } from "./commerce-dashboard-client";
 
 function getStatusTone(status: string) {
@@ -61,6 +61,7 @@ export default async function AdminCommercePage({
 
   const snapshot = await loadCommerceSnapshot();
   const overview = getCommerceOverview(snapshot);
+  const customers = await listCustomerProfiles();
   const featuredProducts = snapshot.products.filter((product) => product.featured).slice(0, 4);
   const latestOrders = snapshot.orders.slice(0, 5);
   const logisticsQueue = snapshot.shipments.slice(0, 5);
@@ -94,6 +95,16 @@ export default async function AdminCommercePage({
             <p className="admin-kicker">Captured revenue</p>
             <strong>{formatCurrency(overview.revenue, snapshot.settings)}</strong>
             <span>Based on paid orders already marked captured.</span>
+          </article>
+          <article className="admin-insight-card">
+            <p className="admin-kicker">Orders</p>
+            <strong>{overview.totalOrders}</strong>
+            <span>Total orders in the connected data source.</span>
+          </article>
+          <article className="admin-insight-card">
+            <p className="admin-kicker">Registered customers</p>
+            <strong>{customers.length}</strong>
+            <span>Profiles synced from Supabase (empty if using local data only).</span>
           </article>
           <article className="admin-insight-card">
             <p className="admin-kicker">Live catalog</p>
@@ -228,6 +239,37 @@ export default async function AdminCommercePage({
         </section>
 
         <section className="commerce-admin-panels">
+          <article className="commerce-panel">
+            <div className="commerce-panel-heading">
+              <div>
+                <p className="admin-kicker">Customers</p>
+                <h2>Registered accounts</h2>
+              </div>
+            </div>
+            <div className="commerce-list">
+              {customers.length ? (
+                customers.slice(0, 20).map((customer) => (
+                  <div className="commerce-list-item" key={customer.id}>
+                    <div>
+                      <strong>{customer.fullName || customer.email}</strong>
+                      <p>
+                        {customer.email}
+                        {customer.phone ? ` • ${customer.phone}` : ""}
+                      </p>
+                    </div>
+                    <div className="commerce-list-side">
+                      <span className="status-pill status-neutral">{new Date(customer.createdAt).toLocaleDateString("en-IN")}</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="admin-copy">
+                  No customer profiles returned. With Supabase connected, profiles appear after users sign up or place orders.
+                </p>
+              )}
+            </div>
+          </article>
+
           <article className="commerce-panel">
             <div className="commerce-panel-heading">
               <div>

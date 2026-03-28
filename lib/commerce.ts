@@ -324,11 +324,11 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
             "id, user_id, customer_name, customer_email, customer_phone, status, fulfillment_status, payment_provider, payment_status, subtotal, discount, shipping, total, coupon_code, shipping_address, created_at"
           )
           .order("created_at", { ascending: false })
-          .limit(12),
+          .limit(800),
         supabase
           .from("order_items")
           .select("id, order_id, product_id, product_name, sku, quantity, unit_price, total_price")
-          .limit(100),
+          .limit(5000),
         supabase.from("shipments").select("id, order_id, partner, awb, status, tracking_url").order("id", { ascending: false }).limit(12),
         supabase.from("product_reviews").select("id, product_id, author, rating, comment, created_at").order("created_at", { ascending: false }).limit(250)
       ]);
@@ -894,6 +894,14 @@ export async function createCommerceOrder(input: CreateOrderInput) {
       throw new Error(itemsError.message);
     }
 
+    for (const line of matchedItems) {
+      const nextStock = Math.max(0, line.product.stock - line.quantity);
+      const { error: stockError } = await supabase.from("products").update({ stock: nextStock, updated_at: new Date().toISOString() }).eq("id", line.product.id);
+      if (stockError) {
+        throw new Error(stockError.message);
+      }
+    }
+
     return { order, orderItems, coupon };
   }
 
@@ -917,13 +925,13 @@ export async function createCommerceOrder(input: CreateOrderInput) {
 export async function updateOrderPaymentStatus(orderId: string, paymentStatus: string, status: string) {
   const supabase = getSupabaseClient();
   if (supabase) {
-    const { error } = await supabase
-      .from("orders")
-      .update({
-        payment_status: paymentStatus,
-        status
-      })
-      .eq("id", orderId);
+    const paid = status === "paid" || paymentStatus === "captured";
+    const { error } = await supabase.from("orders").update({
+      payment_status: paymentStatus,
+      status,
+      updated_at: new Date().toISOString(),
+      ...(paid ? { fulfillment_status: "processing" } : {})
+    }).eq("id", orderId);
     if (error) {
       throw new Error(error.message);
     }
@@ -932,12 +940,14 @@ export async function updateOrderPaymentStatus(orderId: string, paymentStatus: s
 
   const snapshot = await loadCommerceSnapshot();
   const local = cloneLocalSnapshot(snapshot);
+  const paid = status === "paid" || paymentStatus === "captured";
   local.orders = local.orders.map((order) =>
     order.id === orderId
       ? {
           ...order,
           paymentStatus,
-          status
+          status,
+          fulfillmentStatus: paid ? "processing" : order.fulfillmentStatus
         }
       : order
   );
@@ -1285,12 +1295,26 @@ export async function setCartItemQuantity(userId: string, productId: string, qua
   }
 
   if (supabase) {
+    let resolvedId = productId;
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId);
+    
+    if (!isUuid) {
+      const { data: prod } = await supabase
+        .from("products")
+        .select("id")
+        .eq("slug", productId)
+        .single();
+      if (prod) {
+        resolvedId = prod.id;
+      }
+    }
+
     const { data, error } = await supabase
       .from("cart_items")
       .upsert(
         {
           user_id: userId,
-          product_id: productId,
+          product_id: resolvedId,
           quantity: normalizedQuantity,
           updated_at: timestamp
         },
@@ -1339,7 +1363,15 @@ export async function setCartItemQuantity(userId: string, productId: string, qua
 export async function removeCartItem(userId: string, productId: string) {
   const supabase = getSupabaseClient();
   if (supabase) {
-    const { error } = await supabase.from("cart_items").delete().eq("user_id", userId).eq("product_id", productId);
+    let resolvedId = productId;
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId);
+    if (!isUuid) {
+      const { data: prod } = await supabase.from("products").select("id").eq("slug", productId).maybeSingle();
+      if (prod) {
+        resolvedId = prod.id;
+      }
+    }
+    const { error } = await supabase.from("cart_items").delete().eq("user_id", userId).eq("product_id", resolvedId);
     if (error) {
       throw new Error(error.message);
     }
@@ -1403,6 +1435,7 @@ export function getDiscountPercent(product: CommerceProduct) {
 export function getCommerceOverview(snapshot: CommerceSnapshot) {
   const paidOrders = snapshot.orders.filter((order) => order.paymentStatus === "captured");
   const revenue = paidOrders.reduce((sum, order) => sum + order.total, 0);
+  const totalOrders = snapshot.orders.length;
   const activeProducts = snapshot.products.filter((product) => product.stock > 0).length;
   const lowStockProducts = snapshot.products.filter((product) => product.stock > 0 && product.stock <= 12).length;
   const activeOffers = snapshot.offers.filter((offer) => offer.active).length;
@@ -1411,10 +1444,44 @@ export function getCommerceOverview(snapshot: CommerceSnapshot) {
 
   return {
     revenue,
+    totalOrders,
     activeProducts,
     lowStockProducts,
     activeOffers,
     activeCoupons,
     activeShipments
   };
+}
+
+export type CommerceCustomerSummary = {
+  id: string;
+  email: string;
+  fullName: string;
+  phone: string;
+  createdAt: string;
+};
+
+export async function listCustomerProfiles(): Promise<CommerceCustomerSummary[]> {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, email, full_name, phone, created_at")
+    .order("created_at", { ascending: false })
+    .limit(500);
+
+  if (error) {
+    return [];
+  }
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    email: row.email ?? "",
+    fullName: row.full_name ?? "",
+    phone: row.phone ?? "",
+    createdAt: row.created_at
+  }));
 }

@@ -135,7 +135,9 @@ export function CheckoutClient({
     () =>
       items
         .map((item) => {
-          const product = products.find((entry) => entry.id === item.productId);
+          const product =
+            products.find((entry) => entry.id === item.productId) ??
+            products.find((entry) => entry.slug === item.productId);
           return product ? { product, quantity: item.quantity } : null;
         })
         .filter((item): item is { product: CommerceProduct; quantity: number } => Boolean(item)),
