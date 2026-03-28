@@ -102,8 +102,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         // Clear local storage and refresh the official cart
         localStorage.removeItem("dhyan_guest_cart");
         await refreshCart();
-      } catch (err) {
-        console.error("Failed to sync guest cart:", err);
+      } catch {
+        // Guest cart merge failed; user can retry by refreshing after sign-in.
       }
     };
 
