@@ -86,7 +86,7 @@ main {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 65;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -278,55 +278,221 @@ h3 {
 .mobile-menu {
   display: none;
   position: relative;
-}
-
-.mobile-menu summary {
-  list-style: none;
-}
-
-.mobile-menu summary::-webkit-details-marker {
-  display: none;
+  z-index: 30;
 }
 
 .mobile-menu-trigger {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.62rem 0.9rem;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  min-height: 48px;
   border-radius: 999px;
-  border: 1px solid rgba(122, 31, 23, 0.24);
-  background: rgba(255, 248, 239, 0.95);
+  border: 1px solid rgba(122, 31, 23, 0.2);
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(250, 241, 230, 0.92));
   color: var(--accent-dark);
   font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
   cursor: pointer;
+  box-shadow: 0 4px 14px rgba(89, 20, 15, 0.08);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.mobile-menu-trigger:hover {
+  border-color: rgba(143, 37, 27, 0.35);
+  box-shadow: 0 8px 22px rgba(89, 20, 15, 0.12);
+}
+
+.mobile-menu-trigger-active {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(143, 37, 27, 0.28);
+}
+
+.mobile-menu-trigger-label {
+  font-size: 0.88rem;
 }
 
 .mobile-menu-icon {
-  display: grid;
-  gap: 0.22rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 1.25rem;
+  height: 1rem;
 }
 
 .mobile-menu-icon span {
-  width: 1rem;
+  display: block;
+  width: 100%;
   height: 2px;
   border-radius: 999px;
   background: currentColor;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+  transform-origin: center;
 }
 
-.mobile-menu-panel {
-  position: absolute;
+.mobile-menu-icon-open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.mobile-menu-icon-open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.mobile-menu-icon-open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.mobile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(52, 27, 22, 0.42);
+  backdrop-filter: blur(4px);
+  animation: drawer-backdrop-in 0.22s ease forwards;
+}
+
+@keyframes drawer-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mobile-drawer-panel {
+  position: fixed;
+  top: 0;
   right: 0;
-  top: calc(100% + 0.5rem);
-  z-index: 25;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 20rem);
+  max-width: 100vw;
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-left: 1px solid rgba(103, 48, 33, 0.12);
+  border-radius: 0;
+  background:
+    linear-gradient(165deg, rgba(255, 252, 248, 0.99) 0%, rgba(248, 239, 228, 0.97) 55%, rgba(242, 232, 218, 0.95) 100%);
+  box-shadow: -12px 0 48px rgba(52, 27, 22, 0.18);
+  animation: drawer-slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes drawer-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0.92;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.mobile-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1rem 1rem 1.15rem;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.mobile-drawer-title {
+  margin: 0;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.mobile-drawer-close {
   display: grid;
-  gap: 0.7rem;
-  width: min(320px, calc(100vw - 1.5rem));
-  padding: 1.25rem;
-  border-radius: 1.5rem;
-  border: 1px solid rgba(122, 31, 23, 0.18);
-  background: rgba(255, 248, 239, 0.98);
-  box-shadow: 0 24px 60px rgba(68, 28, 20, 0.28);
-  backdrop-filter: blur(14px);
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--accent-dark);
+  font-size: 1.65rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.mobile-drawer-close:hover {
+  background: rgba(214, 167, 110, 0.22);
+}
+
+.mobile-drawer-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.75rem 0.85rem 1.5rem;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mobile-drawer-cta {
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.mobile-drawer-cta .button {
+  width: 100%;
+  justify-content: center;
+}
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mobile-nav > a {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0.65rem 0.85rem;
+  border-radius: 14px;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.01em;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.mobile-nav > a:hover,
+.mobile-nav > a:focus-visible {
+  background: rgba(255, 255, 255, 0.65);
+  outline: none;
+}
+
+.mobile-nav > a.active-link {
+  background: rgba(143, 37, 27, 0.1);
+  color: var(--accent);
+}
+
+.mobile-nav-commerce {
+  margin-top: 0.15rem;
 }
 
 .nav-primary {
@@ -3065,4 +3231,152 @@ textarea:focus-visible {
   flex-wrap: wrap;
   gap: 0.35rem;
   justify-content: flex-end;
+}
+
+.account-dashboard-inner {
+  max-width: 1120px;
+}
+
+.account-dashboard .admin-header {
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(103, 48, 33, 0.1);
+}
+
+.account-dashboard .admin-header h1 {
+  margin: 0.25rem 0 0.35rem;
+  font-size: clamp(1.35rem, 4.5vw, 2.35rem);
+  line-height: 1.18;
+  word-break: break-word;
+}
+
+.account-dashboard .admin-actions {
+  width: 100%;
+}
+
+@media (min-width: 520px) {
+  .account-dashboard .admin-actions {
+    width: auto;
+  }
+}
+
+.account-detail-grid {
+  display: grid;
+  gap: 1.35rem;
+  width: 100%;
+}
+
+.account-detail-grid .commerce-panel-heading {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.account-detail-grid .commerce-panel-heading .button {
+  flex-shrink: 0;
+}
+
+.account-detail-grid .commerce-list-item {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.85rem;
+  padding: 1rem 1.05rem;
+  border-radius: 18px;
+  background: rgba(255, 252, 247, 0.65);
+  border: 1px solid rgba(103, 48, 33, 0.08);
+}
+
+.account-detail-grid .commerce-list-side {
+  width: 100%;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cart-page-shell {
+  padding: 0 0 2rem;
+}
+
+.cart-page-shell .checkout-layout {
+  gap: 1.35rem;
+}
+
+.cart-page-shell .page-title {
+  max-width: 22ch;
+  font-size: clamp(1.65rem, 5vw, 2.75rem);
+  line-height: 1.08;
+}
+
+.cart-page-shell .commerce-list .commerce-list-item {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 1rem 1.05rem;
+  border-radius: 20px;
+  background: rgba(255, 252, 247, 0.72);
+  border: 1px solid rgba(103, 48, 33, 0.1);
+}
+
+.cart-page-shell .cart-line {
+  gap: 1rem;
+}
+
+.cart-page-shell .commerce-list-side {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.cart-page-shell .commerce-panel:last-child .button {
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.35rem;
+}
+
+.admin-page--commerce {
+  padding-left: max(0.75rem, env(safe-area-inset-left));
+  padding-right: max(0.75rem, env(safe-area-inset-right));
+  padding-bottom: 3rem;
+}
+
+.admin-page--commerce .admin-header h1 {
+  font-size: clamp(1.35rem, 4vw, 2.35rem);
+  line-height: 1.15;
+  word-break: break-word;
+}
+
+.admin-page--commerce .commerce-admin-shell {
+  gap: 1.5rem;
+}
+
+.admin-page--commerce .commerce-panel,
+.admin-page--commerce .admin-insight-card {
+  padding: 1.15rem 1.05rem;
+}
+
+.admin-page--commerce .commerce-list-item {
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 0.85rem 0;
+}
+
+@media (max-width: 640px) {
+  .account-dashboard .admin-actions .button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-page--commerce .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-page--commerce .admin-actions {
+    width: 100%;
+  }
+
+  .admin-page--commerce .admin-actions .button {
+    width: 100%;
+    justify-content: center;
+  }
 }

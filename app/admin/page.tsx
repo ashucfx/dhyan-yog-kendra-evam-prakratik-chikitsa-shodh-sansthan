@@ -67,7 +67,7 @@ export default async function AdminCommercePage({
   const logisticsQueue = snapshot.shipments.slice(0, 5);
 
   return (
-    <main className="admin-page">
+    <main className="admin-page admin-page--commerce">
       <section className="admin-shell commerce-admin-shell">
         <div className="admin-header">
           <div>

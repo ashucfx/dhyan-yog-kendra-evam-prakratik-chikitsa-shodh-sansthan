@@ -23,8 +23,8 @@ export default async function AccountPage() {
 
   return (
     <SiteShell>
-      <main className="admin-page">
-        <section className="admin-shell">
+      <main className="admin-page account-dashboard">
+        <section className="admin-shell account-dashboard-inner">
           <div className="admin-header">
             <div>
               <p className="eyebrow">My account</p>

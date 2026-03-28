@@ -5,7 +5,8 @@ import { SocialIcon } from "./social-icon";
 import { CalendlyButton } from "./calendly";
 import { brand, footerDetails, footerLegal, footerPrograms, footerSocials } from "../content/site-data";
 import { getAuthenticatedUser } from "@/lib/auth-user";
-import { SiteNavigation, MobileNavigation } from "./site-navigation";
+import { SiteNavigation } from "./site-navigation";
+import { MobileNavDrawer } from "./mobile-nav-drawer";
 
 type SiteShellProps = {
   children: ReactNode;
@@ -44,25 +45,7 @@ export async function SiteShell({ children }: SiteShellProps) {
             mode="popup"
           />
 
-          <details className="mobile-menu">
-            <summary className="mobile-menu-trigger" aria-label="Open navigation menu">
-              <span className="mobile-menu-icon" aria-hidden="true">
-                <span />
-                <span />
-                <span />
-              </span>
-              <span>Menu</span>
-            </summary>
-            <div className="mobile-menu-panel">
-              <MobileNavigation user={user} />
-              <CalendlyButton
-                className="button button-small mobile-menu-cta"
-                label="Book Your Free Consultation"
-                source="mobile_menu_cta"
-                mode="popup"
-              />
-            </div>
-          </details>
+          <MobileNavDrawer user={user} />
         </div>
       </header>
 

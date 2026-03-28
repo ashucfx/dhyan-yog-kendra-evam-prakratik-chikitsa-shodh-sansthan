@@ -7,7 +7,9 @@ export default async function CartPage() {
 
   return (
     <SiteShell>
-      <CartClient products={snapshot.products} settings={snapshot.settings} />
+      <main className="cart-page-shell">
+        <CartClient products={snapshot.products} settings={snapshot.settings} />
+      </main>
     </SiteShell>
   );
 }
