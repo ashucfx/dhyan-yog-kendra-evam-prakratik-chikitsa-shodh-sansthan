@@ -139,13 +139,13 @@ export function AccountClient({
   }
 
   return (
-    <div className="account-detail-grid">
+    <div className="account-layout">
       {message ? <p className={`form-status form-status-${messageTone}`}>{message}</p> : null}
 
-      <article className="commerce-panel">
-        <div className="commerce-panel-heading">
+      <article className="account-card">
+        <div className="account-card-head">
           <div>
-            <p className="admin-kicker">Profile</p>
+            <p className="eyebrow">Profile</p>
             <h2>Personal details</h2>
           </div>
           <button className="button button-secondary button-small" type="button" disabled={busy === "signout"} onClick={handleSignOut}>
@@ -153,27 +153,27 @@ export function AccountClient({
           </button>
         </div>
 
-        <div className="admin-form-grid admin-form-grid-compact">
+        <div className="account-form-grid">
           <input value={profile.fullName} placeholder="Full name" onChange={(event) => setProfile((current) => ({ ...current, fullName: event.target.value }))} />
           <input value={profile.email} disabled placeholder="Email" />
           <input value={profile.phone} placeholder="Phone number" onChange={(event) => setProfile((current) => ({ ...current, phone: event.target.value }))} />
         </div>
-        <div className="admin-actions">
+        <div className="account-actions">
           <button className="button button-small" type="button" disabled={busy === "profile"} onClick={saveProfile}>
             {busy === "profile" ? "Saving..." : "Save Profile"}
           </button>
         </div>
       </article>
 
-      <article className="commerce-panel">
-        <div className="commerce-panel-heading">
+      <article className="account-card">
+        <div className="account-card-head">
           <div>
-            <p className="admin-kicker">Addresses</p>
+            <p className="eyebrow">Addresses</p>
             <h2>Saved delivery addresses</h2>
           </div>
         </div>
 
-        <div className="admin-form-grid">
+        <div className="account-form-grid account-form-grid-wide">
           <input placeholder="Label" value={addressForm.label} onChange={(event) => setAddressForm((current) => ({ ...current, label: event.target.value }))} />
           <input placeholder="Full name" value={addressForm.fullName} onChange={(event) => setAddressForm((current) => ({ ...current, fullName: event.target.value }))} />
           <input placeholder="Phone" value={addressForm.phone} onChange={(event) => setAddressForm((current) => ({ ...current, phone: event.target.value }))} />
@@ -183,7 +183,7 @@ export function AccountClient({
           <input placeholder="Postal code" value={addressForm.postalCode} onChange={(event) => setAddressForm((current) => ({ ...current, postalCode: event.target.value }))} />
           <input placeholder="Country" value={addressForm.country} onChange={(event) => setAddressForm((current) => ({ ...current, country: event.target.value }))} />
         </div>
-        <div className="admin-actions">
+        <div className="account-actions">
           <button className="button button-small" type="button" disabled={busy === "address"} onClick={saveAddress}>
             {busy === "address" ? "Saving..." : addressForm.id ? "Update Address" : "Add Address"}
           </button>
@@ -208,17 +208,18 @@ export function AccountClient({
           </button>
         </div>
 
-        <div className="commerce-list">
+        <div className="account-address-list">
           {addresses.length ? (
             addresses.map((address) => (
-              <div className="commerce-list-item" key={address.id}>
-                <div>
+              <article className="account-address-card" key={address.id}>
+                <div className="account-address-copy">
                   <strong>{address.label || address.fullName}</strong>
-                  <p>
+                  <p className="account-address-line">
                     {address.line1}, {address.city}, {address.state} {address.postalCode}
                   </p>
+                  <p className="account-address-line">{address.phone}</p>
                 </div>
-                <div className="commerce-list-side">
+                <div className="account-address-actions">
                   <button className="button button-secondary button-small" type="button" onClick={() => editAddress(address)}>
                     Edit
                   </button>
@@ -231,10 +232,10 @@ export function AccountClient({
                     Delete
                   </button>
                 </div>
-              </div>
+              </article>
             ))
           ) : (
-            <p className="admin-copy">No saved addresses yet.</p>
+            <p className="account-empty-copy">No saved addresses yet.</p>
           )}
         </div>
       </article>

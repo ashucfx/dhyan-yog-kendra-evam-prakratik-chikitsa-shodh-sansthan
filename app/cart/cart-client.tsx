@@ -101,27 +101,27 @@ export function CartClient({ products, settings }: { products: CommerceProduct[]
 
       <aside className="cart-summary-panel">
         <div className="cart-summary-card">
-          <div className="commerce-status-card">
-            <div>
-              <strong>Subtotal</strong>
-              <p>{formatStoreCurrency(subtotal, settings)}</p>
-            </div>
-            <span className="status-pill status-neutral">{cartItems.length} products</span>
+          <div className="cart-summary-head">
+            <p className="eyebrow">Order summary</p>
+            <h2>{cartItems.length} {cartItems.length === 1 ? "item" : "items"}</h2>
           </div>
-          <div className="commerce-status-card">
-            <div>
-              <strong>Shipping</strong>
-              <p>{formatStoreCurrency(shipping, settings)}</p>
+          <div className="cart-summary-rows">
+            <div className="cart-summary-row">
+              <span>Subtotal</span>
+              <strong>{formatStoreCurrency(subtotal, settings)}</strong>
             </div>
-            <span className="status-pill status-warning">{shipping ? "Applied" : "Free"}</span>
-          </div>
-          <div className="commerce-status-card">
-            <div>
-              <strong>Total</strong>
-              <p>{formatStoreCurrency(total, settings)}</p>
+            <div className="cart-summary-row">
+              <span>Shipping</span>
+              <strong>{shipping ? formatStoreCurrency(shipping, settings) : "Free"}</strong>
             </div>
-            <span className="status-pill status-success">Ready</span>
+            <div className="cart-summary-row cart-summary-row-total">
+              <span>Total</span>
+              <strong>{formatStoreCurrency(total, settings)}</strong>
+            </div>
           </div>
+          <p className="cart-summary-note">
+            Free shipping applies on orders above {formatStoreCurrency(1499, settings)}.
+          </p>
         </div>
 
         <Link className="button" href={authenticated ? "/checkout" : "/auth/sign-in?redirectTo=/checkout"}>

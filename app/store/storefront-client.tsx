@@ -53,20 +53,14 @@ export function StorefrontClient({ products, categories, settings, reviewSummary
             Browse by concern, compare pricing clearly, and move from discovery to checkout without leaving the store
             flow.
           </p>
-        </div>
-
-        <div className="shop-hero-aside">
-          <div className="shop-hero-stat">
-            <strong>{products.length}</strong>
-            <span>Active products</span>
+          <div className="shop-hero-actions">
+            <Link className="button button-small" href="/cart">
+              View cart
+            </Link>
+            <Link className="button button-secondary button-small" href="/checkout">
+              Checkout
+            </Link>
           </div>
-          <div className="shop-hero-stat">
-            <strong>{categories.length}</strong>
-            <span>Store categories</span>
-          </div>
-          <Link className="button" href="/cart">
-            Review Cart
-          </Link>
         </div>
       </section>
 

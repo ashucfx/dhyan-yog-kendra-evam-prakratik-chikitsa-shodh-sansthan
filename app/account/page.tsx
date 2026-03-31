@@ -23,39 +23,39 @@ export default async function AccountPage() {
 
   return (
     <SiteShell>
-      <main className="admin-page account-dashboard">
-        <section className="admin-shell account-dashboard-inner">
-          <div className="admin-header">
+      <main className="account-page">
+        <section className="section account-shell page-end-section">
+          <div className="account-overview">
             <div>
               <p className="eyebrow">My account</p>
               <h1>{profile.fullName || user.name || user.email}</h1>
-              <p className="admin-copy">
+              <p className="account-subtitle">
                 {profile.email}
                 {profile.phone ? ` | ${profile.phone}` : ""}
               </p>
             </div>
-            <div className="admin-actions">
+            <div className="account-overview-actions">
               <Link className="button button-secondary button-small" href="/account/orders">
-                My Orders
+                View orders
               </Link>
             </div>
           </div>
 
-          <section className="commerce-admin-grid">
-            <article className="admin-insight-card">
-              <p className="admin-kicker">Orders</p>
+          <section className="account-summary-grid">
+            <article className="account-summary-card">
+              <span>Orders</span>
               <strong>{orders.length}</strong>
-              <span>Total account-linked orders.</span>
+              <p>Total purchases linked to this account.</p>
             </article>
-            <article className="admin-insight-card">
-              <p className="admin-kicker">Account email</p>
-              <strong>{profile.email}</strong>
-              <span>Used for order confirmations and sign-in.</span>
-            </article>
-            <article className="admin-insight-card">
-              <p className="admin-kicker">Saved addresses</p>
+            <article className="account-summary-card">
+              <span>Saved addresses</span>
               <strong>{addresses.length}</strong>
-              <span>Ready for faster checkout and repeat orders.</span>
+              <p>Delivery addresses ready for faster checkout.</p>
+            </article>
+            <article className="account-summary-card">
+              <span>Primary email</span>
+              <strong>{profile.email}</strong>
+              <p>Used for sign-in, confirmations, and updates.</p>
             </article>
           </section>
 
