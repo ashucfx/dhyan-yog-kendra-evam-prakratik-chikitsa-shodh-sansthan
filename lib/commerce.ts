@@ -1380,9 +1380,14 @@ export async function deleteAddress(addressId: string, userId: string) {
   await writeLocalUserState(state);
 }
 
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
 export async function listCartItemsForUser(userId: string) {
+  const snapshot = await loadCommerceSnapshot();
   const supabase = getSupabaseClient();
-  if (supabase) {
+  if (supabase && snapshot.source === "supabase") {
     const { data, error } = await supabase
       .from("cart_items")
       .select("id, user_id, product_id, quantity, created_at, updated_at")
@@ -1411,6 +1416,7 @@ export async function listCartItemsForUser(userId: string) {
 export async function setCartItemQuantity(userId: string, productId: string, quantity: number) {
   const normalizedQuantity = Math.max(0, Math.round(quantity));
   const timestamp = new Date().toISOString();
+  const snapshot = await loadCommerceSnapshot();
   const supabase = getSupabaseClient();
 
   if (normalizedQuantity === 0) {
@@ -1418,19 +1424,24 @@ export async function setCartItemQuantity(userId: string, productId: string, qua
     return null;
   }
 
-  if (supabase) {
+  if (supabase && snapshot.source === "supabase") {
     let resolvedId = productId;
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId);
-    
-    if (!isUuid) {
-      const { data: prod } = await supabase
+    if (!isUuid(productId)) {
+      const { data: prod, error: productError } = await supabase
         .from("products")
         .select("id")
         .eq("slug", productId)
-        .single();
+        .maybeSingle();
+      if (productError) {
+        throw new Error(productError.message);
+      }
       if (prod) {
         resolvedId = prod.id;
       }
+    }
+
+    if (!isUuid(resolvedId)) {
+      throw new Error("The selected product could not be matched to the active store catalog.");
     }
 
     const { data, error } = await supabase
@@ -1485,11 +1496,11 @@ export async function setCartItemQuantity(userId: string, productId: string, qua
 }
 
 export async function removeCartItem(userId: string, productId: string) {
+  const snapshot = await loadCommerceSnapshot();
   const supabase = getSupabaseClient();
-  if (supabase) {
+  if (supabase && snapshot.source === "supabase") {
     let resolvedId = productId;
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId);
-    if (!isUuid) {
+    if (!isUuid(productId)) {
       const { data: prod } = await supabase.from("products").select("id").eq("slug", productId).maybeSingle();
       if (prod) {
         resolvedId = prod.id;
@@ -1508,8 +1519,9 @@ export async function removeCartItem(userId: string, productId: string) {
 }
 
 export async function clearCartForUser(userId: string) {
+  const snapshot = await loadCommerceSnapshot();
   const supabase = getSupabaseClient();
-  if (supabase) {
+  if (supabase && snapshot.source === "supabase") {
     const { error } = await supabase.from("cart_items").delete().eq("user_id", userId);
     if (error) {
       throw new Error(error.message);

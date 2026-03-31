@@ -2,9 +2,17 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { getSupabaseServerEnv } from "./config";
 
-export function updateSupabaseSession(request: NextRequest) {
+function hasSupabaseAuthCookie(request: NextRequest) {
+  return request.cookies.getAll().some((cookie) => cookie.name.includes("auth-token"));
+}
+
+export async function updateSupabaseSession(request: NextRequest) {
   const env = getSupabaseServerEnv();
   if (!env.configured || !env.url || !env.anonKey) {
+    return NextResponse.next({ request });
+  }
+
+  if (!hasSupabaseAuthCookie(request)) {
     return NextResponse.next({ request });
   }
 
@@ -25,6 +33,11 @@ export function updateSupabaseSession(request: NextRequest) {
     }
   });
 
-  void supabase.auth.getUser();
+  try {
+    await supabase.auth.getUser();
+  } catch {
+    return NextResponse.next({ request });
+  }
+
   return response;
 }
