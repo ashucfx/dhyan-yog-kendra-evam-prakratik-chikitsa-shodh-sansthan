@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { getPasswordRequirementMessage, validateEmail, validateIndianMobile, validatePassword } from "@/lib/customer-validation";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type AuthFormProps = {
@@ -22,7 +23,13 @@ export function AuthForm({ mode }: AuthFormProps) {
   const redirectTo = searchParams.get("redirectTo") || "/account";
 
   async function handleSubmit() {
-    if (!email.trim() || !password.trim()) {
+    if (!validateEmail(email)) {
+      setMessageTone("error");
+      setMessage("Enter a valid email address.");
+      return;
+    }
+
+    if (!password.trim()) {
       setMessageTone("error");
       setMessage("Email and password are required.");
       return;
@@ -31,6 +38,18 @@ export function AuthForm({ mode }: AuthFormProps) {
     if (mode === "sign-up" && !fullName.trim()) {
       setMessageTone("error");
       setMessage("Full name is required for account creation.");
+      return;
+    }
+
+    if (mode === "sign-up" && phone && !validateIndianMobile(phone)) {
+      setMessageTone("error");
+      setMessage("Enter a valid 10-digit Indian mobile number.");
+      return;
+    }
+
+    if (mode === "sign-up" && !validatePassword(password)) {
+      setMessageTone("error");
+      setMessage(getPasswordRequirementMessage());
       return;
     }
 
@@ -125,6 +144,8 @@ export function AuthForm({ mode }: AuthFormProps) {
           <input type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} />
         </div>
 
+        {mode === "sign-up" ? <p className="microcopy">{getPasswordRequirementMessage()}</p> : null}
+
         {message ? <p className={`form-status form-status-${messageTone}`}>{message}</p> : null}
 
         <button className="button" type="button" disabled={busy} onClick={handleSubmit}>
@@ -140,6 +161,12 @@ export function AuthForm({ mode }: AuthFormProps) {
             {mode === "sign-up" ? "Sign in" : "Create one"}
           </Link>
         </p>
+        {mode === "sign-in" ? (
+          <p className="microcopy">
+            Forgot your password or created your account with Google?{" "}
+            <Link href={`/auth/forgot-password?redirectTo=${encodeURIComponent(redirectTo)}`}>Reset password</Link>
+          </p>
+        ) : null}
       </div>
     </section>
   );

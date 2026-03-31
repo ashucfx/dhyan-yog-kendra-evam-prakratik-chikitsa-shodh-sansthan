@@ -26,6 +26,7 @@ create table if not exists public.addresses (
   full_name text not null,
   phone text not null,
   line1 text not null,
+  landmark text,
   city text not null,
   state text not null,
   postal_code text not null,
@@ -158,6 +159,8 @@ create table if not exists public.cart_items (
   updated_at timestamptz not null default now(),
   unique(user_id, product_id)
 );
+
+alter table public.addresses add column if not exists landmark text;
 
 create index if not exists products_category_slug_idx on public.products(category_slug);
 create index if not exists products_featured_idx on public.products(featured);

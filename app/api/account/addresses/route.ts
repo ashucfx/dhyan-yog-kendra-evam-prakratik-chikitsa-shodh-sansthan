@@ -23,6 +23,7 @@ export async function POST(request: Request) {
     fullName?: string;
     phone?: string;
     line1?: string;
+    landmark?: string;
     city?: string;
     state?: string;
     postalCode?: string;
@@ -40,6 +41,7 @@ export async function POST(request: Request) {
     fullName: payload.fullName,
     phone: payload.phone,
     line1: payload.line1,
+    landmark: payload.landmark ?? "",
     city: payload.city,
     state: payload.state,
     postalCode: payload.postalCode,

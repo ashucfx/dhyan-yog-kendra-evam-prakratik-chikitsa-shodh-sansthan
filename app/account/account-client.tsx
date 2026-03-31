@@ -3,7 +3,25 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { CommerceAddress, CommerceProfile } from "@/lib/commerce";
+import { isValidIndianPostalCode } from "@/lib/commerce-pricing";
+import { validateEmail, validateIndianMobile } from "@/lib/customer-validation";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
+
+type ProfileErrors = {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+};
+
+type AddressErrors = {
+  fullName?: string;
+  phone?: string;
+  line1?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+};
 
 export function AccountClient({
   initialProfile,
@@ -18,12 +36,15 @@ export function AccountClient({
   const [addresses, setAddresses] = useState(initialAddresses);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"success" | "error">("success");
+  const [profileErrors, setProfileErrors] = useState<ProfileErrors>({});
+  const [addressErrors, setAddressErrors] = useState<AddressErrors>({});
   const [addressForm, setAddressForm] = useState({
     id: "",
     label: "",
     fullName: initialProfile.fullName,
     phone: initialProfile.phone,
     line1: "",
+    landmark: "",
     city: "",
     state: "",
     postalCode: "",
@@ -33,10 +54,77 @@ export function AccountClient({
   function notify(tone: "success" | "error", nextMessage: string) {
     setMessageTone(tone);
     setMessage(nextMessage);
-    window.setTimeout(() => setMessage(""), 2600);
+    window.setTimeout(() => setMessage(""), 3200);
+  }
+
+  function resetAddressForm() {
+    setAddressForm({
+      id: "",
+      label: "",
+      fullName: profile.fullName,
+      phone: profile.phone,
+      line1: "",
+      landmark: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "India"
+    });
+    setAddressErrors({});
+  }
+
+  function validateProfileForm() {
+    const nextErrors: ProfileErrors = {};
+
+    if (!profile.fullName.trim()) {
+      nextErrors.fullName = "Full name is required.";
+    }
+    if (!validateEmail(profile.email)) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+    if (!validateIndianMobile(profile.phone)) {
+      nextErrors.phone = "Enter a valid 10-digit Indian mobile number.";
+    }
+
+    setProfileErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  }
+
+  function validateAddressForm() {
+    const nextErrors: AddressErrors = {};
+
+    if (!addressForm.fullName.trim()) {
+      nextErrors.fullName = "Full name is required.";
+    }
+    if (!validateIndianMobile(addressForm.phone)) {
+      nextErrors.phone = "Enter a valid 10-digit Indian mobile number.";
+    }
+    if (!addressForm.line1.trim()) {
+      nextErrors.line1 = "Address line is required.";
+    }
+    if (!addressForm.city.trim()) {
+      nextErrors.city = "City is required.";
+    }
+    if (!addressForm.state.trim()) {
+      nextErrors.state = "State is required.";
+    }
+    if (!isValidIndianPostalCode(addressForm.postalCode)) {
+      nextErrors.postalCode = "Enter a valid 6-digit Indian pincode.";
+    }
+    if (addressForm.country.trim().toLowerCase() !== "india") {
+      nextErrors.country = "Only India is supported right now.";
+    }
+
+    setAddressErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   }
 
   async function saveProfile() {
+    if (!validateProfileForm()) {
+      notify("error", "Correct the highlighted profile fields.");
+      return;
+    }
+
     setBusy("profile");
     const response = await fetch("/api/account/profile", {
       method: "PUT",
@@ -60,12 +148,18 @@ export function AccountClient({
       fullName: current.fullName || savedProfile.fullName,
       phone: current.phone || savedProfile.phone
     }));
+    setProfileErrors({});
     notify("success", result.message || "Profile updated.");
     setBusy("");
     router.refresh();
   }
 
   async function saveAddress() {
+    if (!validateAddressForm()) {
+      notify("error", "Correct the highlighted address fields.");
+      return;
+    }
+
     setBusy("address");
     const response = await fetch("/api/account/addresses", {
       method: "POST",
@@ -80,17 +174,7 @@ export function AccountClient({
     }
 
     setAddresses(result.addresses);
-    setAddressForm({
-      id: "",
-      label: "",
-      fullName: profile.fullName,
-      phone: profile.phone,
-      line1: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "India"
-    });
+    resetAddressForm();
     notify("success", result.message || "Address saved.");
     setBusy("");
     router.refresh();
@@ -123,11 +207,13 @@ export function AccountClient({
       fullName: address.fullName,
       phone: address.phone,
       line1: address.line1,
+      landmark: address.landmark ?? "",
       city: address.city,
       state: address.state,
       postalCode: address.postalCode,
       country: address.country
     });
+    setAddressErrors({});
   }
 
   async function handleSignOut() {
@@ -154,9 +240,18 @@ export function AccountClient({
         </div>
 
         <div className="account-form-grid">
-          <input value={profile.fullName} placeholder="Full name" onChange={(event) => setProfile((current) => ({ ...current, fullName: event.target.value }))} />
-          <input value={profile.email} disabled placeholder="Email" />
-          <input value={profile.phone} placeholder="Phone number" onChange={(event) => setProfile((current) => ({ ...current, phone: event.target.value }))} />
+          <div className="account-field">
+            <input value={profile.fullName} placeholder="Full name" onChange={(event) => setProfile((current) => ({ ...current, fullName: event.target.value }))} />
+            {profileErrors.fullName ? <p className="account-field-error">{profileErrors.fullName}</p> : null}
+          </div>
+          <div className="account-field">
+            <input value={profile.email} disabled placeholder="Email" />
+            {profileErrors.email ? <p className="account-field-error">{profileErrors.email}</p> : null}
+          </div>
+          <div className="account-field">
+            <input value={profile.phone} placeholder="Phone number" onChange={(event) => setProfile((current) => ({ ...current, phone: event.target.value }))} />
+            {profileErrors.phone ? <p className="account-field-error">{profileErrors.phone}</p> : null}
+          </div>
         </div>
         <div className="account-actions">
           <button className="button button-small" type="button" disabled={busy === "profile"} onClick={saveProfile}>
@@ -174,36 +269,52 @@ export function AccountClient({
         </div>
 
         <div className="account-form-grid account-form-grid-wide">
-          <input placeholder="Label" value={addressForm.label} onChange={(event) => setAddressForm((current) => ({ ...current, label: event.target.value }))} />
-          <input placeholder="Full name" value={addressForm.fullName} onChange={(event) => setAddressForm((current) => ({ ...current, fullName: event.target.value }))} />
-          <input placeholder="Phone" value={addressForm.phone} onChange={(event) => setAddressForm((current) => ({ ...current, phone: event.target.value }))} />
-          <input placeholder="Address line" value={addressForm.line1} onChange={(event) => setAddressForm((current) => ({ ...current, line1: event.target.value }))} />
-          <input placeholder="City" value={addressForm.city} onChange={(event) => setAddressForm((current) => ({ ...current, city: event.target.value }))} />
-          <input placeholder="State" value={addressForm.state} onChange={(event) => setAddressForm((current) => ({ ...current, state: event.target.value }))} />
-          <input placeholder="Postal code" value={addressForm.postalCode} onChange={(event) => setAddressForm((current) => ({ ...current, postalCode: event.target.value }))} />
-          <input placeholder="Country" value={addressForm.country} onChange={(event) => setAddressForm((current) => ({ ...current, country: event.target.value }))} />
+          <div className="account-field">
+            <input placeholder="Label" value={addressForm.label} onChange={(event) => setAddressForm((current) => ({ ...current, label: event.target.value }))} />
+          </div>
+          <div className="account-field">
+            <input placeholder="Full name" value={addressForm.fullName} onChange={(event) => setAddressForm((current) => ({ ...current, fullName: event.target.value }))} />
+            {addressErrors.fullName ? <p className="account-field-error">{addressErrors.fullName}</p> : null}
+          </div>
+          <div className="account-field">
+            <input placeholder="Phone" value={addressForm.phone} onChange={(event) => setAddressForm((current) => ({ ...current, phone: event.target.value }))} />
+            {addressErrors.phone ? <p className="account-field-error">{addressErrors.phone}</p> : null}
+          </div>
+          <div className="account-field">
+            <input placeholder="Address line" value={addressForm.line1} onChange={(event) => setAddressForm((current) => ({ ...current, line1: event.target.value }))} />
+            {addressErrors.line1 ? <p className="account-field-error">{addressErrors.line1}</p> : null}
+          </div>
+          <div className="account-field">
+            <input placeholder="Landmark (optional)" value={addressForm.landmark} onChange={(event) => setAddressForm((current) => ({ ...current, landmark: event.target.value }))} />
+          </div>
+          <div className="account-field">
+            <input placeholder="City" value={addressForm.city} onChange={(event) => setAddressForm((current) => ({ ...current, city: event.target.value }))} />
+            {addressErrors.city ? <p className="account-field-error">{addressErrors.city}</p> : null}
+          </div>
+          <div className="account-field">
+            <input placeholder="State" value={addressForm.state} onChange={(event) => setAddressForm((current) => ({ ...current, state: event.target.value }))} />
+            {addressErrors.state ? <p className="account-field-error">{addressErrors.state}</p> : null}
+          </div>
+          <div className="account-field">
+            <input
+              placeholder="Postal code"
+              value={addressForm.postalCode}
+              onChange={(event) =>
+                setAddressForm((current) => ({ ...current, postalCode: event.target.value.replace(/\D/g, "").slice(0, 6) }))
+              }
+            />
+            {addressErrors.postalCode ? <p className="account-field-error">{addressErrors.postalCode}</p> : null}
+          </div>
+          <div className="account-field">
+            <input placeholder="Country" value={addressForm.country} onChange={(event) => setAddressForm((current) => ({ ...current, country: event.target.value }))} />
+            {addressErrors.country ? <p className="account-field-error">{addressErrors.country}</p> : null}
+          </div>
         </div>
         <div className="account-actions">
           <button className="button button-small" type="button" disabled={busy === "address"} onClick={saveAddress}>
             {busy === "address" ? "Saving..." : addressForm.id ? "Update Address" : "Add Address"}
           </button>
-          <button
-            className="button button-secondary button-small"
-            type="button"
-            onClick={() =>
-              setAddressForm({
-                id: "",
-                label: "",
-                fullName: profile.fullName,
-                phone: profile.phone,
-                line1: "",
-                city: "",
-                state: "",
-                postalCode: "",
-                country: "India"
-              })
-            }
-          >
+          <button className="button button-secondary button-small" type="button" onClick={resetAddressForm}>
             Reset
           </button>
         </div>
@@ -217,6 +328,7 @@ export function AccountClient({
                   <p className="account-address-line">
                     {address.line1}, {address.city}, {address.state} {address.postalCode}
                   </p>
+                  {address.landmark ? <p className="account-address-line">Landmark: {address.landmark}</p> : null}
                   <p className="account-address-line">{address.phone}</p>
                 </div>
                 <div className="account-address-actions">

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { CommerceAddress, CommerceProduct, CommerceSettings } from "@/lib/commerce";
+import { isValidIndianPostalCode } from "@/lib/commerce-pricing";
+import { validateEmail, validateIndianMobile } from "@/lib/customer-validation";
 import { formatStoreCurrency } from "@/lib/commerce-ui";
 import { useCart } from "@/app/components/cart-provider";
 
@@ -32,6 +34,17 @@ type ShippingEstimateState = {
   shippingCharge: number;
   etaLabel?: string;
   message: string;
+};
+
+type CheckoutFieldErrors = {
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  line1?: string;
+  city?: string;
+  stateName?: string;
+  postalCode?: string;
+  country?: string;
 };
 
 async function loadRazorpayScript() {
@@ -63,11 +76,13 @@ export function CheckoutClient({
   const paypalInternalOrder = searchParams.get("internal_order");
   const paypalToken = searchParams.get("token");
   const paypalCancelled = searchParams.get("paypal_cancel");
+
   const [customerName, setCustomerName] = useState(initialName);
   const [customerEmail, setCustomerEmail] = useState(initialEmail);
   const [customerPhone, setCustomerPhone] = useState(initialPhone);
   const [selectedAddressId, setSelectedAddressId] = useState(initialAddresses[0]?.id ?? "");
   const [line1, setLine1] = useState(initialAddresses[0]?.line1 ?? "");
+  const [landmark, setLandmark] = useState(initialAddresses[0]?.landmark ?? "");
   const [city, setCity] = useState(initialAddresses[0]?.city ?? "");
   const [stateName, setStateName] = useState(initialAddresses[0]?.state ?? "");
   const [postalCode, setPostalCode] = useState(initialAddresses[0]?.postalCode ?? "");
@@ -76,6 +91,8 @@ export function CheckoutClient({
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCouponState | null>(null);
   const [shippingEstimate, setShippingEstimate] = useState<ShippingEstimateState | null>(null);
   const [paymentSheetOpen, setPaymentSheetOpen] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<CheckoutFieldErrors>({});
+  const [addressWarning, setAddressWarning] = useState("");
   const [busy, setBusy] = useState(false);
   const [couponBusy, setCouponBusy] = useState(false);
   const [shippingBusy, setShippingBusy] = useState(false);
@@ -108,10 +125,12 @@ export function CheckoutClient({
     setCustomerName(selectedAddress.fullName || initialName);
     setCustomerPhone(selectedAddress.phone || initialPhone);
     setLine1(selectedAddress.line1);
+    setLandmark(selectedAddress.landmark ?? "");
     setCity(selectedAddress.city);
     setStateName(selectedAddress.state);
     setPostalCode(selectedAddress.postalCode);
     setCountry(selectedAddress.country);
+    setFieldErrors({});
   }, [initialAddresses, initialName, initialPhone, selectedAddressId]);
 
   useEffect(() => {
@@ -182,7 +201,98 @@ export function CheckoutClient({
     setShippingEstimate((current) =>
       current && current.postalCode === postalCode.trim() ? current : null
     );
-  }, [postalCode, line1, city, stateName, country]);
+    setAddressWarning("");
+  }, [postalCode, line1, city, stateName, landmark, country]);
+
+  useEffect(() => {
+    if (!selectedAddressId || !postalCode.trim() || !country.trim()) {
+      return;
+    }
+
+    let active = true;
+
+    async function validateSelectedAddress() {
+      setShippingBusy(true);
+
+      try {
+        const response = await fetch("/api/shipping/estimate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            postalCode: postalCode.trim(),
+            subtotal: Math.max(0, subtotal - discount),
+            country
+          })
+        });
+        const result = (await response.json()) as {
+          postalCode?: string;
+          shippingCharge?: number;
+          etaLabel?: string;
+          message?: string;
+        };
+
+        if (!active) {
+          return;
+        }
+
+        if (!response.ok || typeof result.shippingCharge !== "number" || !result.postalCode) {
+          setShippingEstimate(null);
+          setAddressWarning(result.message || "Delivery is not available for this pincode.");
+          return;
+        }
+
+        setShippingEstimate({
+          postalCode: result.postalCode,
+          shippingCharge: result.shippingCharge,
+          etaLabel: result.etaLabel,
+          message: result.message || "Delivery is available."
+        });
+        setAddressWarning("");
+      } finally {
+        if (active) {
+          setShippingBusy(false);
+        }
+      }
+    }
+
+    void validateSelectedAddress();
+
+    return () => {
+      active = false;
+    };
+  }, [selectedAddressId, postalCode, country, subtotal, discount]);
+
+  function validateCheckoutFields() {
+    const nextErrors: CheckoutFieldErrors = {};
+
+    if (!customerName.trim()) {
+      nextErrors.customerName = "Full name is required.";
+    }
+    if (!validateEmail(customerEmail)) {
+      nextErrors.customerEmail = "Enter a valid email address.";
+    }
+    if (!validateIndianMobile(customerPhone)) {
+      nextErrors.customerPhone = "Enter a valid 10-digit Indian mobile number.";
+    }
+    if (!line1.trim()) {
+      nextErrors.line1 = "Address line is required.";
+    }
+    if (!city.trim()) {
+      nextErrors.city = "City is required.";
+    }
+    if (!stateName.trim()) {
+      nextErrors.stateName = "State is required.";
+    }
+    if (!isValidIndianPostalCode(postalCode)) {
+      nextErrors.postalCode = "Enter a valid 6-digit Indian pincode.";
+    }
+    if (country.trim().toLowerCase() !== "india") {
+      nextErrors.country = "Only India is supported right now.";
+    }
+
+    setFieldErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  }
 
   async function validateCoupon() {
     const normalizedCode = couponCode.trim().toUpperCase();
@@ -275,16 +385,19 @@ export function CheckoutClient({
       } satisfies ShippingEstimateState;
 
       setShippingEstimate(nextEstimate);
+      setAddressWarning("");
       if (!silent) {
         setMessageTone("success");
         setMessage(nextEstimate.message);
       }
       return nextEstimate;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Delivery is not available for this pincode.";
       setShippingEstimate(null);
+      setAddressWarning(errorMessage);
       if (!silent) {
         setMessageTone("error");
-        setMessage(error instanceof Error ? error.message : "Delivery is not available for this pincode.");
+        setMessage(errorMessage);
       }
       return null;
     } finally {
@@ -310,22 +423,16 @@ export function CheckoutClient({
       return;
     }
 
-    if (!customerName.trim() || !customerEmail.trim() || !customerPhone.trim()) {
+    if (!validateCheckoutFields()) {
       setMessageTone("error");
-      setMessage("Enter your name, email, and phone number.");
-      return;
-    }
-
-    if (!line1.trim() || !city.trim() || !stateName.trim() || !postalCode.trim() || !country.trim()) {
-      setMessageTone("error");
-      setMessage("Enter your complete shipping address.");
+      setMessage("Correct the highlighted fields before payment.");
       return;
     }
 
     const estimate = await validateShippingPin(true);
     if (!estimate) {
       setMessageTone("error");
-      setMessage("This pincode is not serviceable. Please use a deliverable Indian address.");
+      setMessage("This pincode is not serviceable. Please choose or enter a deliverable address.");
       return;
     }
 
@@ -343,6 +450,7 @@ export function CheckoutClient({
           customerPhone,
           shippingAddress: {
             line1,
+            landmark,
             city,
             state: stateName,
             postalCode,
@@ -473,15 +581,15 @@ export function CheckoutClient({
       return;
     }
 
-    if (!customerName.trim() || !customerEmail.trim() || !customerPhone.trim()) {
+    if (!validateCheckoutFields()) {
       setMessageTone("error");
-      setMessage("Enter your name, email, and phone number.");
+      setMessage("Correct the highlighted fields before payment.");
       return;
     }
 
-    if (!line1.trim() || !city.trim() || !stateName.trim() || !postalCode.trim() || !country.trim()) {
+    if (!customerPhone.trim()) {
       setMessageTone("error");
-      setMessage("Enter your complete shipping address.");
+      setMessage("Complete your mobile number before payment.");
       return;
     }
 
@@ -500,6 +608,12 @@ export function CheckoutClient({
           <p className="eyebrow">Checkout</p>
           <h1 className="page-title">Review your cart and complete your order.</h1>
         </div>
+
+        {!initialPhone.trim() ? (
+          <p className="form-status form-status-error">
+            Your account is missing a mobile number. Complete your profile before you proceed with payment.
+          </p>
+        ) : null}
 
         <div className="commerce-list">
           {loading ? (
@@ -527,14 +641,17 @@ export function CheckoutClient({
       <div className="commerce-panel">
         <div className="admin-form-grid">
           {initialAddresses.length ? (
-            <select value={selectedAddressId} onChange={(event) => setSelectedAddressId(event.target.value)}>
-              <option value="">Use a custom address</option>
-              {initialAddresses.map((address) => (
-                <option key={address.id} value={address.id}>
-                  {address.label || address.fullName} - {address.city}
-                </option>
-              ))}
-            </select>
+            <>
+              <select value={selectedAddressId} onChange={(event) => setSelectedAddressId(event.target.value)}>
+                <option value="">Use a custom address</option>
+                {initialAddresses.map((address) => (
+                  <option key={address.id} value={address.id}>
+                    {address.label || address.fullName} - {address.city}
+                  </option>
+                ))}
+              </select>
+              {addressWarning ? <p className="form-status form-status-error">Selected pincode is not serviceable. Choose another address.</p> : null}
+            </>
           ) : (
             <div className="checkout-inline-note">
               <span>No saved address yet.</span>
@@ -543,14 +660,43 @@ export function CheckoutClient({
               </Link>
             </div>
           )}
-          <input placeholder="Full name" value={customerName} onChange={(event) => setCustomerName(event.target.value)} />
-          <input placeholder="Email" value={customerEmail} onChange={(event) => setCustomerEmail(event.target.value)} />
-          <input placeholder="Phone number" value={customerPhone} onChange={(event) => setCustomerPhone(event.target.value)} />
-          <input placeholder="Address line" value={line1} onChange={(event) => setLine1(event.target.value)} />
-          <input placeholder="City" value={city} onChange={(event) => setCity(event.target.value)} />
-          <input placeholder="State" value={stateName} onChange={(event) => setStateName(event.target.value)} />
-          <input placeholder="Postal code" value={postalCode} onChange={(event) => setPostalCode(event.target.value)} />
-          <input placeholder="Country" value={country} onChange={(event) => setCountry(event.target.value)} />
+
+          <div className="checkout-field">
+            <input placeholder="Full name" value={customerName} onChange={(event) => setCustomerName(event.target.value)} />
+            {fieldErrors.customerName ? <p className="account-field-error">{fieldErrors.customerName}</p> : null}
+          </div>
+          <div className="checkout-field">
+            <input placeholder="Email" value={customerEmail} onChange={(event) => setCustomerEmail(event.target.value)} />
+            {fieldErrors.customerEmail ? <p className="account-field-error">{fieldErrors.customerEmail}</p> : null}
+          </div>
+          <div className="checkout-field">
+            <input placeholder="Phone number" value={customerPhone} onChange={(event) => setCustomerPhone(event.target.value)} />
+            {fieldErrors.customerPhone ? <p className="account-field-error">{fieldErrors.customerPhone}</p> : null}
+          </div>
+          <div className="checkout-field">
+            <input placeholder="Address line" value={line1} onChange={(event) => setLine1(event.target.value)} />
+            {fieldErrors.line1 ? <p className="account-field-error">{fieldErrors.line1}</p> : null}
+          </div>
+          <div className="checkout-field">
+            <input placeholder="Landmark (optional)" value={landmark} onChange={(event) => setLandmark(event.target.value)} />
+          </div>
+          <div className="checkout-field">
+            <input placeholder="City" value={city} onChange={(event) => setCity(event.target.value)} />
+            {fieldErrors.city ? <p className="account-field-error">{fieldErrors.city}</p> : null}
+          </div>
+          <div className="checkout-field">
+            <input placeholder="State" value={stateName} onChange={(event) => setStateName(event.target.value)} />
+            {fieldErrors.stateName ? <p className="account-field-error">{fieldErrors.stateName}</p> : null}
+          </div>
+          <div className="checkout-field">
+            <input placeholder="Postal code" value={postalCode} onChange={(event) => setPostalCode(event.target.value.replace(/\D/g, "").slice(0, 6))} />
+            {fieldErrors.postalCode ? <p className="account-field-error">{fieldErrors.postalCode}</p> : null}
+          </div>
+          <div className="checkout-field">
+            <input placeholder="Country" value={country} onChange={(event) => setCountry(event.target.value)} />
+            {fieldErrors.country ? <p className="account-field-error">{fieldErrors.country}</p> : null}
+          </div>
+
           <div className="checkout-coupon-row">
             <button className="button button-secondary button-small" type="button" disabled={shippingBusy || !postalCode.trim()} onClick={() => void validateShippingPin()}>
               {shippingBusy ? "Checking..." : "Check delivery"}
@@ -559,6 +705,7 @@ export function CheckoutClient({
               <span>{shippingEstimate?.etaLabel ? `ETA ${shippingEstimate.etaLabel}` : "Dispatches from 127021, India"}</span>
             </div>
           </div>
+
           <div className="checkout-coupon-row">
             <input placeholder="Coupon code" value={couponCode} onChange={(event) => setCouponCode(event.target.value.toUpperCase())} />
             <button className="button button-secondary button-small" type="button" disabled={couponBusy || !subtotal} onClick={() => void validateCoupon()}>
@@ -599,7 +746,12 @@ export function CheckoutClient({
         </div>
 
         {message ? <p className={`form-status form-status-${messageTone}`}>{message}</p> : null}
-        <button className="button" type="button" disabled={busy || loading || !selectedItems.length} onClick={() => void handleProceedToPayment()}>
+        <button
+          className="button"
+          type="button"
+          disabled={busy || loading || !selectedItems.length || Boolean(addressWarning) || !initialPhone.trim()}
+          onClick={() => void handleProceedToPayment()}
+        >
           {busy ? "Processing..." : `Proceed to pay ${formatStoreCurrency(total, settings)}`}
         </button>
 

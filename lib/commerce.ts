@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { calculateShippingCharge, estimateShippingForPostalCode, validateCouponForSubtotal } from "@/lib/commerce-pricing";
+import { normalizeEmail, normalizeIndianMobile, validateEmail, validateIndianMobile } from "@/lib/customer-validation";
 
 export type PaymentProviderStatus = "planned" | "active" | "disabled";
 
@@ -99,6 +100,7 @@ export type CommerceOrder = {
   couponCode?: string;
   shippingAddress?: {
     line1: string;
+    landmark?: string;
     city: string;
     state: string;
     postalCode: string;
@@ -143,6 +145,7 @@ export type CommerceAddress = {
   fullName: string;
   phone: string;
   line1: string;
+  landmark?: string;
   city: string;
   state: string;
   postalCode: string;
@@ -228,6 +231,7 @@ export type CreateOrderInput = {
   customerPhone: string;
   shippingAddress: {
     line1: string;
+    landmark?: string;
     city: string;
     state: string;
     postalCode: string;
@@ -455,6 +459,7 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
         shippingAddress: item.shipping_address
           ? {
               line1: item.shipping_address.line1 ?? "",
+              landmark: item.shipping_address.landmark ?? "",
               city: item.shipping_address.city ?? "",
               state: item.shipping_address.state ?? "",
               postalCode: item.shipping_address.postalCode ?? item.shipping_address.postal_code ?? "",
@@ -1210,11 +1215,19 @@ export async function upsertUserProfile(input: {
   fullName: string;
   phone: string;
 }) {
+  if (!validateEmail(input.email)) {
+    throw new Error("Enter a valid email address.");
+  }
+
+  if (input.phone && !validateIndianMobile(input.phone)) {
+    throw new Error("Enter a valid 10-digit Indian mobile number.");
+  }
+
   const profile: CommerceProfile = {
     id: input.userId,
-    email: input.email.trim().toLowerCase(),
+    email: normalizeEmail(input.email),
     fullName: sanitizeText(input.fullName),
-    phone: sanitizeText(input.phone),
+    phone: normalizeIndianMobile(input.phone),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1265,7 +1278,7 @@ export async function listAddressesForUser(userId: string) {
   if (supabase) {
     const { data, error } = await supabase
       .from("addresses")
-      .select("id, user_id, label, full_name, phone, line1, city, state, postal_code, country, created_at")
+      .select("id, user_id, label, full_name, phone, line1, landmark, city, state, postal_code, country, created_at")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
     if (error) {
@@ -1280,6 +1293,7 @@ export async function listAddressesForUser(userId: string) {
           fullName: item.full_name,
           phone: item.phone,
           line1: item.line1,
+          landmark: item.landmark ?? "",
           city: item.city,
           state: item.state,
           postalCode: item.postal_code,
@@ -1300,18 +1314,33 @@ export async function saveAddress(input: {
   fullName: string;
   phone: string;
   line1: string;
+  landmark?: string;
   city: string;
   state: string;
   postalCode: string;
   country: string;
 }) {
+  if (!validateIndianMobile(input.phone)) {
+    throw new Error("Enter a valid 10-digit Indian mobile number.");
+  }
+
+  if (!input.fullName.trim() || !input.line1.trim() || !input.city.trim() || !input.state.trim()) {
+    throw new Error("Complete the address before saving.");
+  }
+
+  const shippingEstimate = estimateShippingForPostalCode(input.postalCode, 0);
+  if (!shippingEstimate.valid || !shippingEstimate.serviceable) {
+    throw new Error(shippingEstimate.message);
+  }
+
   const address: CommerceAddress = {
     id: input.id || crypto.randomUUID(),
     userId: input.userId,
     label: sanitizeText(input.label),
     fullName: sanitizeText(input.fullName),
-    phone: sanitizeText(input.phone),
+    phone: normalizeIndianMobile(input.phone),
     line1: sanitizeText(input.line1),
+    landmark: sanitizeText(input.landmark ?? ""),
     city: sanitizeText(input.city),
     state: sanitizeText(input.state),
     postalCode: sanitizeText(input.postalCode),
@@ -1331,6 +1360,7 @@ export async function saveAddress(input: {
           full_name: address.fullName,
           phone: address.phone,
           line1: address.line1,
+          landmark: address.landmark || null,
           city: address.city,
           state: address.state,
           postal_code: address.postalCode,
@@ -1338,7 +1368,7 @@ export async function saveAddress(input: {
         },
         { onConflict: "id" }
       )
-      .select("id, user_id, label, full_name, phone, line1, city, state, postal_code, country, created_at")
+      .select("id, user_id, label, full_name, phone, line1, landmark, city, state, postal_code, country, created_at")
       .single();
     if (error) {
       throw new Error(error.message);
@@ -1350,6 +1380,7 @@ export async function saveAddress(input: {
       fullName: data.full_name,
       phone: data.phone,
       line1: data.line1,
+      landmark: data.landmark ?? "",
       city: data.city,
       state: data.state,
       postalCode: data.postal_code,

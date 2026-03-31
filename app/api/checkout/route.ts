@@ -1,8 +1,7 @@
 import { createCommerceOrder } from "@/lib/commerce";
 import { createPayPalOrder, createRazorpayOrder } from "@/lib/commerce-integrations";
+import { validateEmail, validateIndianMobile } from "@/lib/customer-validation";
 import { getAuthenticatedUser } from "@/lib/auth-user";
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
   try {
@@ -21,8 +20,12 @@ export async function POST(request: Request) {
       return Response.json({ message: "Select a valid payment provider." }, { status: 400 });
     }
 
-    if (!emailRegex.test(payload.customerEmail.trim().toLowerCase())) {
+    if (!validateEmail(payload.customerEmail)) {
       return Response.json({ message: "Please enter a valid email address." }, { status: 400 });
+    }
+
+    if (!validateIndianMobile(payload.customerPhone)) {
+      return Response.json({ message: "Please enter a valid mobile number." }, { status: 400 });
     }
 
     const result = await createCommerceOrder({
