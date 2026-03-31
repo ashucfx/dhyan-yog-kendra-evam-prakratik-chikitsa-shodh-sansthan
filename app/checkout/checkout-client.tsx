@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { CommerceAddress, CommerceProduct, CommerceSettings } from "@/lib/commerce";
@@ -24,6 +25,13 @@ type RazorpayWindow = Window & {
 type AppliedCouponState = {
   code: string;
   discount: number;
+};
+
+type ShippingEstimateState = {
+  postalCode: string;
+  shippingCharge: number;
+  etaLabel?: string;
+  message: string;
 };
 
 async function loadRazorpayScript() {
@@ -66,9 +74,11 @@ export function CheckoutClient({
   const [country, setCountry] = useState(initialAddresses[0]?.country ?? "India");
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCouponState | null>(null);
-  const [paymentProvider, setPaymentProvider] = useState<"Razorpay" | "PayPal">("Razorpay");
+  const [shippingEstimate, setShippingEstimate] = useState<ShippingEstimateState | null>(null);
+  const [paymentSheetOpen, setPaymentSheetOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [couponBusy, setCouponBusy] = useState(false);
+  const [shippingBusy, setShippingBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"success" | "error">("success");
 
@@ -159,7 +169,7 @@ export function CheckoutClient({
 
   const subtotal = selectedItems.reduce((sum, item) => sum + item.product.salePrice * item.quantity, 0);
   const discount = appliedCoupon?.discount ?? 0;
-  const shipping = subtotal - discount >= 1499 || subtotal === 0 ? 0 : 120;
+  const shipping = shippingEstimate?.shippingCharge ?? (subtotal - discount >= 1499 || subtotal === 0 ? 0 : 120);
   const total = Math.max(0, subtotal - discount + shipping);
 
   useEffect(() => {
@@ -167,6 +177,12 @@ export function CheckoutClient({
       setAppliedCoupon(null);
     }
   }, [appliedCoupon, couponCode]);
+
+  useEffect(() => {
+    setShippingEstimate((current) =>
+      current && current.postalCode === postalCode.trim() ? current : null
+    );
+  }, [postalCode, line1, city, stateName, country]);
 
   async function validateCoupon() {
     const normalizedCode = couponCode.trim().toUpperCase();
@@ -215,13 +231,74 @@ export function CheckoutClient({
     }
   }
 
+  async function validateShippingPin(silent = false) {
+    const normalizedPostalCode = postalCode.trim();
+    if (!normalizedPostalCode) {
+      if (!silent) {
+        setMessageTone("error");
+        setMessage("Enter a pincode to check delivery.");
+      }
+      return null;
+    }
+
+    setShippingBusy(true);
+    if (!silent) {
+      setMessage("");
+    }
+
+    try {
+      const response = await fetch("/api/shipping/estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          postalCode: normalizedPostalCode,
+          subtotal: Math.max(0, subtotal - discount),
+          country
+        })
+      });
+      const result = (await response.json()) as {
+        postalCode?: string;
+        shippingCharge?: number;
+        etaLabel?: string;
+        message?: string;
+      };
+
+      if (!response.ok || typeof result.shippingCharge !== "number" || !result.postalCode) {
+        throw new Error(result.message || "Delivery is not available for this pincode.");
+      }
+
+      const nextEstimate = {
+        postalCode: result.postalCode,
+        shippingCharge: result.shippingCharge,
+        etaLabel: result.etaLabel,
+        message: result.message || "Delivery is available."
+      } satisfies ShippingEstimateState;
+
+      setShippingEstimate(nextEstimate);
+      if (!silent) {
+        setMessageTone("success");
+        setMessage(nextEstimate.message);
+      }
+      return nextEstimate;
+    } catch (error) {
+      setShippingEstimate(null);
+      if (!silent) {
+        setMessageTone("error");
+        setMessage(error instanceof Error ? error.message : "Delivery is not available for this pincode.");
+      }
+      return null;
+    } finally {
+      setShippingBusy(false);
+    }
+  }
+
   async function redirectToSuccess(orderId: string) {
     await clearCart();
     router.push(`/checkout/success?order=${orderId}`);
     router.refresh();
   }
 
-  async function handleCheckout() {
+  async function handleCheckout(paymentProvider: "Razorpay" | "PayPal") {
     if (!authenticated) {
       window.location.href = "/auth/sign-in?redirectTo=/checkout";
       return;
@@ -245,8 +322,16 @@ export function CheckoutClient({
       return;
     }
 
+    const estimate = await validateShippingPin(true);
+    if (!estimate) {
+      setMessageTone("error");
+      setMessage("This pincode is not serviceable. Please use a deliverable Indian address.");
+      return;
+    }
+
     setBusy(true);
     setMessage("");
+    setPaymentSheetOpen(false);
 
     try {
       const response = await fetch("/api/checkout", {
@@ -376,6 +461,38 @@ export function CheckoutClient({
     }
   }
 
+  async function handleProceedToPayment() {
+    if (!authenticated) {
+      window.location.href = "/auth/sign-in?redirectTo=/checkout";
+      return;
+    }
+
+    if (!selectedItems.length) {
+      setMessageTone("error");
+      setMessage("Add products to your cart before checkout.");
+      return;
+    }
+
+    if (!customerName.trim() || !customerEmail.trim() || !customerPhone.trim()) {
+      setMessageTone("error");
+      setMessage("Enter your name, email, and phone number.");
+      return;
+    }
+
+    if (!line1.trim() || !city.trim() || !stateName.trim() || !postalCode.trim() || !country.trim()) {
+      setMessageTone("error");
+      setMessage("Enter your complete shipping address.");
+      return;
+    }
+
+    const estimate = await validateShippingPin();
+    if (!estimate) {
+      return;
+    }
+
+    setPaymentSheetOpen(true);
+  }
+
   return (
     <section className="section checkout-layout page-end-section">
       <div className="commerce-panel">
@@ -418,7 +535,14 @@ export function CheckoutClient({
                 </option>
               ))}
             </select>
-          ) : null}
+          ) : (
+            <div className="checkout-inline-note">
+              <span>No saved address yet.</span>
+              <Link className="inline-link" href="/account">
+                Add one in My Account
+              </Link>
+            </div>
+          )}
           <input placeholder="Full name" value={customerName} onChange={(event) => setCustomerName(event.target.value)} />
           <input placeholder="Email" value={customerEmail} onChange={(event) => setCustomerEmail(event.target.value)} />
           <input placeholder="Phone number" value={customerPhone} onChange={(event) => setCustomerPhone(event.target.value)} />
@@ -428,15 +552,19 @@ export function CheckoutClient({
           <input placeholder="Postal code" value={postalCode} onChange={(event) => setPostalCode(event.target.value)} />
           <input placeholder="Country" value={country} onChange={(event) => setCountry(event.target.value)} />
           <div className="checkout-coupon-row">
+            <button className="button button-secondary button-small" type="button" disabled={shippingBusy || !postalCode.trim()} onClick={() => void validateShippingPin()}>
+              {shippingBusy ? "Checking..." : "Check delivery"}
+            </button>
+            <div className="checkout-inline-note">
+              <span>{shippingEstimate?.etaLabel ? `ETA ${shippingEstimate.etaLabel}` : "Dispatches from 127021, India"}</span>
+            </div>
+          </div>
+          <div className="checkout-coupon-row">
             <input placeholder="Coupon code" value={couponCode} onChange={(event) => setCouponCode(event.target.value.toUpperCase())} />
             <button className="button button-secondary button-small" type="button" disabled={couponBusy || !subtotal} onClick={() => void validateCoupon()}>
               {couponBusy ? "Checking..." : appliedCoupon ? "Reapply" : "Apply"}
             </button>
           </div>
-          <select value={paymentProvider} onChange={(event) => setPaymentProvider(event.target.value as "Razorpay" | "PayPal")}>
-            <option value="Razorpay">Razorpay</option>
-            <option value="PayPal">PayPal</option>
-          </select>
         </div>
 
         <div className="commerce-stack">
@@ -459,7 +587,7 @@ export function CheckoutClient({
               <strong>Shipping</strong>
               <p>{formatStoreCurrency(shipping, settings)}</p>
             </div>
-            <span className="status-pill status-warning">{paymentProvider}</span>
+            <span className="status-pill status-warning">{shippingEstimate?.etaLabel ?? "Estimate pending"}</span>
           </div>
           <div className="commerce-status-card">
             <div>
@@ -471,9 +599,41 @@ export function CheckoutClient({
         </div>
 
         {message ? <p className={`form-status form-status-${messageTone}`}>{message}</p> : null}
-        <button className="button" type="button" disabled={busy || loading || !selectedItems.length} onClick={() => void handleCheckout()}>
-          {busy ? "Processing..." : `Pay ${formatStoreCurrency(total, settings)}`}
+        <button className="button" type="button" disabled={busy || loading || !selectedItems.length} onClick={() => void handleProceedToPayment()}>
+          {busy ? "Processing..." : `Proceed to pay ${formatStoreCurrency(total, settings)}`}
         </button>
+
+        {paymentSheetOpen ? (
+          <div className="checkout-payment-sheet">
+            <div className="checkout-payment-sheet-head">
+              <div>
+                <p className="eyebrow">Choose payment</p>
+                <h2>Select your payment method</h2>
+              </div>
+              <button className="button button-secondary button-small" type="button" onClick={() => setPaymentSheetOpen(false)}>
+                Close
+              </button>
+            </div>
+
+            <div className="checkout-payment-options">
+              <button className="checkout-payment-option" type="button" disabled={busy} onClick={() => void handleCheckout("Razorpay")}>
+                <span className="checkout-payment-logo checkout-payment-logo-razorpay">R</span>
+                <div>
+                  <strong>Razorpay</strong>
+                  <p>UPI, cards, netbanking, and wallets</p>
+                </div>
+              </button>
+
+              <button className="checkout-payment-option" type="button" disabled={busy} onClick={() => void handleCheckout("PayPal")}>
+                <span className="checkout-payment-logo checkout-payment-logo-paypal">P</span>
+                <div>
+                  <strong>PayPal</strong>
+                  <p>Best for international card and PayPal accounts</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );

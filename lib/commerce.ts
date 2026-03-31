@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { calculateShippingCharge, validateCouponForSubtotal } from "@/lib/commerce-pricing";
+import { calculateShippingCharge, estimateShippingForPostalCode, validateCouponForSubtotal } from "@/lib/commerce-pricing";
 
 export type PaymentProviderStatus = "planned" | "active" | "disabled";
 
@@ -874,7 +874,12 @@ export async function createCommerceOrder(input: CreateOrderInput) {
   }
 
   const discount = couponCheck.discount;
-  const shipping = calculateShippingCharge(subtotal - discount);
+  const shippingEstimate = estimateShippingForPostalCode(input.shippingAddress.postalCode, subtotal - discount);
+  if (!shippingEstimate.valid || !shippingEstimate.serviceable) {
+    throw new Error(shippingEstimate.message);
+  }
+
+  const shipping = calculateShippingCharge(subtotal - discount, input.shippingAddress.postalCode);
   const total = Math.max(0, subtotal - discount + shipping);
   const orderId = buildOrderId();
   const createdAt = new Date().toISOString();

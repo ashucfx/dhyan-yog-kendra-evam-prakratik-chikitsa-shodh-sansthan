@@ -7,12 +7,108 @@ export type CouponValidationResult = {
   discount: number;
 };
 
-export function calculateShippingCharge(amountAfterDiscount: number) {
+export type ShippingEstimate = {
+  valid: boolean;
+  serviceable: boolean;
+  postalCode: string;
+  zone?: string;
+  shippingCharge: number;
+  etaLabel?: string;
+  message: string;
+};
+
+const storeOriginPostalCode = "127021";
+
+export function isValidIndianPostalCode(postalCode: string) {
+  return /^[1-9]\d{5}$/.test(postalCode.trim());
+}
+
+function getPincodeZone(postalCode: string) {
+  const digit = postalCode[0];
+
+  if (postalCode.startsWith("127")) {
+    return {
+      key: "local",
+      etaLabel: "1 to 2 days",
+      baseCharge: 60
+    };
+  }
+
+  if (digit === "1" || digit === "2") {
+    return {
+      key: "north",
+      etaLabel: "2 to 4 days",
+      baseCharge: 90
+    };
+  }
+
+  if (digit === "3" || digit === "4") {
+    return {
+      key: "west-central",
+      etaLabel: "3 to 5 days",
+      baseCharge: 120
+    };
+  }
+
+  if (digit === "5" || digit === "6") {
+    return {
+      key: "south",
+      etaLabel: "4 to 6 days",
+      baseCharge: 150
+    };
+  }
+
+  return {
+    key: "east-northeast",
+    etaLabel: "5 to 7 days",
+    baseCharge: 180
+  };
+}
+
+export function calculateShippingCharge(amountAfterDiscount: number, postalCode?: string) {
   if (amountAfterDiscount <= 0) {
     return 0;
   }
 
-  return amountAfterDiscount >= 1499 ? 0 : 120;
+  if (amountAfterDiscount >= 1499) {
+    return 0;
+  }
+
+  if (!postalCode || !isValidIndianPostalCode(postalCode)) {
+    return 120;
+  }
+
+  return getPincodeZone(postalCode).baseCharge;
+}
+
+export function estimateShippingForPostalCode(postalCode: string, subtotal: number): ShippingEstimate {
+  const normalizedPostalCode = postalCode.trim();
+
+  if (!isValidIndianPostalCode(normalizedPostalCode)) {
+    return {
+      valid: false,
+      serviceable: false,
+      postalCode: normalizedPostalCode,
+      shippingCharge: 0,
+      message: "Enter a valid 6-digit Indian pincode."
+    };
+  }
+
+  const zone = getPincodeZone(normalizedPostalCode);
+  const shippingCharge = calculateShippingCharge(subtotal, normalizedPostalCode);
+
+  return {
+    valid: true,
+    serviceable: true,
+    postalCode: normalizedPostalCode,
+    zone: zone.key,
+    etaLabel: zone.etaLabel,
+    shippingCharge,
+    message:
+      normalizedPostalCode === storeOriginPostalCode
+        ? `Delivery is available from our ${storeOriginPostalCode} dispatch location.`
+        : `Delivery is available to ${normalizedPostalCode}.`
+  };
 }
 
 export function validateCouponForSubtotal(

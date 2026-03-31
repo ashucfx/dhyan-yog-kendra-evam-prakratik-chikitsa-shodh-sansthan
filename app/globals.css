@@ -3914,6 +3914,120 @@ textarea:focus-visible {
   gap: 0.65rem;
 }
 
+.checkout-inline-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 3rem;
+  padding: 0.8rem 1rem;
+  border-radius: 1rem;
+  background: rgba(241, 231, 214, 0.72);
+  color: rgba(73, 53, 31, 0.82);
+}
+
+.checkout-payment-sheet {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid rgba(125, 86, 40, 0.12);
+  border-radius: 1.4rem;
+  background: rgba(255, 252, 247, 0.92);
+}
+
+.checkout-payment-sheet-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.checkout-payment-sheet-head h2 {
+  margin: 0.25rem 0 0;
+}
+
+.checkout-payment-options {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.checkout-payment-option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  border: 1px solid rgba(125, 86, 40, 0.12);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.checkout-payment-option p {
+  margin: 0.2rem 0 0;
+  color: rgba(73, 53, 31, 0.76);
+}
+
+.checkout-payment-logo {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  flex: 0 0 auto;
+}
+
+.checkout-payment-logo-razorpay {
+  background: #2b66f6;
+}
+
+.checkout-payment-logo-paypal {
+  background: #003087;
+}
+
+.product-delivery-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border-radius: 1.2rem;
+  background: rgba(241, 231, 214, 0.52);
+}
+
+.product-delivery-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.product-delivery-head h2 {
+  margin: 0.25rem 0 0;
+  font-size: 1.15rem;
+}
+
+.product-delivery-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+}
+
+.product-delivery-result {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.product-delivery-result span {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 0.46rem 0.78rem;
+  font-size: 0.86rem;
+}
+
 @media (max-width: 1100px) {
   .shop-grid,
   .product-detail-grid,
@@ -3932,6 +4046,7 @@ textarea:focus-visible {
 @media (max-width: 720px) {
   .shop-toolbar-card,
   .checkout-coupon-row,
+  .product-delivery-form,
   .product-summary-grid,
   .product-detail-grid,
   .shop-grid,
@@ -3949,7 +4064,9 @@ textarea:focus-visible {
   .product-cta-row,
   .account-overview,
   .account-card-head,
-  .account-address-card {
+  .account-address-card,
+  .checkout-payment-sheet-head,
+  .product-delivery-head {
     flex-direction: column;
     align-items: stretch;
   }

@@ -19,6 +19,13 @@ type MediaItem =
   | { kind: "image"; value: string }
   | { kind: "video"; value: string };
 
+type ProductShippingEstimate = {
+  postalCode: string;
+  shippingCharge: number;
+  etaLabel?: string;
+  message: string;
+};
+
 export function ProductDetailClient({
   product,
   settings,
@@ -41,6 +48,11 @@ export function ProductDetailClient({
   const [score, setScore] = useState(5);
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
+  const [shippingBusy, setShippingBusy] = useState(false);
+  const [shippingPostalCode, setShippingPostalCode] = useState("");
+  const [shippingEstimate, setShippingEstimate] = useState<ProductShippingEstimate | null>(null);
+  const [deliveryMessage, setDeliveryMessage] = useState("");
+  const [deliveryMessageTone, setDeliveryMessageTone] = useState<"success" | "error">("success");
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"success" | "error">("success");
 
@@ -87,6 +99,51 @@ export function ProductDetailClient({
       setMessage(error instanceof Error ? error.message : "Unable to submit review.");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function checkDelivery() {
+    setShippingBusy(true);
+    setDeliveryMessage("");
+
+    try {
+      const response = await fetch("/api/shipping/estimate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          postalCode: shippingPostalCode,
+          subtotal: product.salePrice,
+          country: "India"
+        })
+      });
+
+      const result = (await response.json()) as {
+        postalCode?: string;
+        shippingCharge?: number;
+        etaLabel?: string;
+        message?: string;
+      };
+
+      if (!response.ok || typeof result.shippingCharge !== "number" || !result.postalCode) {
+        throw new Error(result.message || "Delivery is not available for this pincode.");
+      }
+
+      setShippingEstimate({
+        postalCode: result.postalCode,
+        shippingCharge: result.shippingCharge,
+        etaLabel: result.etaLabel,
+        message: result.message || "Delivery is available."
+      });
+      setDeliveryMessageTone("success");
+      setDeliveryMessage(result.message || "Delivery is available.");
+    } catch (error) {
+      setShippingEstimate(null);
+      setDeliveryMessageTone("error");
+      setDeliveryMessage(error instanceof Error ? error.message : "Delivery is not available for this pincode.");
+    } finally {
+      setShippingBusy(false);
     }
   }
 
@@ -148,6 +205,33 @@ export function ProductDetailClient({
             {product.benefits.map((benefit) => (
               <span key={benefit}>{benefit}</span>
             ))}
+          </div>
+
+          <div className="product-delivery-card">
+            <div className="product-delivery-head">
+              <div>
+                <p className="eyebrow">Delivery check</p>
+                <h2>Check delivery by pincode</h2>
+              </div>
+              <span className="status-pill status-neutral">Ships from 127021</span>
+            </div>
+            <div className="product-delivery-form">
+              <input
+                placeholder="Enter 6-digit pincode"
+                value={shippingPostalCode}
+                onChange={(event) => setShippingPostalCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
+              />
+              <button className="button button-secondary button-small" type="button" disabled={shippingBusy} onClick={() => void checkDelivery()}>
+                {shippingBusy ? "Checking..." : "Check"}
+              </button>
+            </div>
+            {shippingEstimate ? (
+              <div className="product-delivery-result">
+                <span>ETA {shippingEstimate.etaLabel ?? "Available"}</span>
+                <span>Shipping {formatStoreCurrency(shippingEstimate.shippingCharge, settings)}</span>
+              </div>
+            ) : null}
+            {deliveryMessage ? <p className={`form-status form-status-${deliveryMessageTone}`}>{deliveryMessage}</p> : null}
           </div>
 
           <div className="product-summary-grid">
