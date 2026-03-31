@@ -2,13 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import type { CommerceAddress, CommerceCoupon, CommerceProduct, CommerceSettings } from "@/lib/commerce";
+import type { CommerceAddress, CommerceProduct, CommerceSettings } from "@/lib/commerce";
 import { formatStoreCurrency } from "@/lib/commerce-ui";
 import { useCart } from "@/app/components/cart-provider";
 
 type CheckoutClientProps = {
   products: CommerceProduct[];
-  coupons: CommerceCoupon[];
   settings: CommerceSettings;
   initialName: string;
   initialEmail: string;
@@ -20,6 +19,11 @@ type RazorpayWindow = Window & {
   Razorpay?: new (options: Record<string, unknown>) => {
     open: () => void;
   };
+};
+
+type AppliedCouponState = {
+  code: string;
+  discount: number;
 };
 
 async function loadRazorpayScript() {
@@ -38,7 +42,6 @@ async function loadRazorpayScript() {
 
 export function CheckoutClient({
   products,
-  coupons,
   settings,
   initialName,
   initialEmail,
@@ -51,6 +54,7 @@ export function CheckoutClient({
   const selectedProductId = searchParams.get("product");
   const paypalInternalOrder = searchParams.get("internal_order");
   const paypalToken = searchParams.get("token");
+  const paypalCancelled = searchParams.get("paypal_cancel");
   const [customerName, setCustomerName] = useState(initialName);
   const [customerEmail, setCustomerEmail] = useState(initialEmail);
   const [customerPhone, setCustomerPhone] = useState(initialPhone);
@@ -61,8 +65,10 @@ export function CheckoutClient({
   const [postalCode, setPostalCode] = useState(initialAddresses[0]?.postalCode ?? "");
   const [country, setCountry] = useState(initialAddresses[0]?.country ?? "India");
   const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCouponState | null>(null);
   const [paymentProvider, setPaymentProvider] = useState<"Razorpay" | "PayPal">("Razorpay");
   const [busy, setBusy] = useState(false);
+  const [couponBusy, setCouponBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"success" | "error">("success");
 
@@ -89,14 +95,14 @@ export function CheckoutClient({
       return;
     }
 
-    setCustomerName(selectedAddress.fullName || customerName);
-    setCustomerPhone(selectedAddress.phone || customerPhone);
+    setCustomerName(selectedAddress.fullName || initialName);
+    setCustomerPhone(selectedAddress.phone || initialPhone);
     setLine1(selectedAddress.line1);
     setCity(selectedAddress.city);
     setStateName(selectedAddress.state);
     setPostalCode(selectedAddress.postalCode);
     setCountry(selectedAddress.country);
-  }, [customerName, customerPhone, initialAddresses, selectedAddressId]);
+  }, [initialAddresses, initialName, initialPhone, selectedAddressId]);
 
   useEffect(() => {
     async function capturePayPalReturn() {
@@ -131,6 +137,13 @@ export function CheckoutClient({
     void capturePayPalReturn();
   }, [clearCart, paypalInternalOrder, paypalToken, router]);
 
+  useEffect(() => {
+    if (paypalCancelled) {
+      setMessageTone("error");
+      setMessage("PayPal checkout was cancelled. Your cart is still available.");
+    }
+  }, [paypalCancelled]);
+
   const selectedItems = useMemo(
     () =>
       items
@@ -145,15 +158,62 @@ export function CheckoutClient({
   );
 
   const subtotal = selectedItems.reduce((sum, item) => sum + item.product.salePrice * item.quantity, 0);
-  const appliedCoupon = coupons.find((coupon) => coupon.active && coupon.code === couponCode.trim().toUpperCase()) ?? null;
-  const discount =
-    appliedCoupon && subtotal >= appliedCoupon.minimumOrderAmount
-      ? appliedCoupon.discountType === "percent"
-        ? Math.round((subtotal * appliedCoupon.discountValue) / 100)
-        : appliedCoupon.discountValue
-      : 0;
+  const discount = appliedCoupon?.discount ?? 0;
   const shipping = subtotal - discount >= 1499 || subtotal === 0 ? 0 : 120;
   const total = Math.max(0, subtotal - discount + shipping);
+
+  useEffect(() => {
+    if (appliedCoupon && appliedCoupon.code !== couponCode.trim().toUpperCase()) {
+      setAppliedCoupon(null);
+    }
+  }, [appliedCoupon, couponCode]);
+
+  async function validateCoupon() {
+    const normalizedCode = couponCode.trim().toUpperCase();
+    if (!normalizedCode) {
+      setAppliedCoupon(null);
+      setMessageTone("error");
+      setMessage("Enter a coupon code first.");
+      return;
+    }
+
+    setCouponBusy(true);
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: normalizedCode,
+          subtotal
+        })
+      });
+      const result = (await response.json()) as {
+        message?: string;
+        coupon?: { code: string };
+        discount?: number;
+      };
+
+      if (!response.ok || !result.coupon || typeof result.discount !== "number") {
+        throw new Error(result.message || "Coupon is not valid.");
+      }
+
+      setAppliedCoupon({
+        code: result.coupon.code,
+        discount: result.discount
+      });
+      setCouponCode(result.coupon.code);
+      setMessageTone("success");
+      setMessage(result.message || "Coupon applied successfully.");
+    } catch (error) {
+      setAppliedCoupon(null);
+      setMessageTone("error");
+      setMessage(error instanceof Error ? error.message : "Coupon is not valid.");
+    } finally {
+      setCouponBusy(false);
+    }
+  }
 
   async function redirectToSuccess(orderId: string) {
     await clearCart();
@@ -170,6 +230,18 @@ export function CheckoutClient({
     if (!selectedItems.length) {
       setMessageTone("error");
       setMessage("Add products to your cart before checkout.");
+      return;
+    }
+
+    if (!customerName.trim() || !customerEmail.trim() || !customerPhone.trim()) {
+      setMessageTone("error");
+      setMessage("Enter your name, email, and phone number.");
+      return;
+    }
+
+    if (!line1.trim() || !city.trim() || !stateName.trim() || !postalCode.trim() || !country.trim()) {
+      setMessageTone("error");
+      setMessage("Enter your complete shipping address.");
       return;
     }
 
@@ -195,7 +267,7 @@ export function CheckoutClient({
             productId: item.product.id,
             quantity: item.quantity
           })),
-          couponCode,
+          couponCode: appliedCoupon?.code ?? couponCode.trim().toUpperCase(),
           paymentProvider
         })
       });
@@ -355,7 +427,12 @@ export function CheckoutClient({
           <input placeholder="State" value={stateName} onChange={(event) => setStateName(event.target.value)} />
           <input placeholder="Postal code" value={postalCode} onChange={(event) => setPostalCode(event.target.value)} />
           <input placeholder="Country" value={country} onChange={(event) => setCountry(event.target.value)} />
-          <input placeholder="Coupon code" value={couponCode} onChange={(event) => setCouponCode(event.target.value.toUpperCase())} />
+          <div className="checkout-coupon-row">
+            <input placeholder="Coupon code" value={couponCode} onChange={(event) => setCouponCode(event.target.value.toUpperCase())} />
+            <button className="button button-secondary button-small" type="button" disabled={couponBusy || !subtotal} onClick={() => void validateCoupon()}>
+              {couponBusy ? "Checking..." : appliedCoupon ? "Reapply" : "Apply"}
+            </button>
+          </div>
           <select value={paymentProvider} onChange={(event) => setPaymentProvider(event.target.value as "Razorpay" | "PayPal")}>
             <option value="Razorpay">Razorpay</option>
             <option value="PayPal">PayPal</option>

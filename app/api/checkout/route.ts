@@ -17,6 +17,10 @@ export async function POST(request: Request) {
       return Response.json({ message: "Customer details and order items are required." }, { status: 400 });
     }
 
+    if (payload.paymentProvider !== "Razorpay" && payload.paymentProvider !== "PayPal") {
+      return Response.json({ message: "Select a valid payment provider." }, { status: 400 });
+    }
+
     if (!emailRegex.test(payload.customerEmail.trim().toLowerCase())) {
       return Response.json({ message: "Please enter a valid email address." }, { status: 400 });
     }

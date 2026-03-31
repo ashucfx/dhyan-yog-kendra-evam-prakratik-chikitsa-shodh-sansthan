@@ -168,3 +168,102 @@ create index if not exists orders_user_id_idx on public.orders(user_id);
 create index if not exists orders_payment_status_idx on public.orders(payment_status);
 create index if not exists shipments_order_id_idx on public.shipments(order_id);
 create index if not exists product_reviews_product_id_idx on public.product_reviews(product_id);
+
+alter table public.profiles enable row level security;
+alter table public.addresses enable row level security;
+alter table public.categories enable row level security;
+alter table public.products enable row level security;
+alter table public.product_reviews enable row level security;
+alter table public.offers enable row level security;
+alter table public.coupons enable row level security;
+alter table public.orders enable row level security;
+alter table public.order_items enable row level security;
+alter table public.shipments enable row level security;
+alter table public.cart_items enable row level security;
+
+drop policy if exists "profiles_select_own" on public.profiles;
+create policy "profiles_select_own" on public.profiles
+for select to authenticated
+using (auth.uid() = id);
+
+drop policy if exists "profiles_insert_own" on public.profiles;
+create policy "profiles_insert_own" on public.profiles
+for insert to authenticated
+with check (auth.uid() = id);
+
+drop policy if exists "profiles_update_own" on public.profiles;
+create policy "profiles_update_own" on public.profiles
+for update to authenticated
+using (auth.uid() = id)
+with check (auth.uid() = id);
+
+drop policy if exists "addresses_manage_own" on public.addresses;
+create policy "addresses_manage_own" on public.addresses
+for all to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+drop policy if exists "categories_public_read" on public.categories;
+create policy "categories_public_read" on public.categories
+for select to anon, authenticated
+using (true);
+
+drop policy if exists "products_public_read_active" on public.products;
+create policy "products_public_read_active" on public.products
+for select to anon, authenticated
+using (active = true);
+
+drop policy if exists "offers_public_read_active" on public.offers;
+create policy "offers_public_read_active" on public.offers
+for select to anon, authenticated
+using (active = true);
+
+drop policy if exists "coupons_authenticated_read" on public.coupons;
+create policy "coupons_authenticated_read" on public.coupons
+for select to authenticated
+using (true);
+
+drop policy if exists "product_reviews_public_read" on public.product_reviews;
+create policy "product_reviews_public_read" on public.product_reviews
+for select to anon, authenticated
+using (true);
+
+drop policy if exists "product_reviews_authenticated_insert" on public.product_reviews;
+create policy "product_reviews_authenticated_insert" on public.product_reviews
+for insert to authenticated
+with check (true);
+
+drop policy if exists "orders_select_own" on public.orders;
+create policy "orders_select_own" on public.orders
+for select to authenticated
+using (auth.uid() = user_id);
+
+drop policy if exists "order_items_select_own" on public.order_items;
+create policy "order_items_select_own" on public.order_items
+for select to authenticated
+using (
+  exists (
+    select 1
+    from public.orders
+    where orders.id = order_items.order_id
+      and orders.user_id = auth.uid()
+  )
+);
+
+drop policy if exists "shipments_select_own" on public.shipments;
+create policy "shipments_select_own" on public.shipments
+for select to authenticated
+using (
+  exists (
+    select 1
+    from public.orders
+    where orders.id = shipments.order_id
+      and orders.user_id = auth.uid()
+  )
+);
+
+drop policy if exists "cart_items_manage_own" on public.cart_items;
+create policy "cart_items_manage_own" on public.cart_items
+for all to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);

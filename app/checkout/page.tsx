@@ -26,7 +26,6 @@ export default async function CheckoutPage() {
       <Suspense fallback={<div className="loading-state">Loading checkout...</div>}>
         <CheckoutClient
           products={snapshot.products}
-          coupons={snapshot.coupons}
           settings={snapshot.settings}
           initialName={profile.fullName || user.name}
           initialEmail={profile.email || user.email}

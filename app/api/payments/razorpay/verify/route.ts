@@ -24,7 +24,12 @@ export async function POST(request: Request) {
       return Response.json({ message: "Razorpay signature verification failed." }, { status: 400 });
     }
 
-    await updateOrderPaymentStatus(payload.internalOrderId, "captured", "paid");
+    await updateOrderPaymentStatus(
+      payload.internalOrderId,
+      "captured",
+      "paid",
+      payload.razorpayPaymentId
+    );
 
     return Response.json({ message: "Payment verified successfully." }, { status: 200 });
   } catch (error) {

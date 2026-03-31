@@ -15,11 +15,11 @@ export async function POST(request: Request) {
     const capture = await capturePayPalOrder(payload.paypalOrderId);
 
     if (!capture) {
-      await updateOrderPaymentStatus(payload.internalOrderId, "captured", "paid");
+      await updateOrderPaymentStatus(payload.internalOrderId, "captured", "paid", payload.paypalOrderId);
       return Response.json({ message: "Mock PayPal payment captured successfully." }, { status: 200 });
     }
 
-    await updateOrderPaymentStatus(payload.internalOrderId, "captured", "paid");
+    await updateOrderPaymentStatus(payload.internalOrderId, "captured", "paid", capture.id);
     return Response.json(
       {
         message: "PayPal payment captured successfully.",

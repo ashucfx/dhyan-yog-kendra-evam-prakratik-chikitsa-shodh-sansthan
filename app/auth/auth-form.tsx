@@ -22,6 +22,18 @@ export function AuthForm({ mode }: AuthFormProps) {
   const redirectTo = searchParams.get("redirectTo") || "/account";
 
   async function handleSubmit() {
+    if (!email.trim() || !password.trim()) {
+      setMessageTone("error");
+      setMessage("Email and password are required.");
+      return;
+    }
+
+    if (mode === "sign-up" && !fullName.trim()) {
+      setMessageTone("error");
+      setMessage("Full name is required for account creation.");
+      return;
+    }
+
     setBusy(true);
     setMessage("");
 

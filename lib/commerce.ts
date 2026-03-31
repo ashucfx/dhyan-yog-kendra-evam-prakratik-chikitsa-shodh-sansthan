@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
+import { calculateShippingCharge, validateCouponForSubtotal } from "@/lib/commerce-pricing";
 
 export type PaymentProviderStatus = "planned" | "active" | "disabled";
 
@@ -74,7 +75,11 @@ export type CommerceCoupon = {
   discountType: "percent" | "flat";
   discountValue: number;
   minimumOrderAmount: number;
+  usageLimit: number | null;
+  usageCount: number;
   active: boolean;
+  startsAt?: string;
+  endsAt?: string;
 };
 
 export type CommerceOrder = {
@@ -204,7 +209,11 @@ export type CouponInput = {
   discountType: "percent" | "flat";
   discountValue: number;
   minimumOrderAmount: number;
+  usageLimit?: number | null;
+  usageCount?: number;
   active: boolean;
+  startsAt?: string;
+  endsAt?: string;
 };
 
 export type CheckoutItemInput = {
@@ -263,6 +272,13 @@ async function readLocalSnapshot() {
       ...product,
       active: product.active ?? true
     })),
+    coupons: (snapshot.coupons ?? []).map((coupon) => ({
+      ...coupon,
+      usageLimit: coupon.usageLimit ?? null,
+      usageCount: coupon.usageCount ?? 0,
+      startsAt: coupon.startsAt ?? undefined,
+      endsAt: coupon.endsAt ?? undefined
+    })),
     source: "local" as const
   };
 }
@@ -316,7 +332,7 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
         supabase.from("offers").select("id, title, description, kind, discount_type, discount_value, active").order("title"),
         supabase
           .from("coupons")
-          .select("id, code, description, discount_type, discount_value, minimum_order_amount, active")
+          .select("id, code, description, discount_type, discount_value, minimum_order_amount, usage_limit, usage_count, active, starts_at, ends_at")
           .order("code"),
         supabase
           .from("orders")
@@ -415,7 +431,11 @@ async function readSupabaseSnapshot(): Promise<CommerceSnapshot | null> {
         discountType: item.discount_type,
         discountValue: item.discount_value,
         minimumOrderAmount: item.minimum_order_amount,
-        active: item.active
+        usageLimit: item.usage_limit ?? null,
+        usageCount: item.usage_count ?? 0,
+        active: item.active,
+        startsAt: item.starts_at ?? undefined,
+        endsAt: item.ends_at ?? undefined
       })),
       orders: (ordersResult.data ?? []).map((item) => ({
         id: item.id,
@@ -537,8 +557,17 @@ function buildOrderId() {
   return `order-${Date.now()}`;
 }
 
-function getShippingCharge(subtotal: number) {
-  return subtotal >= 1499 ? 0 : 120;
+function normalizeOptionalDate(value: string | undefined) {
+  const trimmed = value?.trim();
+  return trimmed ? new Date(trimmed).toISOString() : undefined;
+}
+
+function normalizeUsageLimit(value: number | null | undefined) {
+  if (value === null || value === undefined || value === 0) {
+    return null;
+  }
+
+  return sanitizeCurrency(value);
 }
 
 export async function upsertProduct(input: ProductInput) {
@@ -742,7 +771,11 @@ export async function upsertCoupon(input: CouponInput) {
     discountType: input.discountType,
     discountValue: sanitizeCurrency(input.discountValue),
     minimumOrderAmount: sanitizeCurrency(input.minimumOrderAmount),
-    active: Boolean(input.active)
+    usageLimit: normalizeUsageLimit(input.usageLimit),
+    usageCount: sanitizeCurrency(input.usageCount ?? 0),
+    active: Boolean(input.active),
+    startsAt: normalizeOptionalDate(input.startsAt),
+    endsAt: normalizeOptionalDate(input.endsAt)
   } satisfies CommerceCoupon;
 
   const supabase = getSupabaseClient();
@@ -754,7 +787,11 @@ export async function upsertCoupon(input: CouponInput) {
       discount_type: payload.discountType,
       discount_value: payload.discountValue,
       minimum_order_amount: payload.minimumOrderAmount,
-      active: payload.active
+      usage_limit: payload.usageLimit,
+      usage_count: payload.usageCount,
+      active: payload.active,
+      starts_at: payload.startsAt ?? null,
+      ends_at: payload.endsAt ?? null
     });
     if (error) {
       throw new Error(error.message);
@@ -809,18 +846,35 @@ export async function createCommerceOrder(input: CreateOrderInput) {
     throw new Error("No valid order items were provided.");
   }
 
+  if (!input.customerName.trim() || !input.customerPhone.trim()) {
+    throw new Error("Customer name and phone number are required.");
+  }
+
+  if (
+    !input.shippingAddress?.line1?.trim() ||
+    !input.shippingAddress?.city?.trim() ||
+    !input.shippingAddress?.state?.trim() ||
+    !input.shippingAddress?.postalCode?.trim() ||
+    !input.shippingAddress?.country?.trim()
+  ) {
+    throw new Error("A complete shipping address is required.");
+  }
+
   const subtotal = matchedItems.reduce((sum, item) => sum + item.product.salePrice * item.quantity, 0);
   const normalizedCouponCode = input.couponCode?.trim().toUpperCase() ?? "";
-  const coupon = input.couponCode
-    ? snapshot.coupons.find((item) => item.active && item.code === normalizedCouponCode)
+  const coupon = normalizedCouponCode
+    ? snapshot.coupons.find((item) => item.code === normalizedCouponCode) ?? null
     : null;
-  const discount =
-    coupon && subtotal >= coupon.minimumOrderAmount
-      ? coupon.discountType === "percent"
-        ? Math.round((subtotal * coupon.discountValue) / 100)
-        : coupon.discountValue
-      : 0;
-  const shipping = getShippingCharge(subtotal - discount);
+  const couponCheck = normalizedCouponCode
+    ? validateCouponForSubtotal(coupon, subtotal)
+    : { valid: false, coupon: null, discount: 0 };
+
+  if (normalizedCouponCode && !couponCheck.valid) {
+    throw new Error(couponCheck.reason || "This coupon cannot be applied.");
+  }
+
+  const discount = couponCheck.discount;
+  const shipping = calculateShippingCharge(subtotal - discount);
   const total = Math.max(0, subtotal - discount + shipping);
   const orderId = buildOrderId();
   const createdAt = new Date().toISOString();
@@ -894,53 +948,85 @@ export async function createCommerceOrder(input: CreateOrderInput) {
       throw new Error(itemsError.message);
     }
 
-    for (const line of matchedItems) {
-      const nextStock = Math.max(0, line.product.stock - line.quantity);
-      const { error: stockError } = await supabase.from("products").update({ stock: nextStock, updated_at: new Date().toISOString() }).eq("id", line.product.id);
-      if (stockError) {
-        throw new Error(stockError.message);
-      }
-    }
-
     return { order, orderItems, coupon };
   }
 
   const local = cloneLocalSnapshot(snapshot);
   local.orders.unshift(order);
   local.orderItems.unshift(...orderItems);
-  local.products = local.products.map((product) => {
-    const selected = matchedItems.find((item) => item.product.id === product.id);
-    if (!selected) {
-      return product;
-    }
-    return {
-      ...product,
-      stock: Math.max(0, product.stock - selected.quantity)
-    };
-  });
   await writeLocalSnapshot(local);
   return { order, orderItems, coupon };
 }
 
-export async function updateOrderPaymentStatus(orderId: string, paymentStatus: string, status: string) {
+export async function updateOrderPaymentStatus(
+  orderId: string,
+  paymentStatus: string,
+  status: string,
+  paymentReference?: string
+) {
+  const snapshot = await loadCommerceSnapshot();
+  const existingOrder = snapshot.orders.find((order) => order.id === orderId);
+
+  if (!existingOrder) {
+    throw new Error("Order was not found.");
+  }
+
+  const paid = status === "paid" || paymentStatus === "captured";
+  const wasAlreadyPaid =
+    existingOrder.status === "paid" ||
+    existingOrder.paymentStatus === "captured" ||
+    existingOrder.paymentStatus === "paid";
+
   const supabase = getSupabaseClient();
   if (supabase) {
-    const paid = status === "paid" || paymentStatus === "captured";
     const { error } = await supabase.from("orders").update({
       payment_status: paymentStatus,
       status,
+      payment_reference: paymentReference ?? null,
       updated_at: new Date().toISOString(),
       ...(paid ? { fulfillment_status: "processing" } : {})
     }).eq("id", orderId);
     if (error) {
       throw new Error(error.message);
     }
+
+    if (paid && !wasAlreadyPaid) {
+      const orderItems = snapshot.orderItems.filter((item) => item.orderId === orderId);
+
+      for (const line of orderItems) {
+        const product = snapshot.products.find((item) => item.id === line.productId);
+        if (!product) {
+          continue;
+        }
+
+        const nextStock = Math.max(0, product.stock - line.quantity);
+        const { error: stockError } = await supabase
+          .from("products")
+          .update({ stock: nextStock, updated_at: new Date().toISOString() })
+          .eq("id", line.productId);
+        if (stockError) {
+          throw new Error(stockError.message);
+        }
+      }
+
+      if (existingOrder.couponCode) {
+        const coupon = snapshot.coupons.find((item) => item.code === existingOrder.couponCode);
+        if (coupon) {
+          const { error: couponError } = await supabase
+            .from("coupons")
+            .update({ usage_count: coupon.usageCount + 1 })
+            .eq("id", coupon.id);
+          if (couponError) {
+            throw new Error(couponError.message);
+          }
+        }
+      }
+    }
+
     return;
   }
 
-  const snapshot = await loadCommerceSnapshot();
   const local = cloneLocalSnapshot(snapshot);
-  const paid = status === "paid" || paymentStatus === "captured";
   local.orders = local.orders.map((order) =>
     order.id === orderId
       ? {
@@ -951,13 +1037,50 @@ export async function updateOrderPaymentStatus(orderId: string, paymentStatus: s
         }
       : order
   );
+
+  if (paid && !wasAlreadyPaid) {
+    const orderItems = local.orderItems.filter((item) => item.orderId === orderId);
+    local.products = local.products.map((product) => {
+      const line = orderItems.find((item) => item.productId === product.id);
+      if (!line) {
+        return product;
+      }
+
+      return {
+        ...product,
+        stock: Math.max(0, product.stock - line.quantity)
+      };
+    });
+    local.coupons = local.coupons.map((coupon) =>
+      coupon.code === existingOrder.couponCode
+        ? {
+            ...coupon,
+            usageCount: coupon.usageCount + 1
+          }
+        : coupon
+    );
+  }
+
   await writeLocalSnapshot(local);
 }
 
 export async function updateOrderFulfillment(orderId: string, fulfillmentStatus: string) {
+  const statusMap: Record<string, string> = {
+    awaiting_payment: "pending_payment",
+    processing: "paid",
+    packed: "paid",
+    pickup_scheduled: "paid",
+    shipped: "shipped",
+    delivered: "delivered"
+  };
+  const nextStatus = statusMap[fulfillmentStatus] ?? fulfillmentStatus;
+
   const supabase = getSupabaseClient();
   if (supabase) {
-    const { error } = await supabase.from("orders").update({ fulfillment_status: fulfillmentStatus }).eq("id", orderId);
+    const { error } = await supabase
+      .from("orders")
+      .update({ fulfillment_status: fulfillmentStatus, status: nextStatus })
+      .eq("id", orderId);
     if (error) {
       throw new Error(error.message);
     }
@@ -970,7 +1093,8 @@ export async function updateOrderFulfillment(orderId: string, fulfillmentStatus:
     order.id === orderId
       ? {
           ...order,
-          fulfillmentStatus
+          fulfillmentStatus,
+          status: nextStatus
         }
       : order
   );
